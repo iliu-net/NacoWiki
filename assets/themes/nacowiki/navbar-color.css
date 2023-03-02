@@ -1,0 +1,27 @@
+nav {
+   background-color: MediumAquaMarine;
+}
+
+nav div {
+  color: black;
+}
+
+nav div.right {
+  color: navyblue;
+}
+
+nav select,input{
+  color: darkgreen;
+}
+
+nav a {
+  color: black;
+}
+nav a:hover {
+  color: white;
+}
+
+.navlist-hilite {
+  color: black;
+  background-color: white;
+}

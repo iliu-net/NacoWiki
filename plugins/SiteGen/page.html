@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+    <?= $wiki->html ?>
+    </div>
+  </div>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

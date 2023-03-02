@@ -1,0 +1,18 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    padding: 0;
+    margin: 0;
+    text-rendering: optimizeLegibility;
+}
+
+.page {
+    max-width: 45em;
+    margin: auto;
+}
+.main {
+    padding-bottom: 20vh;
+}

@@ -1,0 +1,20 @@
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title><?=
+    $wiki->meta['title'] ?
+      htmlspecialchars($wiki->meta['title']).' : '.$wiki->cfg['title'] :
+      $wiki->cfg['title']
+  ?></title>
+  <?php
+    foreach (['file-' => $wiki->filemeta ?? NULL, '' => $wiki->meta ?? NULL] as $px => $meta) {
+      if (is_null($meta)) continue;
+      foreach ($meta as $k=>$v) {
+	if ($px.$k == 'title') continue;
+	echo('<meta name="'.$px.htmlspecialchars($k).'" content="'.htmlspecialchars($v).'"/>'.PHP_EOL);
+      }
+    }
+  ?>
+  <?php \NWiki\Core::theme($wiki) ?>
+  <link rel="shortcut icon" href="<?=$wiki->asset('imgs/nanowiki-favicon.png')   ?>" type="image/png">

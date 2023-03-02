@@ -1,0 +1,152 @@
+<!-- body havbar -->
+<?php use \NWiki\Util as Util; ?>
+<?php if (!isset($scope)) $scope = 'local'; ?>
+<?php if (!isset($q)) $q = ''; ?>
+<nav>
+  <?php
+    if ($wiki->cfg['ext_url']) {
+      echo '<div>';
+      echo '<a href="'.$wiki->cfg['ext_url'].'" target="_blank">';
+      echo '<img src="'.$wiki->asset('imgs/nanowiki-favicon.png').'" height=24 width=24>';
+      echo '</a>';
+      echo '</div>';
+    }
+  ?>
+  <?php
+    echo '<div>';
+    echo '<a href="'.$wiki->mkUrl('').'">&#x2302;</a> ';
+    $crumbs = explode('/',$wiki->page);
+    array_pop($crumbs);
+    for ($i = 1; $i < count($crumbs) ; $i++) {
+      echo ' : ';
+      echo '<a href="'.$wiki->mkUrl(implode('/',array_slice($crumbs,0,$i+1))).'">';
+      echo htmlspecialchars($crumbs[$i]);
+      echo '</a>';
+    }
+    if (substr($wiki->page,-1) != '/') {
+      $f = dirname($wiki->page);
+      echo ': <a href="'. $wiki->mkUrl(dirname($wiki->page).'/').'">&#x1F4C1;</a>';
+    } else {
+      if (file_exists($wiki->filePath($wiki->page . $wiki->cfg['default_doc'])))
+       echo ':<a href="'. $wiki->mkUrl($wiki->page . $wiki->cfg['default_doc']).'">&#x1F5CE;</a>';
+    }
+    echo '</div>';
+  ?>
+  <?php if (in_array($wiki->view,['folder','search','page','error404'])) { ?>
+      <div>
+        <form action="<?= $wiki->mkUrl($wiki->page) ?>">
+	  <input type="text" name="q" value="<?= $q ?? ''?>" placeholder="Search...">
+	  <select name="scope">
+	    <option value="local" <?= $scope == 'local' ? 'selected' : '' ?>>local</option>
+	    <option value="global" <?= $scope == 'global' ? 'selected' : '' ?>>global</option>
+	    <option value="recursive" <?= $scope == 'recursive' ? 'selected' : '' ?>>recurs</option>
+	  </select>
+	  <input type="hidden" name="do" value="search">
+	  <input type="submit" name="submit" value="Go">
+	</form>
+      </div>
+  <?php }  ?>
+  <div class="right">
+    <span class="dropdown">  <!-- content tree -->
+      <a href="javascript:void(0)"
+	  onclick="navtoolsClick('navtools','navlist-root','navtools-goto');"
+	  class="dropbtn" title="<?= $wiki->view ?> tools"
+	  > &#x2630; </a>
+      <div id="navtools" class="dropdown-content">
+	<div>
+	  <a
+	    href="javascript:void(0)"
+	    onclick="navGotoClear('navtools-goto')"
+	    class="dropctl" style="display: inline"
+	    >&#x2a2f;</a>
+	  <input type="text"
+	    id="navtools-goto" name="go" class="dropctl"
+	    title="jump to page..."
+	    >
+	  <a
+	    href="javascript:void(0)"
+	    onclick="navGotoPage('navtools-goto')"
+	    class="dropctl" style="display: inline"
+	    >&#x2386;</a>
+	  <script>
+	      document.getElementById("navtools-goto")
+		.addEventListener("keyup", function(event) {
+		  event.preventDefault();
+		  if (event.keyCode === 13) {
+		    navGotoPage("navtools-goto");
+		  }
+		});
+	      document.getElementById("navtools-goto").oninput = function() {
+		navSearchFile("navtools-goto");
+	      };
+	  </script>
+	</div>
+	<div id="navlist-root">
+	</div>
+      </div>
+    </span>
+
+    <?php $wr = $wiki->isWritable(); ?>
+
+    <?php if ($wr && in_array($wiki->view,['page','folder'])) { ?>
+     <span class="dropdown"> <!-- attach/rename/delete -->
+      <a href="javascript:void(0)"
+	  onclick="dropbtnClick('pgtools');"
+	  class="dropbtn" title="<?= $wiki->view ?> tools"
+	  > &#x1F6E0; </a>
+      <div id="pgtools" class="dropdown-content">
+	<a
+	  href="javascript:void(0)"
+	  onclick="attachFile('fileToUloadFrm','fileToUploadCtl');"
+	>Attach file</a>
+	<a
+	  href="<?= $wiki->mkUrl($wiki->page)?>"
+	  onclick="return dlg_rename(this,'<?= $wiki->page ?>');"
+	>Rename</a>
+	<a
+	  href="<?= $wiki->mkUrl($wiki->page,[ 'do'=>'delete']) ?>"
+	  onclick="return confirm('Delete &quot;<?= $wiki->page ?>&quot;?');"
+	>Delete</a>
+      </div>
+     </span>
+<?php
+?>
+    <?php } ?>
+    <?php
+      if ($wiki->view == 'page' || $wiki->view == 'error404') {
+	if ($wr) {
+	  echo '<a href="'.$wiki->mkUrl($wiki->page,['do'=>'edit']).'" alt="Edit page" title="Edit page" id="editLink">';
+	  echo '&#x270E;';
+	  echo '</a>';
+	}
+      }
+      if (is_null($wr)) {
+	echo '<a href="#" alt="Sign-in" title="Sign-in">';
+	echo '&#x1F512;';
+	echo '</a>';
+      }
+    ?>
+    <?php if ($wiki->view == 'edit') { ?>
+      <a href="javascript:void(0)" onclick="cm_save()" title="Save" alt="Save">
+	&#x1F4BE;
+      </a>
+      <a href="<?= $wiki->mkUrl($wiki->page) ?>" title="Discard changes" alt="Discard changes"
+	onclick="return confirm('Are you sure you want to discard changes?');">
+	&#x1F441;
+      </a>
+    <?php } ?>
+   <!--- &#x238B;
+     &#x2699; &#x1F3AF;
+    &#x1F6C8;  &#x1F527;
+     &#x1F513; -->
+    <!--- &#x1F78B; <!-- local -->
+    <!--- &#x1F310; <!-- global -->
+
+  </div>
+</nav>
+<form id="fileToUloadFrm" method="post" enctype="multipart/form-data" action="<?=$wiki->mkUrl($wiki->page)?>">
+  <input type="file" name="fileToUpload" id="fileToUploadCtl" style="display: none">
+  <input type="hidden" name="action" value="attach">
+</form>
+<script src="<?= $wiki->assetQS('js/dropdown.js') ?>"></script>
+<script src="<?= $wiki->assetQS('js/navtools.js') ?>"></script>

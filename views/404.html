@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+      <h2>File Not Found</h2>
+      <?php if ($wiki->isWritable()) { ?>
+	<p><a href="<?= $wiki->mkUrl($wiki->page,['do'=>'edit']) ?>">
+	  Create <?= htmlspecialchars($wiki->page) ?>?
+	</a></p>
+      <?php } ?>
+      <p>
+	Go <a href="<?= $wiki->mkUrl('')?>">Home</a>
+      </p>
+      <?php if ($wiki->isWritable()) { ?>
+	<hr>
+	<p>
+	  Do you want to upload a new file?
+	</p>
+	<form method="post" enctype="multipart/form-data" action="<?= $wiki->mkUrl(dirname($wiki->page)) ?>">
+	  <p>Select file to upload:</p>
+	  <p><input type="file" name="fileToUpload" id="fileToUpload"></p>
+	  <p><input type="submit" value="Upload File" name="attach"></p>
+	  </p>
+	  <input type="hidden" name="action" value="attach">
+	</form>
+      <?php } ?>
+    </div>
+    <?php include(APP_DIR . 'views/footer.html'); ?>
+  </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+nav {
+   background-color: DarkGreen;
+}
+
+nav div {
+  color: yellowgreen;
+}
+
+nav div.right {
+  color: navyblue;
+}
+
+nav select,input{
+  color: black;
+}
+
+nav a {
+  color: pink;
+}
+nav a:hover {
+  color: salmon;
+}
+
+.navlist-hilite {
+  color: black;
+  background-color: white;
+}

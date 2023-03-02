@@ -1,0 +1,40 @@
+<?php use \NWiki\Core as Core; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+
+  <script src="<?= Core::CODEMIRROR ?>lib/codemirror.min.js"></script>
+  <link href="<?= Core::CODEMIRROR ?>lib/codemirror.min.css" rel="stylesheet">
+  <?php
+    foreach ($cm_opts['css'] as $css) {
+      ?><link href="<?= Core::CODEMIRROR . $css ?>" rel="stylesheet"><?php
+    }
+    foreach ($cm_opts['js'] as $js) {
+      ?><script src="<?= Core::CODEMIRROR . $js ?>"></script><?php
+    }
+  ?>
+  <script src="<?= $wiki->assetQS('js/codemirror.js') ?>"></script>
+  <link href="<?= $wiki->asset('css/codemirror.css') ?>" rel="stylesheet">
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="source" class="editor">
+      <form method="POST" id="edform" action="<?= $wiki->mkUrl($wiki->page)?>">
+	<input type="hidden" name="text" id="text">
+	<input type="hidden" name="action" value="save">
+	<textarea id="srcedit"><?= htmlspecialchars($wiki->source) ?></textarea>
+      </form>
+      <script>
+	cm_setup(<?= json_encode($cm_opts['mode'] ?? NULL) ?>);
+	<?php if (!empty($wiki->cfg['theme-codemirror'])) { ?>
+	    textarea1.setOption('theme','<?= $wiki->cfg['theme-codemirror'] ?>');
+	<?php } ?>
+      </script>
+    </div>
+  </div>
+  <?php include(APP_DIR . 'views/footer.html'); ?>
+</body>
+</html>

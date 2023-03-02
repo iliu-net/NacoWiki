@@ -1,0 +1,35 @@
+nav {
+   position: sticky;
+   top: 0;
+   z-index: 100;
+   padding: 10px;
+   display: flex;
+}
+
+nav div {
+  margin:5px;
+}
+
+nav div.right {
+  margin-left: auto;
+}
+
+nav select,input{
+    font-size: 0.7em;
+}
+
+nav a {
+  text-decoration: none;
+}
+nav a:hover {
+  text-decoration: none;
+}
+
+.navlist-show {
+  display: block;
+}
+
+.navlist-hide {
+  display: none;
+}
+

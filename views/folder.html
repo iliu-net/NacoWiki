@@ -1,0 +1,76 @@
+<?php if (!isset($scope)) $scope = 'local'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+  <script src="<?= $wiki->assetQS('js/RenameDlg.js') ?>"></script>
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+
+      <?php
+	if (count($files) == 0) {
+	  echo '<p>Empty folder!</p>';
+	} else {
+	  echo '<p>Folder contents</p>';
+	  echo '<ul>'.PHP_EOL;
+	  foreach ($files as $doc=>$fn) {
+	    $xfn =  htmlspecialchars($fn);
+	    $rd = $wiki->isReadable($doc);
+	    $isdir = is_dir($wiki->filePath($doc));
+	    if ($rd) {
+	      echo '<li>';
+	      echo $isdir ? '&#x1F4C1;' : '&#x1F5CE;';
+
+	      echo ' <a href="'.$wiki->mkUrl($doc).'">'. $xfn .
+		  '</a>'.PHP_EOL;
+	      if ($wiki->isWritable($doc)) {
+		echo '<a href="'.$wiki->mkUrl($wiki->page,$fn,[ 'do'=>'delete']).'"'.
+		    ' title="Delete &quot;'.$xfn.'&quot;" alt="Delete &quot;'.$xfn.'&quot;"'.
+		    ' onclick="return confirm('."'".'Delete &quot;'.$fn.'&quot;?'."'".');"'.
+		    '>'.
+		    '<img src="'.$wiki->asset('imgs/delete.png').'" height=16 width=16>'.
+		    '</a>'.PHP_EOL;
+		echo  '<a href="'.$wiki->mkUrl($wiki->page,$fn).'"'.
+		    ' title="Rename &quot;'.$xfn.'&quot;" alt="Rename &quot;'.$xfn.'&quot;"'.
+		    ' onclick="return dlg_rename(this,'."'".$doc."'".')"'.
+		    '>'.
+		    '<img src="'.$wiki->asset('imgs/rename.png').'" height=16 width=16>'.
+		    '</a>';
+		if (isset($matches) && isset($matches[$doc])) {
+		  echo '<p>';
+		  list($line,$hl) = $matches[$doc];
+		  $line = htmlspecialchars($line);
+		  $hl = htmlspecialchars($hl);
+		  echo str_replace($hl, '<em>'.$hl.'</em>',$line);
+		  echo '</p>';
+		}
+	      }
+	      echo '</li>'.PHP_EOL;
+	    } else {
+	      echo '<li>';
+	      echo $isdir ? '&#x1F4C1;' : '&#x1F5CE;';
+	      echo ' '.$xfh.'</li>'.PHP_EOL;
+	    }
+	  }
+	  echo '</ul>';
+	}
+      ?>
+      <hr>
+      <p>
+	Do you want to upload a new file?
+      </p>
+      <form method="post" enctype="multipart/form-data" action="<?=$wiki->mkUrl($wiki->page)?>">
+	<p>Select file to upload:</p>
+	<p><input type="file" name="fileToUpload" id="fileToUpload"></p>
+	<p><input type="submit" value="Upload File" name="attach"></p>
+	<input type="hidden" name="action" value="attach">
+      </form>
+    </div>
+    <?php include(APP_DIR . 'views/footer.html'); ?>
+  </div>
+</body>
+</html>

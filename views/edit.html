@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+  <script src="<?= $wiki->assetQS('js/edit.js') ?>"></script>
+
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+      <form method="post" action="<?= $wiki->mkUrl($wiki->page)?>" id="edform">
+	<textarea name="text" rows="25" cols="80"><?= htmlspecialchars($wiki->source) ?></textarea>
+	<br/>
+	<input type="hidden" name="action" value="save">
+      </form>
+    </div>
+  </div>
+  <?php include(APP_DIR . 'views/footer.html'); ?>
+</body>
+</html>

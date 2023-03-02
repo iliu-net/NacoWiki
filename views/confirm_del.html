@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+  <script src="<?= $wiki->assetQS('js/DelDlg.js') ?>"></script>
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+
+      <p>Folder "<?= $file_path ?>" contains:</p>
+      <ul>
+	<?php foreach ($files as $fn) { ?>
+	  <li>
+	    <a href="<?= $wiki->mkUrl($wiki->page,$fn) ?>"><?= htmlspecialchars($fn) ?></a>
+	  </li>
+	<?php } ?>
+      </ul>
+      <p>Are you sure you want to delete?</p>
+      <button onclick="dlgClick(true)">Yes</button>
+      <button onclick="dlgClick(false)">No</button>
+    </div>
+    <?php include(APP_DIR . 'views/footer.html'); ?>
+  </div>
+</body>
+</html>

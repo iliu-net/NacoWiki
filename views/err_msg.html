@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+      <p><?= htmlspecialchars($msg) ?></p>
+      <?php if ($flags & EM_PHPERR) {
+	echo '<table>';
+	foreach (error_get_last() as $k=>$v) {
+	  echo '<tr><th align="left">'.
+		htmlspecialchars($k).'</th><td>'.
+		htmlspecialchars($v).'</td></tr>';
+	}
+	echo '</table>';
+      } ?>
+    </div>
+    <?php include(APP_DIR . 'views/footer.html'); ?>
+    </div>
+</body>
+</html>

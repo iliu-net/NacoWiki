@@ -1,0 +1,22 @@
+<footer>
+  <?php
+    if (isset($wiki->filemeta) && isset($wiki->filemeta['year'])) {
+      $year = $wiki->filemeta['year'];
+    } else {
+      $year = gmdate('Y');
+    }
+  ?>
+  <hr/>
+  <small>
+    <a href="<?= APP_URL ?>" target="_blank"><?= APP_NAME ?>: <?= APP_VERSION ?></a><br/>
+    Copyright &copy; <?=$year?> <?=$wiki->cfg['copyright']?> <br/>
+    All rights reserved<br/>
+  </small>
+
+  <?php if ($wiki->context['debug']) { ?>
+  <hr>
+  View: <?= $wiki->view ?><br>
+  <?php \NWiki\Util::dumpLog() ?>
+  <?php } ?>
+
+</footer>
