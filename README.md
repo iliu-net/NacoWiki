@@ -1,8 +1,10 @@
 ---
 title: README.md
 date: "2023-03-01"
-note: This is shown in the Github repo, so onl use GFM markup.
 ---
+<!-- This is shown in the Github repo, so only use GFM markup. -->
+
+
 # NacoWiki
 
 **_NacoWiki is a small and simple file-based Wiki system._**
@@ -12,18 +14,21 @@ note: This is shown in the Github repo, so onl use GFM markup.
 
 # Features
 
-- **Extensible**
+- **Extensible** through plugins.
 - **File-based** Easily editable
-- ?easy? to install.
+- Simple off-tree installation with multiple instances.
+- CLI interface.
 
 ***
 
-# Deployment modes
+# Set-up
 
-1. copy dist
-2. copy index-alt.php and static
-3. symlink web
-4. symlink web/* to location
+- copy dist
+- create a folder to store entry php and assets.
+  - one instance == one entry php.
+  - entry php contains configuration to that specific instance.
+  - Assets can be shared with multiple instance as long as they use the same code base.
+- php _instance-php_ install
 
 # Plugins
 
@@ -42,7 +47,7 @@ through the same plugin mechanism.
 
 ## PHP Extensions
 
-- fileinfo
+- fileinfo - for determining mime content type
 - pecl-yaml
 - dom
 - json

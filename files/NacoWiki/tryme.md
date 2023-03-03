@@ -10,3 +10,6 @@ $meta.vid$
 <img src="https://img.youtube.com/vi/$meta.vid$/0.jpg" width=320 height=240>
 </a>
 
+```
+$cfg$
+```

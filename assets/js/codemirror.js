@@ -9,6 +9,11 @@ function cm_setup(mode) {
       }
     }
   });
+  //~ // This doesn't seem to work
+  //~ setTimeout(function() {
+    //~ console.log("HOW");
+    //~ textarea1.focus();
+  //~ }, 1000);
 }
 
 function cm_save() {

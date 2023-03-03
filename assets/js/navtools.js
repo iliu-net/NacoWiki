@@ -101,7 +101,7 @@ function nvMakeHTML(tree) {
       html+= ' class="navlist-hilite"';
     }
     html += ' style="display:inline">' + prop + '</a>';
-    html += '<a href="javascript:void()" onclick="navCopyLink(';
+    html += '<a href="javascript:void(0)" onclick="navCopyLink(';
     html += "'" + tree[prop].path + "'";
     html += ')" style="display:inline"> &#x29C9;</a>';
 

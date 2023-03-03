@@ -47,10 +47,52 @@
       </div>
   <?php }  ?>
   <div class="right">
+    <?php if (in_array($wiki->view,['page','folder','edit'])) { ?>
+     <span class="dropdown"> <!-- info box -->
+      <a href="javascript:void(0)"
+	  onclick="dropbtnClick('infobox');"
+	  class="dropbtn" title="Info box"
+	  > &#x1f6c8; </a>
+      <div id="infobox" class="dropdown-content">
+	<table>
+	  <?php foreach ([
+	    'meta.'=>$wiki->meta ?? [],
+	    'file.' =>$wiki->filemeta ?? [],
+	    'prop.' =>$wiki->props ?? [],
+	  ] as $p=>$h) {
+	    foreach ($h as $k=>$v) {
+	      ?>
+	      <tr>
+		<th align="left"><?= $p.htmlspecialchars($k) ?></th>
+		<td>
+		  <?php
+		    if (is_array($v)) {
+		      echo htmlspecialchars(yaml_emit($v));
+		    } else {
+		      echo htmlspecialchars($v);
+		    }
+		    echo '<a href="javascript:void(0)" style="display:inline" ';
+		    echo 'onclick=\'copyToClipboard(';
+		    echo json_encode($v);
+		    echo ')\'> &#x29c9; </a>';
+		  ?>
+		</td>
+	      </tr>
+	      <?php
+	    }
+	  }
+	  ?>
+	</table>
+      </div>
+     </span>
+    <?php } ?>
+
+
+
     <span class="dropdown">  <!-- content tree -->
       <a href="javascript:void(0)"
 	  onclick="navtoolsClick('navtools','navlist-root','navtools-goto');"
-	  class="dropbtn" title="<?= $wiki->view ?> tools"
+	  class="dropbtn" title="Wiki contents"
 	  > &#x2630; </a>
       <div id="navtools" class="dropdown-content">
 	<div>
@@ -109,8 +151,6 @@
 	>Delete</a>
       </div>
      </span>
-<?php
-?>
     <?php } ?>
     <?php
       if ($wiki->view == 'page' || $wiki->view == 'error404') {

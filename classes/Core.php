@@ -172,7 +172,7 @@ class Core {
 
     $wiki->filemeta = Util::fileMeta($wiki->filePath());
     $wiki->meta = Util::defaultMeta($wiki->filePath());
-    if ($wiki->page == '/') $wiki->meta['title'] = '';
+    $wiki->meta['title'] = 'Search results';
 
     $wiki->view = 'search';
     include(APP_DIR . 'views/folder.html');
@@ -357,12 +357,21 @@ class Core {
     if ($wiki->cfg['unix_eol']) $ev['text'] = str_replace("\r", "", $ev['text']);
 
     if (!is_null($ext)) {
+      Plugins::dispatchEvent($wiki, 'preSave', $ev);
       Plugins::dispatchEvent($wiki, 'preSave:'.$ext, $ev);
-      if (Plugins::dispatchEvent($wiki, 'save:'.$ext, $ev)) exit();
+      if (Plugins::dispatchEvent($wiki, 'save:'.$ext, $ev)) {
+	Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
+	Plugins::dispatchEvent($wiki, 'postSave', $ev);
+	exit;
+      }
+      Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
     }
+    Plugins::dispatchEvent($wiki, 'preSave', $ev);
     self::makePath($wiki, dirname($wiki->page));
     if (false === file_put_contents($wiki->filePath(), $ev['text']))
       $wiki->errMsg('os_error',$wiki->page.': write error', EM_PHPERR);
+    Plugins::dispatchEvent($wiki, 'postSave', $ev);
+
     header('Location: '.$wiki->mkUrl($wiki->page));
     exit;
   }
@@ -388,12 +397,12 @@ class Core {
     header('Location: '.$wiki->mkUrl($wiki->page, $fname));
     exit;
   }
-  static function apiPageList(\NacoWikiApp $wiki, array &$data) : ?bool {
+  static function apiPageList(\NacoWikiApp $wiki, array &$ev) : ?bool {
     $res = Util::walkTree($wiki->cfg['file_store']);
     $res[] = $wiki->page;
     $res[] = $wiki->cfg['base_url'];
-    echo json_encode(['status' => 'OK', 'output' => $res ]);
-    exit;
+    $ev['output'] = $res;
+    return Plugins::OK;
   }
   static function load() : void {
     Plugins::registerEvent('do:delete',[self::class,'deletePage']);

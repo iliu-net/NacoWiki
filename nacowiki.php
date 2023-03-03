@@ -241,12 +241,13 @@ class NacoWikiApp {
       }
     } elseif (!empty($_GET['api'])) {
       header('Content-type: application/json');
-      if (!Plugins::dispatchEvent($this, 'api:'.strtolower($_GET['api']), Plugins::event())) {
-	die(json_encode([
-	  'status' => 'error',
-	  'msg' => $_GET['api'].': Invalid command',
-	]));
+      $api_ev = [ 'status' => Plugins::API_OK ]; // Assume success
+      if (!Plugins::dispatchEvent($this, 'api:'.strtolower($_GET['api']), $api_ev)) {
+	Plugins::apiError($api_ev,$_GET['api'].': Invalid endpoint');
+	die(json_encode($api_ev));
       }
+      echo json_encode($api_ev);
+      exit;
     } elseif (count($_POST)) {
       if (!$this->isWritable()) {
 	$this->errMsg('write_access',$this->filePath().': No write access');

@@ -55,7 +55,7 @@ class Cli {
 	  if (($i = strpos($docstr,"\n")) !== false) $docstr = rtrim(substr($docstr,0,$i));
 	  $docstr = ': '.$docstr;
 	}
-	echo '- '. $cmd . $docstr.PHP_EOL;
+	echo '- '. $cmd . $docstr.' ('.$j[0][0].')'.PHP_EOL;
       }
     }
     exit;

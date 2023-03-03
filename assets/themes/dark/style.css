@@ -28,9 +28,9 @@ table, th, td {
 }
 
 code {
-    color: #af0b0b;
-    font-size: 1.1em;
-    background: #fbfbfb;
+    background-color: midnightblue;
+    color: yellow;
+    font-size: 1.2em;
     padding: .1em .2em;
     border-radius: 2px;
 }
@@ -45,7 +45,7 @@ a:hover {
 }
 
 strong, b {
-    font-weight: 400;
+    font-weight: 600;
 }
 
 blockquote {
@@ -61,4 +61,8 @@ blockquote p {
     text-align: center;
 }
 
+
+em.search-term {
+    background-color: darkred; }
+}
 

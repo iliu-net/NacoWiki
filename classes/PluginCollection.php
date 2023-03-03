@@ -5,6 +5,8 @@ class PluginCollection {
   const OK = false;
   const OKSTOP = true;
   const NOOP = NULL;
+  const API_OK = 'ok';
+  const API_ERROR = 'error';
 
   static $stack = [[]];		// Used for stack events
   static $handlers = [];	// Event handlers
@@ -24,6 +26,11 @@ class PluginCollection {
     $src .= '/';
     if ($file) $src .= ltrim($file,'/');
     return $src;
+  }
+  static function apiError(array &$ev, string $msg, array $opts = [ 'status' => self::API_ERROR, 'rc' => self::OK ]) : ?bool {
+    $ev['status'] = $opts['status'];
+    $ev['msg'] = $msg;
+    return $opts['rc'];
   }
 
   static function loadPlugins(array $cfg) : array {
@@ -100,7 +107,7 @@ class PluginCollection {
    * @param NULL|string|array $handler -- how media types are handled
    */
   static function registerMedia($ext,string $class, $handler = NULL) : void {
-    $media_handlers = [ 'view', 'read', 'render', 'layout', 'missing', 'edit', 'save', 'preSave' ];
+    $media_handlers = [ 'view', 'read', 'render', 'layout', 'missing', 'edit', 'save', 'preSave', 'postSave' ];
     // view: {ext} | core
     //  read: {ext} | core
     //  render: {ext} | core
@@ -124,6 +131,7 @@ class PluginCollection {
     //~ static function edit(\NacoWikiApp $wiki, array &$data) : ?bool { }
     //~ static function preSave(\NacoWikiApp $wiki, array &$data) : ?bool { }
     //~ static function save(\NacoWikiApp $wiki, array &$data) : ?bool { }
+    //~ static function postSave(\NacoWikiApp $wiki, array &$data) : ?bool { }
 
     if (!is_array($ext)) $ext = [ $ext ];
     $mlst = [];

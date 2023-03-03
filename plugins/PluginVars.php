@@ -9,7 +9,29 @@ use NWiki\PluginCollection as Plugins;
 class PluginVars {
   const VERSION = '2.0.0';
 
+  /** Dump global variables */
+  static function dumpVars(\NacoWikiApp $wiki, array $argv) : ?bool {
+    $key = basename(__FILE__,'.php');
+    if (empty($wiki->cfg['plugins'][$key])) {
+      die('No keys defined in [plugins]['.$key.']'.PHP_EOL);
+    }
+    //~ print_r($wiki->cfg['plugins'][$key]);
+    echo yaml_emit($wiki->cfg['plugins'][$key]);
+    exit;
+  }
+
+  /** Dump config */
+  static function dumpCfg(\NacoWikiApp $wiki, array $argv) : ?bool {
+    if (empty($wiki->cfg)) die('Configuration error'.PHP_EOL);
+    //~ print_r($wiki->cfg);
+    echo yaml_emit($wiki->cfg);
+    exit;
+  }
+
   static function load(array $cfg) : void {
+    Plugins::registerEvent('cli:gvars', [self::class, 'dumpVars']);
+    Plugins::registerEvent('cli:cfg', [self::class, 'dumpCfg']);
+
     Plugins::registerEvent('post-render', function(\NacoWikiApp $wiki, array &$ev) {
       $vars = [];
       # We do it like this because these expansions may be expensive...
@@ -65,14 +87,18 @@ class PluginVars {
       ];
       foreach ([
 	    '' => $wiki->cfg['plugins'][basename(__FILE__,'.php')] ?? [],
-	    'cfg.' =>$wiki->cfg,
-	    'meta.'=>$wiki->meta,
-	    'file.' =>$wiki
+	    'cfg.' => $wiki->cfg ?? [],
+	    'meta.'=> $wiki->meta ?? [],
+	    'file.' => $wiki->filemeta ?? [],
+	    'prop.' => $wiki->props ?? [],
 	  ] as $nsp => &$reg) {
 	foreach ($reg as $k=>$v) {
 	  $vars['$'.$nsp.$k.'$'] = is_array($v) ? yaml_emit($v) : $v;
 	}
       }
+      $vars['$cfg$'] = yaml_emit($wiki->cfg);
+      $vars['$vars$'] = yaml_emit($wiki->cfg['plugins'][basename(__FILE__,'.php')] ?? []);
+
       $ev['html'] =  strtr($ev['html'],$vars);
       return Plugins::OK;
     });

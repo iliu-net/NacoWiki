@@ -1,8 +1,8 @@
 
 
 h1,h2,h3,h4,h5,h6 {
-    color: #afaf86;
-    font-weight: 200;
+    color: brown;
+    font-weight: 400;
 }
 
 h1 {
@@ -10,7 +10,7 @@ h1 {
     font-size: 3em;
 }
 h1.title {
-    color: black;
+    color: navy;
     font-weight: 400;
     font-size: 4em;
 }
@@ -41,7 +41,7 @@ a:hover {
 }
 
 strong, b {
-    font-weight: 400;
+    font-weight: 600;
 }
 
 blockquote {
@@ -57,4 +57,8 @@ blockquote p {
     text-align: center;
 }
 
+
+em.search-term {
+    background-color: silver; }
+}
 

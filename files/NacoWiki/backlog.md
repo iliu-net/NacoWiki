@@ -5,13 +5,16 @@ tags: development, php
 ---
 [toc]
 
-# UI
+***
 
-- when starting page, it shoudl focus automatically on Edit window
-- sort - alpha,latest file (in views/folder)
-- search results page is not very clear
-  - highlight search result matches
-- tweak `css`.
+- phpDoc
+
+# Issues
+
+- attachments not done properly at the moment.
+  - add file attachments (only for actual media handled pages)
+  - handle it in PluginVars
+  - markup in PluginWikiLinks
 
 # Mark-up
 
@@ -32,6 +35,9 @@ tags: development, php
 
 # done 
 
+- [x] search results page is not very clear
+- [x] highlight search result matches
+- [x] Add a drop down to show meta data of current page
 - [x] dropdown for file list: add link to copy page path to Clipboard &#x29C9;
 - [x] UI elements
 - [x] static site first step: single file generator
@@ -42,13 +48,34 @@ tags: development, php
 - [x] implement a dark theme
 - [x] generate links that open new windows if URL ends with "^".  ^ is stripped.
 - [x] File tree display doesn't handle symlinks.
+-[x]  tweak `css`.
 
 # Maybe
 
+- Properties
+  - Create files that begin with `._`. followed by the page.  Track:
+    - Remote user
+    - Creation date
+    - Log of modifications.  Keep it so that there is one log entry per day.
+  - save this as `wiki->props`.
+- preSave and postSave events to implement backups of track changes
+  - backups
+    - keep {n} versions.  But only overwrite backup if older than a day.
+  - Track changes
+    - Create files with `.[n]` followed by page.  Where `n` is a number.
+    - Store reverse diffs in here.
+    - Possible libraries for generating diffs:
+      - https://github.com/baraja-core/simple-php-diff
+      - https://github.com/jfcherng/php-diff
+      - https://www.php.net/manual/en/function.xdiff-file-diff.php
+      - or just exec `diff` command.
 - markdown and html media handler
   - Should be configured globally
   - run PHP code
-
+- UI: when starting page, it shoudl focus automatically on Edit window
+  - ??don't know how to do this.??
+- sort - alpha,latest file (in views/folder)
+  - add it to the context?
 
 ## Tag Navigation
 

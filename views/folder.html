@@ -12,10 +12,21 @@
     <div id="main" class="main">
 
       <?php
+	if ($wiki->view == 'search' && !empty($q)) {
+	  echo '<p>'.ucwords($scope).' search results for "<em class="search-term">'.htmlspecialchars($q).'</em>"</p>';
+	}
 	if (count($files) == 0) {
-	  echo '<p>Empty folder!</p>';
+	  if ($wiki->view == 'search') {
+	    echo '<p>Nothing Found!</p>';
+	  } else {
+	    echo '<p>Empty folder!</p>';
+	  }
 	} else {
-	  echo '<p>Folder contents</p>';
+	  if ($wiki->view == 'search') {
+	    echo '<p>Page content matches: '.count($files).'</p>';
+	  } else {
+	    echo '<p>Folder contents</p>';
+	  }
 	  echo '<ul>'.PHP_EOL;
 	  foreach ($files as $doc=>$fn) {
 	    $xfn =  htmlspecialchars($fn);
@@ -45,7 +56,7 @@
 		  list($line,$hl) = $matches[$doc];
 		  $line = htmlspecialchars($line);
 		  $hl = htmlspecialchars($hl);
-		  echo str_replace($hl, '<em>'.$hl.'</em>',$line);
+		  echo str_replace($hl, '<em class="search-term">'.$hl.'</em>',$line);
 		  echo '</p>';
 		}
 	      }
@@ -59,16 +70,18 @@
 	  echo '</ul>';
 	}
       ?>
+      <?php if ($wiki->view == 'folder') { ?>
       <hr>
-      <p>
-	Do you want to upload a new file?
-      </p>
-      <form method="post" enctype="multipart/form-data" action="<?=$wiki->mkUrl($wiki->page)?>">
-	<p>Select file to upload:</p>
-	<p><input type="file" name="fileToUpload" id="fileToUpload"></p>
-	<p><input type="submit" value="Upload File" name="attach"></p>
-	<input type="hidden" name="action" value="attach">
-      </form>
+	<p>
+	  Do you want to upload a new file?
+	</p>
+	<form method="post" enctype="multipart/form-data" action="<?=$wiki->mkUrl($wiki->page)?>">
+	  <p>Select file to upload:</p>
+	  <p><input type="file" name="fileToUpload" id="fileToUpload"></p>
+	  <p><input type="submit" value="Upload File" name="attach"></p>
+	  <input type="hidden" name="action" value="attach">
+	</form>
+      <?php } ?>
     </div>
     <?php include(APP_DIR . 'views/footer.html'); ?>
   </div>
