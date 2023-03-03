@@ -1,4 +1,9 @@
 <?php
+/**
+ * Further Extends Parsedown
+ *
+ * @package Parsedown
+ */
 class ParsedownExtension extends ParsedownToC {
   const VERSION = '0.0.0';
 

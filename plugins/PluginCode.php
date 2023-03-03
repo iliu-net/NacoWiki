@@ -1,7 +1,9 @@
 <?php
-/*
-Source code renderer
-*/
+/**
+ * Source code renderer
+ *
+ * @package Plugins\PluginCode
+ */
 ##---
 ## title: one-shot
 ## tags: a,b,c

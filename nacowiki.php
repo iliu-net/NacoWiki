@@ -1,38 +1,40 @@
 <?php
+/** Canonical name of the NacoWiki application
+ * @var string */
 define('APP_NAME','NacoWiki');
+/** URL of the NacoWiki application
+ * @var string */
 define('APP_URL', 'https://github.com/iliu-net/NacoWiki/');
+/** NacoWiki Application version
+ * @var string */
 define('APP_VERSION', trim(file_get_contents(dirname(realpath(__FILE__)).'/VERSION')));
+/** Current application code directory.
+ * @var string */
 define('APP_DIR', dirname(realpath(__FILE__)).'/');
-
+/** Used by NacoWikiApp::errMsg to indicate that no special processing is needed
+ *  @var int */
 define('EM_NONE', 0);
+/** Used by NacoWikiApp::errMsg to indicate that PHP Error needs to be displayed
+ * @var int */
 define('EM_PHPERR', 1);
 
 require(APP_DIR . 'classes/PluginCollection.php');
 require(APP_DIR . 'classes/Util.php');
 require(APP_DIR . 'classes/Core.php');
 require(APP_DIR . 'classes/Cli.php');
+require(APP_DIR . 'compat/main.php');
+
 use NWiki\PluginCollection as Plugins;
 use NWiki\Util as Util;
 use NWiki\Core as Core;
 use NWiki\Cli as Cli;
 
-if (!function_exists('yaml_emit')) {
-  //
-  // For installations where yaml is not compiled in...
-  // we use: https://github.com/eriknyk/Yaml
-  require(APP_DIR.'compat/Yaml.php');
-  function yaml_emit($data) {
-    $yaml = new Alchemy\Component\Yaml\Yaml();
-    return $yaml->dump($data);
-  }
-  function yaml_parse($doc) {
-    $yaml = new Alchemy\Component\Yaml\Yaml();
-    return $yaml->loadString($doc);
-  }
-}
-
+/**
+ * Main Application class
+ */
 class NacoWikiApp {
-  public $cfg = [
+  /** Contains running app configuration */
+  public array $cfg = [
     'umask'		=> NULL,	// optional umask
     'proxy-ips'		=> NULL,	// list of IP addresses of trusted reverse proxies
     'no_cache'		=> false,	// disable browser caches
@@ -58,18 +60,29 @@ class NacoWikiApp {
     'theme-codemirror'	=> NULL,	// code mirror theme
   ];
 
-  public $plugins = [];		// List of loaded plugins
-  public $page = '';		// Current document
-  public $meta = [];		// Current document meta-data
-  // HTTP context
-  public $scheme = NULL;
-  public $remote_addr = NULL;
-  public $http_host = NULL;
-  public $https = false;
-  // User context
-  public $context = [];		// Current user/session context
-  public $ctxvars = [];		// Defined context variables
-  public $view = 'default';	// Default view class
+  /**
+   * List loaded plugins
+   * @deprecated Doesn't seem to be used anywhere.
+   */
+  public array $plugins = [];		// List of loaded plugins
+  /** Current document */
+  public string $page = '';
+  /** Current document meta-data */
+  public array $meta = [];
+  /** HTTP context, should be set to http or https, otherwise is NULL */
+  public ?string $scheme = NULL;
+  /** HTTP client's remote address */
+  public ?string $remote_addr = NULL;
+  /** HTTP request host */
+  public ?string $http_host = NULL;
+  /** TRUE if using https */
+  public bool $https = false;
+  /** Current user/session context */
+  public array $context = [];
+  /** Defined context variables */
+  public array $ctxvars = [];
+  /**  Default view class */
+  public string $view = 'default';
 
   public function __construct(array $config = []) {
     // Configure Wiki instance
@@ -114,11 +127,32 @@ class NacoWikiApp {
     // CLI event handlers
     Cli::load();
   }
+  /**
+   * Convert URL to an actual file path
+   *
+   * @param ?string $url URL to translate, If not given, it would use $this->page
+   * @return string actual file path to $url in the filesystem.
+   */
   public function filePath(string $url = NULL) : string {
     if (is_null($url)) $url = $this->page;
     return $this->cfg['file_store'] . $url;
   }
 
+  /**
+   * Show a HTML error message and dies.
+   *
+   * Shows an HTML error message and exits.  You can pass optional
+   * flags:
+   *
+   * * EM_NONE: default, no special processing
+   * * EM_PHPERR: Display the last PHP Error using php's error_get_last
+   *
+   * @todo Determine if running as CLI and only display text not HTML.
+   *
+   * @param string $tag a tag used to identify the error.
+   * @param string $msg Error message to display.
+   * @param int $flags Flags with options.  Defaults to EM_NONE
+   */
   public function errMsg(string $tag, string $msg, int $flags = EM_NONE) : void {
     file_put_contents( "php://stderr",$msg.PHP_EOL); // Write error to logs
     //~ if (Plugins::dispatchEvent($wiki, 'error_msg', Plugins::event([$msg,$flags]))) exit();
@@ -129,7 +163,11 @@ class NacoWikiApp {
     exit;
   }
 
-  /* These two functions are stubs for the moment... */
+  /** Current document is writable
+   * @todo Currently is only a stub function
+   * @param ?string $url URL to translate, If not given, it would use $this->page
+   * @return ?bool returns `true` if allowed, `false` if not. `NULL` if user is not authenticated.
+   */
   public function isWritable(string $url = NULL) : ?bool {
     $fpath = $this->filePath($url);
     if (empty($this->cfg['read_only'])) {
@@ -149,6 +187,11 @@ class NacoWikiApp {
     return $wr;
   }
 
+  /** Current document is readable
+   * @todo Currently is only a stub function
+   * @param ?string $url URL to translate, If not given, it would use $this->page
+   * @return ?bool returns `true` if allowed, `false` if not. `NULL` if user is not authenticated.
+   */
   public function isReadable($url = NULL) : ?bool {
     $event = [ $this->filePath($url), true ];
     Plugins::dispatchEvent($this, 'check_readable', $event);
@@ -156,6 +199,21 @@ class NacoWikiApp {
     return $readable;
   }
 
+  /** Create a URL to the given resource.
+   *
+   * Given the $base and $params, it would compute a URL to the given
+   * resource.
+   *
+   * $params is an array of strings or arrays.  If a string is
+   * passed in $params, it will simply append it to the
+   * URL as another path component.  If an array is passed,
+   * it will use it to create a HTTP query string using PHP
+   * http_build_query.
+   *
+   * @param string $base URL to compute
+   * @param mixed $params varargs with additional arguments
+   * @return string URL to the given resource.
+   */
   public function mkUrl(string $base,... $params) : string {
     $path = $base;
     $qstr = [];
@@ -169,15 +227,60 @@ class NacoWikiApp {
     if (count($qstr) > 0) $path .= '?' . http_build_query($qstr);
     return $this->cfg['base_url'].$path;
   }
+
+  /** Returns a URL to an static file asset
+   *
+   * This returns a string to a static file asset.  The URL is supposed
+   * to be used so that the Web server can send the asset directly
+   * to the user (by-passing PHP).
+   *
+   * @param string $id asset identifier
+   * @return string URL to the asset
+   */
   public function asset(string $id) : string {
     return $this->cfg['static_url'] . $id;
   }
+  /** Returns a URL to an static file asset with timestamp
+   *
+   * This returns a string to a static file asset.  The URL is supposed
+   * to be used so that the Web server can send the asset directly
+   * to the user (by-passing PHP).
+   *
+   * This works just like the `asset` method, with the difference that
+   * the URL also has a query string of the form of '?t=number`.
+   * The number is the mtime of the asset as returned by PHP's filemtime.
+   *
+   * The purpose is so that the URL send to the browser is different every
+   * time the file changes.  This is useful for Web browsers that tend to
+   * aggresively cache JavaScript code.
+   *
+   * @param string $id asset identifier
+   * @return string URL to the asset
+   */
   public function assetQS(string $id) : string {
     $qs = '';
     if (file_exists($this->cfg['static_path'].$id)) $qs = '?t='.filemtime( $this->cfg['static_path'].$id );
     return $this->cfg['static_url'] . $id . $qs;
   }
-
+  /**
+   * Main dispatch point for CLI sub-commands
+   *
+   * It will arrange for the given sub-command to be executed.  This is
+   * done by firing the event `cli:SUBCOMMAND`.  Where `SUBCOMMAND` is the
+   * sub-command specified in the command line.
+   *
+   * The current instance will also get the following properties defined:
+   *
+   * - $this->script : $argv[0], usually the script name
+   * - $this->cwd : Working directory form the command was invoked
+   * - $this->script_dir : Directory of the script
+   * - $this->clicmd : sub command being executed.
+   *
+   * @todo Should do a `chdir` to the $this->script_dir to be more similar to a running web environment?
+   *
+   * @paran array $argv Command line arguments
+   * @return void
+   */
   public function cli(array $argv) : void {
     // CLI entry point
     if (count($argv) < 2) {
@@ -196,7 +299,16 @@ class NacoWikiApp {
     }
   }
 
-  public function run($argv = NULL) : void {
+  /**
+   * Main application entry point method
+   *
+   * @param ?array $argv  Normally NULL. Contains command line arguments if run from CLI
+   */
+  public function run(array $argv = NULL) : void {
+    // pre-run init
+    $this->declareContext('debug',NULL);
+    Plugins::dispatchEvent($this, 'run_init', Plugins::event());
+
     if ($argv && is_array($argv)) {
       $this->cli($argv);
       exit;
@@ -206,10 +318,6 @@ class NacoWikiApp {
       header("Cache-Control: post-check=0, pre-check=0", false);
       header("Pragma: no-cache");
     }
-
-    // pre-run init
-    $this->declareContext('debug',NULL);
-    Plugins::dispatchEvent($this, 'run_init', Plugins::event());
 
     // Check run context
     $this->initContext();
@@ -272,10 +380,49 @@ class NacoWikiApp {
       }
     }
   }
-  public function declareContext($key,$default=NULL) {
+  /**
+   * Declare a context variable.
+   *
+   * Declare context variables that persist in an user session.
+   * This is implemented using Cookies.
+   *
+   * Plugins should hook into the `run-init` event and declare
+   * context variables there.  Value of these variables can
+   * be read from the $wiki->context[$key]
+   *
+   * @param string $key variable name to declare
+   * @param mixed $default default value.
+   */
+  public function declareContext(string $key,$default=NULL) : void {
     $this->ctxvars[$key] = $default;
   }
-  public function initContext() {
+  /**
+   * Initialize user context
+   *
+   * It would initialize the class `context` property from the
+   * http cookies.  Also it would allow the user to change the
+   * context through $_GET variables.  Specifically, you can
+   * use:
+   *
+   * ...url...?ctx_VARNAME=value
+   *
+   * to set the context variable VARNAME to the given value.
+   *
+   * Similarly, you can use:
+   *
+   * ...url...?noctx_VARNAME=null
+   *
+   * To set VARNAME to its default value.
+   *
+   * Example:
+   *
+   * ctx_debug=true
+   *
+   * This enables the debug context variable.
+   *
+   * @todo Add function to modify context afterwards (maybe using header_remove(set-cookie))
+   */
+  public function initContext() : void {
     $cookie_name = $this->cfg['cookie_id'].'_context';
     if (isset($_COOKIE[$cookie_name])) {
       parse_str($_COOKIE[$cookie_name],$context);

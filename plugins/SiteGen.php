@@ -1,13 +1,14 @@
 <?php
-/*
-Site Generator plugin
-*/
 use NWiki\PluginCollection as Plugins;
 use NWiki\Util as Util;
 use NWiki\Core as Core;
 use NWiki\Cli as Cli;
 
-
+/**
+ * Class that actually implements SiteGen
+ *
+ * @package Plugins\SiteGen
+ */
 class SiteGen {
   const VERSION = '0.0';
 

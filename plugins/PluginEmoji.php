@@ -1,9 +1,12 @@
 <?php
 /**
  * Emoji ッ Plugin
+ *
  * This plugin auto-detects smiley shortcuts and replace them with emojis
  * EMOJI Source www.emoji-cheat-sheet.com
- * Author: Igor Gaffling
+ *
+ * @author Igor Gaffling
+ * @package Plugins\PlugiEmoji
  */
 
 /* ADD WHAT YOU LIKE - https://gist.github.com/hkan/264423ab0ee720efb55e05a0f5f90887 */

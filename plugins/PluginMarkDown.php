@@ -1,8 +1,11 @@
 <?php
-/*
-NacoWiki MarkDown
-This plugin converts Markdown format to HTML
-*/
+/**
+ * NacoWiki MarkDown
+ *
+ * This plugin converts Markdown format to HTML
+ *
+ * @package Plugins\PluginMarkDown
+ */
 
 use NWiki\PluginCollection as Plugins;
 use NWiki\Core as Core;

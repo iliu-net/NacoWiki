@@ -1,8 +1,9 @@
 <?php
-/*
-NacoWiki HTML
-This plugin processes HTML
-*/
+/**
+ * NacoWiki HTML render
+ * This plugin processes HTML
+ * @package Plugins\PlugiHTML
+ */
 
 #
 # Template:

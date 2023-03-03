@@ -6,9 +6,8 @@
  *
  * @author      KEINOS (https://github.com/KEINOS/)
  *              Contributors (https://github.com/KEINOS/parsedown-extension_table-of-contents/graphs/contributors)
- * @package     Parsedown ^1.7 (https://github.com/erusev/parsedown)
+ * @package     Parsedown
  * @php         ^5.6.40
- * @see         HowTo: https://github.com/KEINOS/parsedown-extension_table-of-contents/
  * @license     MIT: https://github.com/KEINOS/parsedown-extension_table-of-contents/LICENSE
 */
 
@@ -40,6 +39,10 @@ class Extension extends ParsedownToC
 }
 */
 
+/**
+ * Implements ParsedowToC
+ * @package Parsedown
+ */
 class ParsedownToC extends DynamicParent
 {
     /**

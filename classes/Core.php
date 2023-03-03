@@ -1,12 +1,31 @@
 <?php
+/**  @package NWiki */
 namespace NWiki;
 use NWiki\PluginCollection as Plugins;
 use NWiki\Util as Util;
 
+/**
+ * Main NacoWiki functionality
+ *
+ * This class contains the main functionality included by NacoWiki
+ */
 class Core {
+  /** URL to the supported CODEMIRROR version
+   * @var string */
   const CODEMIRROR = 'https://cdn.jsdelivr.net/npm/codemirror@5.65.4/';
+  /** URL to the supported HIGHLIGHT_JS version
+   * @var string */
   const HIGHLIGHT_JS = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/';
 
+  /** When a file/directory is deleted, make sure no empty dirs remain
+   *
+   * When a file or directory is deleted, it checks if afterwards the
+   * directory is empty.  If it is, it will also delete that directory
+   * until we find a directory that is populated.
+   *
+   * @param \NacoWikiApp $wiki Current wiki instance
+   * @param string $dpath file path relative to $wiki->cfg[file_store] to prune
+   */
   static function prunePath(\NacoWikiApp $wiki, string $dpath) : string {
     while ($dpath != '/' && $dpath != '' && $dpath != '.' && !file_exists($wiki->filePath($dpath))) {
       $dpath = dirname($dpath);
@@ -20,6 +39,11 @@ class Core {
     }
     return $dpath;
   }
+  /** Make sure a directory (and parent directories in between) exist
+   *
+   * @param \NacoWikiApp $wiki Current wiki instance
+   * @param string $dpath file path relative to $wiki->cfg[file_store] to prune
+   */
   static function makePath(\NacoWikiApp $wiki, string $dir) : void {
     $dpath = $wiki->filePath($dir);
     if (is_dir($dpath)) return;
@@ -27,7 +51,21 @@ class Core {
     return;
   }
 
-  // call-able operations
+  /** Show a CodeMirror editor web view
+   *
+   * Will create a web page in the style of the wiki containing a
+   * CodeMirror editor for use.
+   *
+   * The $cm_opts is an array which should contain:
+   *
+   * - array 'js' : list of CodeMirror modules to load.
+   * - array 'css' : list of CodeMirror CSS to load.  Usually for themeing
+   * - string 'mode' : CodeMirror editor mode
+   * - string 'view' : file path to a view template file
+   *
+   * @param \NacoWikiApp $wiki Current wiki instance
+   * @param array $cm_opts configurable options
+   */
   static function codeMirror(\NacoWikiApp $wiki, array $cm_opts = []) : void {
     foreach (['js','css'] as $k) {
       if (!isset($cm_opts[$k])) $cm_opts[$k] = [];
@@ -376,11 +414,29 @@ class Core {
     exit;
   }
   static function attachToPage(\NacoWikiApp $wiki, array &$data) : ?bool {
-    if (substr($wiki->page,-1) != '/') $wiki->errMsg('invalid_target','Can only upload to folders');
     if (!$wiki->isWritable()) {
       //~ Plugins::dispatchEvent($wiki, 'delete_access_error', Plugins::event());
       $wiki->errMsg('write_access',$wiki->filePath().': Write access error');
     }
+    if (substr($wiki->page,-1) != '/') {
+      if (basename($wiki->page) == $wiki->cfg['default_doc']) {
+	$updir = dirname($wiki->page);
+      } else {
+	$ext = Plugins::mediaExt($wiki->page);
+	if (is_null($ext)) {
+	  $wiki->errMsg('invalid_target',$wiki->filePath().': can not attach to file');
+	}
+	$p = pathinfo($wiki->page);
+	if ($p['basename'] == $p['filename']) {
+	  $wiki->errMsg('invalid_target',$wiki->filePath().': can not attach to file');
+	}
+	$updir = $p['dirname'].'/'.$p['filename'];
+      }
+    } else {
+      $updir = $wiki->page;
+    }
+    $updir = '/' . trim($updir,'/') . '/';
+
     if (!isset($_FILES['fileToUpload'])) $wiki->errMsg('param','Invalid FORM response');
     $fd = $_FILES['fileToUpload'];
     if (isset($fd['size']) && $fd['size'] == 0) $wiki->errMsg('param','Zero file submitted');
@@ -388,15 +444,36 @@ class Core {
     if (empty($fd['name']) || empty($fd['tmp_name'])) $wiki->errMsg('param','No file uploaded');
 
     $fname = Util::sanitize(basename($fd['name']));
-    $fpath = $wiki->filePath($wiki->page . $fname);
+    $fpath = $wiki->filePath($updir . $fname);
     if (file_exists($fpath)) $wiki->errMsg('duplicate',$fname.': File already exists');
 
+    self::makePath($wiki,$updir);
     if (!move_uploaded_file($fd['tmp_name'],$fpath))
       $wiki->errMsg('os_error','Error saving uploaded file', EM_PHPERR);
 
-    header('Location: '.$wiki->mkUrl($wiki->page, $fname));
+    header('Location: '.$wiki->mkUrl($updir));
     exit;
   }
+  /** Returns a page list
+   *
+   * This is used by the JavaScript to render a tree of available pages.
+   *
+   * The event parameter is filled with a property `output` containing
+   *
+   * - array with directories
+   * - array with files
+   * - current page
+   * - base URL from $cfg[base_url]
+   *
+   * @todo Should check permissions when returning files
+   * @todo Should filter out attachment folders
+   * @see \NWiki\PluginCollection::dispatchEvent
+   * @api
+   *
+   * @param \NacoWikiApp $wiki NacoWiki instance
+   * @param array $ev Event data.
+   * @return ?bool Returns \NWiki\PluginCollection::OK to indicate that it was handled.
+   */
   static function apiPageList(\NacoWikiApp $wiki, array &$ev) : ?bool {
     $res = Util::walkTree($wiki->cfg['file_store']);
     $res[] = $wiki->page;

@@ -1,4 +1,5 @@
 <?php
+/**  @package NWiki */
 namespace NWiki;
 
 class PluginCollection {

@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Run phpDoc
+#
+( set -o pipefail 2>/dev/null ) && set -o pipefail
+set -euf
+
+scriptdir=$(dirname "$0")
+appdir=$(readlink -f "$scriptdir/..")
+phpdoc_url="https://phpdoc.org/phpDocumentor.phar"
+phpdoc="$scriptdir/phpDocumentor.phar"
+
+if ! php -r 'exit(extension_loaded("Phar") ? 0 : 1);' ; then
+  echo 'PHP PHAR extension missing'
+  echo 'On void, installing composer makes it available.'
+  exit 1
+fi
+if [ ! -x "$phpdoc" ] ; then
+  rm -f "$phpdoc"
+  wget -nv -O "$phpdoc" "$phpdoc_url"
+  chmod a+x "$phpdoc"
+fi
+
+
+$phpdoc -t docs/api -d "$appdir" -t docs \
+	--ignore assets/ --ignore compat/ --ignore files/ \
+	--ignore scripts/ --ignore views/ --ignore web/
+
+
+
+#~ phpxml="$scriptdir/phpdoc.xml"
+
+#~ set -x
+#~ env \
+  #~ srcdir=$homedir \
+  #~ version=$(cat $homedir/VERSION) \
+  #~ $scriptdir/noxml < $scriptdir/phpdoc.cfg > $phpxml
+
+#~ rm -rf docs .build
+
+#~ $phpdoc --config $phpxml -f nacowiki.php
+#~ $phpdoc --config $phpxml -d classes
+#~ $phpdoc --config $phpxml -d plugins

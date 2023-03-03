@@ -1,8 +1,9 @@
 <?php
-/*
-PicoWiki include
-This plugin is used to include files
-*/
+/** Include file
+ *
+ * This plugin is used to include files
+ * @package Plugins\PluginIncludes
+ */
 use NWiki\PluginCollection as Plugins;
 use NWiki\Util as Util;
 use NWiki\Core as Core;

@@ -1,7 +1,12 @@
 <?php
-/*
-This plugin is used to create link
-*/
+/**
+ * Wiki-style links
+ *
+ * This plugin is used to create links that have a shorter format
+ * than Markdown style links.
+ *
+ * @package Plugins\PluginWikiLinks
+ */
 use NWiki\PluginCollection as Plugins;
 use NWiki\Util as Util;
 

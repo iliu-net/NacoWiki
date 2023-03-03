@@ -13,7 +13,7 @@
     All rights reserved<br/>
   </small>
 
-  <?php if ($wiki->context['debug']) { ?>
+  <?php if (!empty($wiki->context['debug']) && $wiki->context['debug']) { ?>
   <hr>
   View: <?= $wiki->view ?><br>
   <?php \NWiki\Util::dumpLog() ?>

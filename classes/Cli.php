@@ -1,11 +1,29 @@
 <?php
+/**  @package NWiki */
 namespace NWiki;
 use NWiki\PluginCollection as Plugins;
 
+/** Main CLI implementation
+ *
+ * This class implements the built-in CLI sub-commands.  It also
+ * contains utility functions for CLI use.
+ */
 class Cli {
+  /** Used by stderr to make it report caller traceback info
+   * @var int */
   const TRC = 1;
+  /** Used by stderr to prevent printing of a New line at the end
+   * @var int */
   const NONL = 2;
-  static function relativePath($from, $to, $ps = DIRECTORY_SEPARATOR) {
+  /**
+   * Given two paths, calculate the relative path from one to the other
+   *
+   * @paran string $from from directory
+   * @param string $to target location
+   * @param string $ps directory separator.
+   * @return string relative path to target location
+   */
+  static function relativePath(string $from, string $to, string $ps = DIRECTORY_SEPARATOR) : string {
     $arFrom = explode($ps, rtrim($from, $ps));
     $arTo = explode($ps, rtrim($to, $ps));
     while(count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0]))
@@ -15,6 +33,18 @@ class Cli {
     }
     return str_pad("", count($arFrom) * 3, '..'.$ps).implode($ps, $arTo);
   }
+  /** output message to stderr
+   *
+   * This method is used to output text to the stderr channel.
+   *
+   * Available flags:
+   *
+   * - TRC : trace dump of the calling function/context
+   * - NONL : it outputs an EOL.  This prevents this behaviour.
+   *
+   * @param string $msg text to display on stderr
+   * @param int $flags OR'ed flags to control output.
+   */
   static function stderr(string $msg, int $flags = 0) : void {
     $tag = '';
     if (self::TRC & $flags) {
@@ -40,6 +70,17 @@ class Cli {
 
   /**
    * Show this help
+   *
+   * This implements a CLI sub-command for HELP
+   *
+   * It will look into the plugin configuration and display what
+   * are the available sub-commands.  In addition if there is
+   * a docstring for the implementing function, it will display
+   * it.  It also shows what plugin's class is providing this
+   * command.
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array $argv Command line arguments
    */
   static function help(\NacoWikiApp $wiki, array $argv) : ?bool {
     echo('Available sub-commands'.PHP_EOL);
@@ -61,7 +102,16 @@ class Cli {
     exit;
   }
   /**
-   * Dump plugin configuraiton
+   * List available plulgins
+   *
+   * This implements a CLI sub-command for plugins.
+   *
+   * This looks in the plugin configuration and shows what plugins
+   * are currently available, its source file and the plugin version
+   * if any
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array $argv Command line arguments
    */
   static function plugins(\NacoWikiApp $wiki, array $argv) : ?bool {
     foreach (Plugins::$plugins as $x=>$y) {
@@ -74,19 +124,20 @@ class Cli {
     //~ print_r(Plugins::$plugins);
     exit;
   }
-  /**
-   * try things
-   */
-  static function ts(\NacoWikiApp $wiki, array $argv) : ?bool {
-    //~ Plugins::path();
-    Plugins::dispatchEvent($wiki,'layout:html',$argv);
-    exit;
-  }
 
   /**
    * Install assets
+   *
+   * This implements a CLI sub-command for plugins.
+   *
+   * This will check if the assets directory specified in the
+   * \NanoWikiApp configuration exists, and if it does not
+   * exist, it will create it.
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array $argv Command line arguments
    */
-  static function install(\NacoWikiApp $wiki, array $argv) : ?bool {
+  function install(\NacoWikiApp $wiki, array $argv) : ?bool {
     if (count($argv) != 0) die('Too many arguments'.PHP_EOL);
 
     $assets = $wiki->cfg['static_path'];
@@ -126,11 +177,14 @@ class Cli {
 
     exit;
   }
-
+  /**
+   * Loading entry point for this class
+   *
+   * Adds commands implemented by this class
+   */
   static function load() : void {
     Plugins::registerEvent('cli:install',[self::class,'install']);
     Plugins::registerEvent('cli:help',[self::class,'help']);
     Plugins::registerEvent('cli:plugins',[self::class,'plugins']);
-    Plugins::registerEvent('cli:t',[self::class,'ts']);
   }
 }

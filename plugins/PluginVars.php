@@ -1,8 +1,10 @@
 <?php
-/*
-PicoWiki vars
-This plugin is used to render config and meta data on a page
-*/
+/**
+ * NacoWiki Vars
+ *
+ * This plugin is used to render config and meta data on a page
+ * @package Plugins\PluginVars
+ */
 use NWiki\PluginCollection as Plugins;
 
 

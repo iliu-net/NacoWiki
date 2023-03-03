@@ -7,23 +7,29 @@ tags: development, php
 
 ***
 
-- phpDoc
 
 # Issues
 
-- attachments not done properly at the moment.
-  - add file attachments (only for actual media handled pages)
-  - handle it in PluginVars
-  - markup in PluginWikiLinks
+- Render correctly:
+  - [[/0ink-drafts/2021/2021-12-26-pelican_tests.md]]
+- more attachment logic
+  - walktree -- should filter out attachment folders
+  - when removing page, should remove attachment folders
+  - when doing makePath, we should check if we are creating folders within attachment folders.
+  - when creating file, make sure a file with the same name (but different extension)
+    doesn't exist.
 
 # Mark-up
 
-- Code snippets to load YouTube videos or Google Maps, etc.
-  - https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages
-  - [[youtube:91233]] Or [[tryme.md]] 
-- WikiLinks if no `/` but a `!` should search the name all
-  over the place.
-  - https://www.php.net/fnmatch
+- WikiLinks
+  - Code snippets to load YouTube videos or Google Maps, etc.
+    - https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages
+    - [[youtube:91233]] Or [[tryme.md]] 
+  - if no `/` but a `!` should search the name all
+    over the place.
+    - https://www.php.net/fnmatch
+  - Confirm if attachments are referenced properly
+    - Attachments should be linked directly
 
 # Tools
 
@@ -35,6 +41,9 @@ tags: development, php
 
 # done 
 
+- [x] attachments not done properly at the moment.
+  - [x] add file attachments (only for actual media handled pages)
+  - [x] ~~handle it in PluginVars~~
 - [x] search results page is not very clear
 - [x] highlight search result matches
 - [x] Add a drop down to show meta data of current page
@@ -50,10 +59,32 @@ tags: development, php
 - [x] File tree display doesn't handle symlinks.
 -[x]  tweak `css`.
 
+# phpDoc
+
+- must run as docker container (since void does not include `phar` in PHP.
+  - `docker run --rm -v ${PWD}:/data phpdoc/phpdoc:3 -d . -t docs/API
+- using composer didn't work
+- For plugins:
+  ```php
+  /**
+  * @package Plugins\PluginName
+  */
+  ```
+  at the top to have plugins show up as a different package. \
+  See https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/package.html
+- Docblocks
+  - https://docs.phpdoc.org/3.0/guide/getting-started/what-is-a-docblock.html#what-is-a-docblock
+  - https://docs.phpdoc.org/3.0/guide/guides/docblocks.html#more-on-docblocks
+- Running:
+  - https://docs.phpdoc.org/3.0/guide/guides/running-phpdocumentor.html
+- configuring
+  - https://docs.phpdoc.org/3.0/guide/references/configuration.html
+
 # Maybe
 
+- ghrelease checks and gh-actions
 - Properties
-  - Create files that begin with `._`. followed by the page.  Track:
+  - Create files that begin with `.prop;`. followed by the page.  Track:
     - Remote user
     - Creation date
     - Log of modifications.  Keep it so that there is one log entry per day.
@@ -62,7 +93,7 @@ tags: development, php
   - backups
     - keep {n} versions.  But only overwrite backup if older than a day.
   - Track changes
-    - Create files with `.[n]` followed by page.  Where `n` is a number.
+    - Create files with `.n;page.md` followed by page.  Where `n` is a number.
     - Store reverse diffs in here.
     - Possible libraries for generating diffs:
       - https://github.com/baraja-core/simple-php-diff

@@ -1,8 +1,14 @@
 <?php
+/**  @package NWiki */
 namespace NWiki;
 
 class Util {
   const VALID_CHARS = '-A-Za-z0-9_\/\.';
+  # Follows https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282
+  # POSIX portable filename character set.
+  # Try to keep valid chars compatible with Windows (See: https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names)
+  #
+  # We also reserve ';' to use for alternative streams ".prop;page.md"
 
   static $cache = [ 'content' => [] ];
   static $logmsg = [];
