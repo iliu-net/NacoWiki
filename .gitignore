@@ -1,3 +1,5 @@
 .nfs*
 vendor
 .phpdoc
+docs/index.html
+docs/php-api
