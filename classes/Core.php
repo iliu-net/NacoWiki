@@ -75,7 +75,16 @@ class Core {
     }
     include($cm_opts['view'] ?? APP_DIR . 'views/edit-cm.html');
   }
-
+  /** Get the contents of a folder
+   *
+   * This function reads te contents of a folders and returns to
+   * caller as a array with the full URL path as the key and the
+   * base name as the data element
+   *
+   * @param string \NacoWikiApp $wiki current running instance
+   * @param string $folder folder to read
+   * @return array
+   */
   static function folderContents(\NacoWikiApp $wiki, string $folder) : array {
     $files = [];
 
@@ -90,6 +99,37 @@ class Core {
     natsort($files);
     return $files;
   }
+  /** Implements search functionality
+   *
+   * It will look for grep style regular expression in $q and returns
+   * matches in $folder.  If the $scope is given, it can be:
+   *
+   * - `local` : searches in the current folder,
+   * - `recursive` : searches in the current folder and sub-folders
+   * - `global` : searches the whole wiki.
+   *
+   * The $q search term can be either some text that will be converted
+   * into '/'.$q.'/i', with any slashes escaped, or a valid regulare
+   * expression (with the start and end delimiters).
+   *
+   * This means that by default it is a case-insensitve search.
+   * To override these defaults you must specify a full RE including
+   * the start and end delimiters and any optional modifiers.
+   *
+   * Returns a list of files in a fomrat similar to folderContents.
+   *
+   * The optional matches array receives the matching lines.  With
+   * the key matching the key in the returned files, and the element
+   * being an array with line context (index 0) amd matching text (index 1).
+   *
+   * @link https://www.php.net/manual/en/pcre.pattern.php
+   * @param \NacoWikiApp $wiki current wiki instance
+   * @param string $folder folder to start the search
+   * @param string $scope search context: "local", "recursive", "global"
+   * @param string $q search term
+   * @param ?array &$matches optional array that will receive the search matches
+   * @return array list of matching files.
+   */
   static function search(\NacoWikiApp $wiki, string $folder, string $scope, string $q, ?array &$matches) : array {
     //~ Util::log('TRC:'.__FILE__.','.__LINE__.': folder='.$folder);
     //~ Util::log('TRC:'.__FILE__.','.__LINE__.': scope='.$scope);
@@ -123,18 +163,38 @@ class Core {
 
     if (!empty($q)) {
       $files = [];
+
+      // Check the validity of RE
+      if (@preg_match($q,'') === false) {
+	$re = '/'.str_replace('/','\/',$q).'/i';
+	if (@preg_match($re,'') === false) {
+	  # The given search string is an invalid REGEX
+	  return $files;
+	}
+      }	else {
+	// User really knows what he is doing!
+	$re = $q;
+      }
+
       $matches = [];
-      $re = '/^.*\b(' . $q . ')\b.*$/m';
       foreach ($flst as $i=>$j) {
 	$ext = Plugins::mediaExt($i);
 	if (is_null($ext)) continue;
 
-	//~ Util::log('TRC:'.__FILE__.','.__LINE__.': i='.$i);
 	$text = Util::fileContents($wiki->filePath($i));
 	if (is_null($text)) continue;
-	if (preg_match($re,$text,$mv)) {
-	  $matches[$i] = $mv;
+	if (empty($text)) continue;
+
+	$fl = preg_grep($re,explode("\n",$text));
+	if (count($fl) > 0) {
+	  $fl = array_shift($fl);
 	  $files[$i] = $j;
+
+	  if (preg_match($re, $fl, $mv)) {
+	    $matches[$i] = [ $fl, $mv[0] ];
+	  } else {
+	    $matches[$i] = [ $fl, '' ];
+	  }
 	}
       }
     } else {
@@ -144,7 +204,13 @@ class Core {
     ksort($files, SORT_NATURAL);
     return $files;
   }
-
+  /** Link theme assets
+   *
+   * Outputs the HTML tags to link the `theme` assets to the currently
+   * displayed page
+   *
+   * @param \NacoWikiApp $wiki running wiki instance
+   */
   static function theme(\NacoWikiApp $wiki) : void {
     if (!isset($wiki->cfg['theme']) || !isset($wiki->cfg['static_path']) || !isset($wiki->cfg['static_url'])) return;
 
@@ -165,6 +231,20 @@ class Core {
 
   // Main user entry points
 
+  /** Show the contents of a folder
+   *
+   * This is the Core event handler that handles the `read_folder` event.
+   *
+   * If the URL does **not** end with `/`, it will redirect to
+   * the `default_doc` (usually `index.md` ) if it exists, or
+   * it will redirect to an URL ending with `/`.
+   * HTTP request.  It is used to trigger a specific action in response
+   * to a HTTP post request.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event read_folder
+   */
   static function readFolder(\NacoWikiApp $wiki, array &$data) : ?bool {
     //~ echo('TRC:'.__FILE__.','.__LINE__.':page:'. $wiki->page.PHP_EOL);
     if (substr($wiki->page,-1) != '/') {
@@ -195,6 +275,16 @@ class Core {
     }
     exit();
   }
+  /** Search results event handler
+   *
+   * This is the Core event handler that handles the `do:search` event.
+   *
+   * Handles search requests from the web browser.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event do:search
+   */
   static function searchPage(\NacoWikiApp $wiki, array &$data) : ?bool {
     //~ echo('TRC:'.__FILE__.','.__LINE__.':page:'. $wiki->page.PHP_EOL);
     $scope = 'local';
@@ -216,26 +306,101 @@ class Core {
     include(APP_DIR . 'views/folder.html');
     exit;
   }
+  /** Raw page display
+   *
+   * This is the Core event handler that handles the `do:raw` event.
+   *
+   * Will serve pages without rendering i.e. raw source code.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event do:raw
+   */
+  static function rawPage(\NacoWikiApp $wiki, array &$data) : ?bool {
+    Util::sendFile($wiki->filePath(),'text/plain');
+    exit;
+  }
+  /**
+   * Utility function to initialize a prepare payload event array
+   *
+   * If available a read:filextension event is used to parse the
+   * page contents to read meta data, and split any header information
+   * from the content body.
+   *
+   * @param \NacoWikiApp $wiki running wiki instance
+   * @param string $url URL of the page being prepared
+   * @param string $ext media handler file extension
+   * @return array Prepared event array
+   */
   static function preparePayload(\NacoWikiApp $wiki, string $url,string $ext = NULL) : array {
     if (is_null($ext)) $ext = Plugins::mediaExt($url);
     $event = [
+      'filepath' => $wiki->filePath($url),
+      'url' => $url,
       'source' => Util::fileContents($wiki->filePath($url)),
       'filemeta' => Util::fileMeta($wiki->filePath($url)),
       'meta' => Util::defaultMeta($wiki->filePath($url)),
       'payload' => NULL ,
       'ext' => $ext,
     ];
+    ##-- events-list##read:[file-extension]
+    ## This event is used for media handlers to parse source text
+    ## and extract header meta data, and the actual payload containing
+    ## the body of the page content.
+    ##
+    ## Event data:
+    ##
+    ## - `filepath` (input) : file system path to source
+    ## - `url` (input) : web url to source
+    ## - `source` (input) : text containing the page document verbatim
+    ## - `filemeta` (input) : pre-loaded file-system based meta data
+    ## - `meta` (output) : to be filed by event handler with meta-data.
+    ##    it is pre-loaded with data derived from filemeta.
+    ## - `payload` (output) : to be filed by event handler with the body of the page.
+    ## - `ext` (input) : file extension for the given media
+    ##--
     if (!Plugins::dispatchEvent($wiki, 'read:'.$ext, $event)) {
       $event['payload'] = $event['source'];
     }
     return $event;
   }
-
+  /** Read page event handler
+   *
+   * This is the Core event handler that handles the `read_page` event.
+   *
+   * Handles read page requests from the web browser.
+   *
+   * If the page is media that can be handled by a plugin, it will
+   * trigger the necessary events to use the plugin hooks.
+   *
+   * The general sequence is as follows
+   *
+   * - Check if this file extension is handled by a plugin.
+   *   - If `view` event is available, it will let a plugin to handle
+   *     the whole process.
+   *   - fires pre-render events to pre-process the page.  It will
+   *     first try the pre-render:ext for file extension specific
+   *     pre-renders.  Following, the generic pre-render event
+   *     will be triggered.
+   *   - fires render:ext event to convert the page data into html.
+   *   - fires post-render render events to post-process the page.  It
+   * 	  will first try post-render:ext, followed by post-render.
+   *   - fires the layout:ext to output the page on a custom layout,
+   *     otherwise the default layout is used.
+   * - If no media handler has been registered for this page's file
+   *   extension, the file will be send verbatim (without any
+   *   processing).  So binary files such as videos, images, audio,
+   *   etc, can be loaded into the Wiki and served directly.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event read_page
+   */
   static function readPage(\NacoWikiApp $wiki, array &$data) : ?bool {
     $wiki->view = 'page';
     $ext = Plugins::mediaExt($wiki->page);
     if (!is_null($ext)) {
-      if (Plugins::dispatchEvent($wiki, 'view:'.$ext, Plugins::event(['ext'=>$ext]))) exit;
+      if (Plugins::dispatchEvent($wiki, 'view:'.$ext, Plugins::devt(['ext'=>$ext]))) exit;
 
       $event = self::preparePayload($wiki, $wiki->page, $ext);
       $wiki->source = $event['source'];
@@ -244,14 +409,93 @@ class Core {
       $wiki->payload = $event['payload'];
 
       $event = [ 'html' => $wiki->payload, 'ext' => $ext ];
+      ##-- events-list##pre-render:[file-extension]
+      ##
+      ## This event is used by plugins to pre-process data.  This
+      ## specific event only triggers for pages matching the given
+      ## file extension.
+      ##
+      ## Since this is a pre-render event, the `html` element
+      ## actually contains text before HTML is generated, but may
+      ## be modified by the pre-render hook.
+      ##
+      ## Event data:
+      ##
+      ## - `html` (input|output) : current page contents which will be eventually rendered.
+      ## - `ext` (input) : file extension for the given media
+      ##--
       Plugins::dispatchEvent($wiki, 'pre-render:'.$ext, $event);
+      ##-- events-list##pre-render
+      ##
+      ## This event is used by plugins to pre-process data.  This
+      ## specific event triggers for any file regardless of the
+      ## file extension.
+      ##
+      ## Since this is a pre-render event, the `html` element
+      ## actually contains text before HTML is generated, but may
+      ## be modified by the pre-render hook.
+      ##
+      ## Event data:
+      ##
+      ## - `html` (input|output) : current page contents which will be eventually rendered.
+      ## - `ext` (input) : file extension for the given media
+      ##--
       Plugins::dispatchEvent($wiki, 'pre-render', $event);
+      ##-- events-list##render:[file-extension]
+      ##
+      ## This event is used by media handlers to convert the
+      ## source to HTML.
+      ##
+      ## The hook must take the `html` element from the event
+      ## which contains possibily pre-processed input, and
+      ## convert it to HTML.
+      ##
+      ## Event data:
+      ##
+      ## - `html` (input|output) : current page contents which will be eventually rendered.
+      ## - `ext` (input) : file extension for the given media
+      ##--
       Plugins::dispatchEvent($wiki, 'render:'.$ext, $event);
+      ##-- events-list##post-render:[file-extension]
+      ##
+      ## This event is used by plugins to post-process data.  This
+      ## specific event only triggers for pages matching the given
+      ## file extension.
+      ##
+      ## Plugins using this hook can post-process the generated HTML.
+      ##
+      ## Event data:
+      ##
+      ## - `html` (input|output) : current page contents which will be eventually rendered.
+      ## - `ext` (input) : file extension for the given media
+      ##--
       Plugins::dispatchEvent($wiki, 'post-render:'.$ext, $event);
+      ##-- events-list##post-render
+      ##
+      ## This event is used by plugins to post-process data.  This
+      ## specific event triggers for any file regardless of the
+      ## file extension.
+      ##
+      ## Plugins using this hook can post-process the generated HTML.
+      ##
+      ## Event data:
+      ##
+      ## - `html` (input|output) : current page contents which will be eventually rendered.
+      ## - `ext` (input) : file extension for the given media
+      ##--
       Plugins::dispatchEvent($wiki, 'post-render', $event);
       $wiki->html = $event['html'];
 
-      if (Plugins::dispatchEvent($wiki, 'layout:'.$ext, Plugins::event(['ext'=>$ext]))) exit;
+      ##-- events-list##layout:[file-extension]
+      ##
+      ## This event is used by media handlers to output to the web
+      ## browser a possibly custom layout for the given media type.
+      ##
+      ## Event data:
+      ##
+      ## - `ext` (input) : file extension for the given media
+      ##--
+      if (Plugins::dispatchEvent($wiki, 'layout:'.$ext, Plugins::devt(['ext'=>$ext]))) exit;
 
       $pgview = $data['view'] ?? APP_DIR . 'views/page.html';
       include($pgview);
@@ -260,24 +504,63 @@ class Core {
     Util::sendFile($wiki->filePath());
     exit;
   }
+  /** Missing page event handler
+   *
+   * This is the Core event handler that handles the `missing_page` event.
+   *
+   * The default shows a page that has a link to create the page
+   * or to upload a new file.
+   *
+   * Media handlers can use this event to display a custom page used
+   * to create new media.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event missing_page
+   */
   static function missingPage(\NacoWikiApp $wiki, array &$data) : ?bool {
 
     //~ Util::log('TRC:'.__FILE__.','.__LINE__);
-    $wiki->filemeta = Util::fileMeta($wiki->page,time());
-    $wiki->meta = Util::defaultMeta($wiki->page,time());
+    $now = time();
+    $wiki->filemeta = Util::fileMeta($wiki->page,time(),$now);
+    $wiki->meta = Util::defaultMeta($wiki->page,time(),$now);
     //~ Util::log('TRC:'.__FILE__.','.__LINE__);
     $wiki->meta['title'] = '404: '.htmlspecialchars($wiki->page);
 
     $ext = Plugins::mediaExt($wiki->page);
     $wiki->view = 'error404';
-    if (!is_null($ext)  && Plugins::dispatchEvent($wiki, 'missing:'.$ext, Plugins::event(['ext'=>$ext]))) exit();
     http_response_code(404);
+    ##-- events-list##missing:[file-extension]
+    ##
+    ## This event is used by media handlers to output to the web
+    ## browser a possibly custom page to create missing media.
+    ##
+    ## Event data:
+    ##
+    ## - `ext` (input) : file extension for the given media
+    ##--
+    if (!is_null($ext)  && Plugins::dispatchEvent($wiki, 'missing:'.$ext, Plugins::devt(['ext'=>$ext]))) exit();
     include(APP_DIR . 'views/404.html');
     exit();
   }
+  /** delete page event handler
+   *
+   * This is the Core event handler that handles the `do:delete` event.
+   *
+   * Deletes the given page.  If the current page is a folder and it
+   * contains files (not just more folders), it will show the folder
+   * contents and ask the user for confirmation.
+   *
+   * If after the page is deleted, there are no more files in the
+   * folder containing the page, it will also delete the containing
+   * folder (or folders).
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event do:delete
+   */
   static function deletePage(\NacoWikiApp $wiki, array &$data) : ?bool {
     if (!$wiki->isWritable()) {
-      //~ Plugins::dispatchEvent($wiki, 'delete_access_error', Plugins::event());
       $wiki->errMsg('write_access',$wiki->filePath().': Delete access error');
     }
     if ($wiki->page == '' || $wiki->page == '/') {
@@ -326,7 +609,20 @@ class Core {
     header('Location: '.rtrim($wiki->mkUrl($dpath),'/').'/');
     exit;
   }
-
+  /** rename page event handler
+   *
+   * This is the Core event handler that handles the `do:rename` event.
+   *
+   * Renames the given page to the http query string `name` field.
+   *
+   * If after the page is renamed, there are no more files in the
+   * folder that was containing the page, it will also delete the containing
+   * folder (or folders).
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event do:rename
+   */
   static function renamePage(\NacoWikiApp $wiki, array &$data) : ?bool {
     if ($wiki->page == '/' || $wiki->page == '') $wiki->errMsg('invalid_target','Cannot rename root directory');
 
@@ -335,7 +631,6 @@ class Core {
     if ($newpage == $wiki->page) $wiki->errMsg('no-op','No changes made');
 
     if (!$wiki->isWritable() || !$wiki->isWritable($newpage) ) {
-      //~ Plugins::dispatchEvent($wiki, 'rename_access_error', Plugins::event());
       $wiki->errMsg('write_access',$wiki->filePath().': Rename access error');
     }
 
@@ -356,11 +651,26 @@ class Core {
     header('Location: '.$wiki->mkUrl($newpage));
     exit;
   }
-
+  /** edit page event handler
+   *
+   * This is the Core event handler that handles the `do:edit` event.
+   *
+   * The default shows a page with a text area to edit the page.
+   *
+   * Media handlers can use this event to display a customize the
+   * page used to edit the media.
+   *
+   * Usually media handlers would use this to separate content from
+   * header data, and also customize a CodeMirror instance to
+   * the correct modes for the given media.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event do:edit
+   */
   static function editPage(\NacoWikiApp $wiki, array &$data) : ?bool {
     if (substr($wiki->page,-1) == '/') $wiki->errMsg('invalid_target','Folders are not editable');
     if (!$wiki->isWritable()) {
-      //~ Plugins::dispatchEvent($wiki, 'delete_access_error', Plugins::event());
       $wiki->errMsg('write_access',$wiki->filePath().': Write access error');
     }
 
@@ -376,16 +686,61 @@ class Core {
 
     $ext = Plugins::mediaExt($wiki->page);
     $wiki->view = 'edit';
-    if (!is_null($ext)  && Plugins::dispatchEvent($wiki, 'edit:'.$ext, Plugins::event(['ext'=>$ext]))) exit();
+
+    ##-- events-list##edit:[file-extension]
+    ##
+    ## This event is used by media handlers to output to the web
+    ## browser a possibly custom page to edit media.
+    ##
+    ## Typically this is used to pre-format the editable content
+    ## separating metadata and body text.  Also, to display
+    ## a codemirror with the right modules loaded and initialized
+    ## to the right mode.
+    ##
+    ## Event data:
+    ##
+    ## - `ext` (input) : file extension for the given media
+    ##--
+    if (!is_null($ext)  && Plugins::dispatchEvent($wiki, 'edit:'.$ext, Plugins::devt(['ext'=>$ext]))) exit();
 
     include(APP_DIR . 'views/edit.html');
     exit();
   }
-
+  /** save page event handler
+   *
+   * This is the Core event handler that handles the `do:save` event.
+   *
+   * Normally it will get the payload from a field name `text` from the POST data.
+   *
+   * UNIX EOL conversion is handled here.
+   *
+   * The following events are triggered:
+   *
+   * - preSave
+   * - preSave:ext
+   *   - preSave events happen before data is written.  Can be used
+   *     to sanitize user input, by for example, pre-parsing headers.
+   *   - There are two events, generic and file extension specific. \
+   *     If a media handler is available, both events will be triggered.
+   *     Otherwise, only the generic one will be triggered.
+   * - save:ext
+   *   - This actually saves the page.  If no plugin hooked this event,
+   *     it will simply save payload using `file_put_contents`
+   * - postSave
+   * - postSave:ext
+   *   - postSave events happen after data is written.  Can be used
+   *     to for example update tag cloud information.
+   *   - There are two events, generic and file extension specific. \
+   *     If a media handler is available, both events will be triggered.
+   *     Otherwise, only the generic one will be triggered.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event action:save
+   */
   static function savePage(\NacoWikiApp $wiki, array &$data) : ?bool {
     if (substr($wiki->page,-1) == '/') $wiki->errMsg('invalid_target','Folders are not editable');
     if (!$wiki->isWritable()) {
-      //~ Plugins::dispatchEvent($wiki, 'delete_access_error', Plugins::event());
       $wiki->errMsg('write_access',$wiki->filePath().': Write access error');
     }
 
@@ -394,28 +749,112 @@ class Core {
 
     if ($wiki->cfg['unix_eol']) $ev['text'] = str_replace("\r", "", $ev['text']);
 
-    if (!is_null($ext)) {
-      Plugins::dispatchEvent($wiki, 'preSave', $ev);
-      Plugins::dispatchEvent($wiki, 'preSave:'.$ext, $ev);
-      if (Plugins::dispatchEvent($wiki, 'save:'.$ext, $ev)) {
-	Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
-	Plugins::dispatchEvent($wiki, 'postSave', $ev);
-	exit;
-      }
-      Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
-    }
+    ##-- events-list##preSave
+    ##
+    ## This event is used by plugins to pre-parse text before
+    ## saving to storage.
+    ##
+    ## Hooks can examine the data to be saved in the `text` element
+    ## of the event array and modify it if needed.
+    ##
+    ## Event data:
+    ##
+    ## - `text` (input|output) : textual data to save
+    ## - `ext` (input) : file extension for the given media
+    ##--
     Plugins::dispatchEvent($wiki, 'preSave', $ev);
-    self::makePath($wiki, dirname($wiki->page));
-    if (false === file_put_contents($wiki->filePath(), $ev['text']))
-      $wiki->errMsg('os_error',$wiki->page.': write error', EM_PHPERR);
+    ##-- events-list##preSave:[file-extension]
+    ##
+    ## This event is used by plugins to pre-parse text before
+    ## saving to storage.
+    ##
+    ## Hooks can examine the data to be saved in the `text` element
+    ## of the event array and modify it if needed.
+    ##
+    ## Usually is used by media handlers to pre-parse data, separating
+    ## header meta data from actual content.  And sanitizing any
+    ## problematic input.
+    ##
+    ## Event data:
+    ##
+    ## - `text` (input|output) : textual data to save
+    ## - `ext` (input) : file extension for the given media
+    ##--
+    if (!is_null($ext)) Plugins::dispatchEvent($wiki, 'preSave:'.$ext, $ev);
+
+    ##-- events-list##save:[file-extension]
+    ##
+    ## This event is used by plugins to save to storage.
+    ##
+    ## Usually is used by media handlers to save data using custom
+    ## file formats.
+    ##
+    ## Event data:
+    ##
+    ## - `text` (input) : textual data to save
+    ## - `ext` (input) : file extension for the given media
+    ##--
+    if (is_null($ext) || !Plugins::dispatchEvent($wiki, 'save:'.$ext, $ev)) {
+      self::makePath($wiki, dirname($wiki->page));
+      if (false === file_put_contents($wiki->filePath(), $ev['text']))
+	$wiki->errMsg('os_error',$wiki->page.': write error', EM_PHPERR);
+    }
+    ##-- events-list##postSave
+    ##
+    ## This event is used by plugins to examine data after it
+    ## was saved to storage.
+    ##
+    ## Usually used to update additional meta data files, like for
+    ## example update a tag cloud index.
+    ##
+    ## Event data:
+    ##
+    ## - `text` (input) : textual data to save
+    ## - `ext` (input) : file extension for the given media
+    ##--
     Plugins::dispatchEvent($wiki, 'postSave', $ev);
+    ##-- events-list##postSave:[file-extension]
+    ##
+    ## This event is used by media handlers to examine data after it
+    ## was saved to storage.
+    ##
+    ## Event data:
+    ##
+    ## - `text` (input) : textual data to save
+    ## - `ext` (input) : file extension for the given media
+    ##--
+    if (!is_null($ext)) Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
 
     header('Location: '.$wiki->mkUrl($wiki->page));
     exit;
   }
+  /** attach to page event handler
+   *
+   * This is the Core event handler that handles the `do:attach` event.
+   *
+   * Handles POST requests to upload files to pages or folders.  The
+   * uploaded file is expected to be in the `fileToUpload` POST element.
+   *
+   * If uploading to a folder, it will simply upload the file to the
+   * directory for that folder.
+   *
+   * If uploading to a page with $cfg[default_doc] name, it will treat
+   * it as uploading to the directory for that default doc page.
+   *
+   * If uploading to a normal page, it will create a folder with the
+   * same name as the page without file extension and upload the file
+   * there.
+   *
+   * As it is, attachments are essentially ordinary files
+   * that convention that files in a folder the same
+   * name as the page (without extension) are its attachments.
+   *
+   * @param \NanoWikiApp $wiki current wiki instance
+   * @param array $data ignored
+   * @event action:attach
+   */
   static function attachToPage(\NacoWikiApp $wiki, array &$data) : ?bool {
     if (!$wiki->isWritable()) {
-      //~ Plugins::dispatchEvent($wiki, 'delete_access_error', Plugins::event());
       $wiki->errMsg('write_access',$wiki->filePath().': Write access error');
     }
     if (substr($wiki->page,-1) != '/') {
@@ -468,8 +907,8 @@ class Core {
    * @todo Should check permissions when returning files
    * @todo Should filter out attachment folders
    * @see \NWiki\PluginCollection::dispatchEvent
-   * @api
-   *
+   * @phpcod RESTAPI##page-list
+   * @event api:page-list
    * @param \NacoWikiApp $wiki NacoWiki instance
    * @param array $ev Event data.
    * @return ?bool Returns \NWiki\PluginCollection::OK to indicate that it was handled.
@@ -481,17 +920,24 @@ class Core {
     $ev['output'] = $res;
     return Plugins::OK;
   }
+  /**
+   * Loading entry point for this class
+   *
+   * Hooks events implemented by this class
+   */
   static function load() : void {
-    Plugins::registerEvent('do:delete',[self::class,'deletePage']);
-    Plugins::registerEvent('do:rename',[self::class,'renamePage']);
-    Plugins::registerEvent('do:edit',[self::class,'editPage']);
-    Plugins::registerEvent('do:search',[self::class,'searchPage']);
-    Plugins::registerEvent('api:page-list',[self::class,'apiPageList']);
-    Plugins::registerEvent('action:save',[self::class,'savePage']);
-    Plugins::registerEvent('action:attach',[self::class,'attachToPage']);
-    Plugins::registerEvent('missing_page',[self::class,'missingPage']);
-    Plugins::registerEvent('read_page',[self::class,'readPage']);
-    Plugins::registerEvent('read_folder',[self::class,'readFolder']);
+    Plugins::autoload(self::class);
+
+    //~ Plugins::registerEvent('action:attach',[self::class,'attachToPage']);
+    //~ Plugins::registerEvent('action:save',[self::class,'savePage']);
+    //~ Plugins::registerEvent('do:edit',[self::class,'editPage']);
+    //~ Plugins::registerEvent('do:rename',[self::class,'renamePage']);
+    //~ Plugins::registerEvent('do:delete',[self::class,'deletePage']);
+    //~ Plugins::registerEvent('missing_page',[self::class,'missingPage']);
+    //~ Plugins::registerEvent('read_page',[self::class,'readPage']);
+    //~ Plugins::registerEvent('api:page-list',[self::class,'apiPageList']);
+    //~ Plugins::registerEvent('read_folder',[self::class,'readFolder']);
+    //~ Plugins::registerEvent('do:search',[self::class,'searchPage']);
   }
 }
 

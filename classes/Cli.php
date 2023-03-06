@@ -18,7 +18,7 @@ class Cli {
   /**
    * Given two paths, calculate the relative path from one to the other
    *
-   * @paran string $from from directory
+   * @param string $from from directory
    * @param string $to target location
    * @param string $ps directory separator.
    * @return string relative path to target location
@@ -40,7 +40,7 @@ class Cli {
    * Available flags:
    *
    * - TRC : trace dump of the calling function/context
-   * - NONL : it outputs an EOL.  This prevents this behaviour.
+   * - NONL : do not print EOL after $msg.
    *
    * @param string $msg text to display on stderr
    * @param int $flags OR'ed flags to control output.
@@ -64,10 +64,9 @@ class Cli {
       }
       $tag .= ': ';
     }
+    if ((self::NONL & $flags) == 0) $msg .= PHP_EOL;
     file_put_contents( "php://stderr",$tag.$msg);
-    if (self::NONL & $flags == 0) echo PHP_EOL;
   }
-
   /**
    * Show this help
    *
@@ -81,6 +80,8 @@ class Cli {
    *
    * @param \NanoWikiApp $wiki running wiki instance
    * @param array $argv Command line arguments
+   * @event cli:help
+   * @phpcod commands##help
    */
   static function help(\NacoWikiApp $wiki, array $argv) : ?bool {
     echo('Available sub-commands'.PHP_EOL);
@@ -101,8 +102,7 @@ class Cli {
     }
     exit;
   }
-  /**
-   * List available plulgins
+  /** List available plugins
    *
    * This implements a CLI sub-command for plugins.
    *
@@ -112,6 +112,8 @@ class Cli {
    *
    * @param \NanoWikiApp $wiki running wiki instance
    * @param array $argv Command line arguments
+   * @event cli:plugins
+   * @phpcod commands##plugins
    */
   static function plugins(\NacoWikiApp $wiki, array $argv) : ?bool {
     foreach (Plugins::$plugins as $x=>$y) {
@@ -136,8 +138,10 @@ class Cli {
    *
    * @param \NanoWikiApp $wiki running wiki instance
    * @param array $argv Command line arguments
+   * @event cli:install
+   * @phpcod commands##install
    */
-  function install(\NacoWikiApp $wiki, array $argv) : ?bool {
+  static function install(\NacoWikiApp $wiki, array $argv) : ?bool {
     if (count($argv) != 0) die('Too many arguments'.PHP_EOL);
 
     $assets = $wiki->cfg['static_path'];
@@ -173,8 +177,6 @@ class Cli {
 	if (false === symlink($rpath, $link)) die($link.': symlink failed'.PHP_EOL);
       }
     }
-
-
     exit;
   }
   /**
@@ -183,8 +185,12 @@ class Cli {
    * Adds commands implemented by this class
    */
   static function load() : void {
-    Plugins::registerEvent('cli:install',[self::class,'install']);
-    Plugins::registerEvent('cli:help',[self::class,'help']);
-    Plugins::registerEvent('cli:plugins',[self::class,'plugins']);
+    Plugins::autoload(self::class);
+    //~ // These lines are replaced by the autoload method and the relevant
+    //~ // doc strings.
+    //~ Plugins::registerEvent('cli:install',[self::class,'install']);
+    //~ Plugins::registerEvent('cli:help',[self::class,'help']);
+    //~ Plugins::registerEvent('cli:plugins',[self::class,'plugins']);
   }
 }
+

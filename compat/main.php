@@ -13,3 +13,14 @@ if (!function_exists('yaml_emit')) {
     return $yaml->loadString($doc);
   }
 }
+
+if (!function_exists('str_starts_with')) {
+  function str_starts_with(string $haystack, string $needle) : bool {
+    return substr($haystack,0,strlen($needle)) == $needle;
+  }
+}
+if (!function_exists('str_ends_with')) {
+  function str_ends_with(string $haystack, string $needle) : bool {
+    return substr($haystack,-strlen($needle)) == $needle;
+  }
+}

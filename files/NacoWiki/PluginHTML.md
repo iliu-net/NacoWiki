@@ -1,9 +1,12 @@
 ---
 title: PluginHTML
-date: "2023-03-02"
 ---
-This plugin is used to handle HTML files.  Implements a media handler
-interface.
+HTML media handler
+
+NacoWiki HTML render.
+
+This plugin is used to handle HTML files.  Implements a media
+handler interface.
 
 To maintain the HTML syntax, HTML documents must follow this template:
 
@@ -30,3 +33,12 @@ only the lines with `<title>` and `<meta>` tags are recognized.
 The `<title>` contents uses `htmlspecialchars` for escaping.  On the
 other hand, the content of the `<meta>` is URL encoded at least for the
 `%` (`%25`) and `"` (`%22`) characters.
+
+
+- @phpcod PluginHTML
+ 
+
+***
+* plugins/PluginHTML.php,12
+***
+

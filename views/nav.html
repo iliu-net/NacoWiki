@@ -149,6 +149,9 @@
 	  href="<?= $wiki->mkUrl($wiki->page,[ 'do'=>'delete']) ?>"
 	  onclick="return confirm('Delete &quot;<?= $wiki->page ?>&quot;?');"
 	>Delete</a>
+	<a
+	  href="<?= $wiki->mkUrl($wiki->page,[ 'do'=>'raw']) ?>"
+	>Raw page</a>
       </div>
      </span>
     <?php } ?>

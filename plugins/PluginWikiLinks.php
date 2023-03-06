@@ -1,24 +1,67 @@
 <?php
-/**
- * Wiki-style links
+/** PluginWikiLinks
+ *
+ * Implements Wiki-style links
+ *
+ * @package Plugins
+ * @phpcod Plugins##PluginWikiLinks
+ */
+use NWiki\PluginCollection as Plugins;
+use NWiki\Util as Util;
+use NWiki\Cli as Cli;
+
+
+/** Wiki style links
  *
  * This plugin is used to create links that have a shorter format
  * than Markdown style links.
  *
- * @package Plugins\PluginWikiLinks
+ * Simplified markup for internal links.  It supports:
+ *
+ * - hypertext links
+ *   - `[[` : opening
+ *   - __url-path__.
+ *   - ==space== followed by html attribute tags (if any, can be omitted)
+ *   - `|` followed by the link text if not specified, defaults to the
+ *     __url-path__
+ *   - `]]` : closing
+ * - img tags
+ *   - `{{` : opening
+ *   - __url-path__
+ *   - ==space== followed by html attribute tags (if any, can be omitted)
+ *   - `|` followed by the `alt` and `title` text.  Defaults to
+ *     __url-path__.
+ *   - `}}` : closing
+ *
+ * URL paths rules:
+ *
+ * - paths beginning with `/` are relative to the root of the wiki
+ * - paths beginning with `!/` search for full file paths that end with
+ *   that path in the entire wiki.
+ * - paths beginnig with `!` (without `/`) match basename in the entire wiki.
+ * - paths are relative to the current document.
+ *
+ * @phpcod PluginWikiLinks
  */
-use NWiki\PluginCollection as Plugins;
-use NWiki\Util as Util;
-
-
 class PluginWikiLinks {
-  const VERSION = '1.0.0';
+  /** var string */
+  const VERSION = '1.2.0';
 
+  /** file list cache
+   * var string[] */
+   static $tree_cache = NULL;
+
+  /** WikiLinks implementation
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param string $html Input text
+   * @return string text with expanded links
+   */
   static function wikiLinks($wiki, $html) {
       $vars = [];
       foreach ([
-	  '/\[\[[^\]\n]+\]\]/' => '<a href="%1$s"%3$s>%2$s</a>',
-	  '/\{\{[^\}\n]+\}\}/' => '<img src="%1$s" alt="%2$s" title="%2$s"%3$s>',
+	  '/\[\[[^\]\n:]+\]\]/' => '<a href="%1$s"%3$s>%2$s</a>',
+	  '/\{\{[^\}\n:]+\}\}/' => '<img src="%1$s" alt="%2$s" title="%2$s"%3$s>',
 	] as $re=>$fmt) {
 	if (preg_match_all($re,$html,$mv)) {
 	  foreach ($mv[0] as $k) {
@@ -36,6 +79,7 @@ class PluginWikiLinks {
 	    $x = isset($v[1]) ? ' '.$v[1] : '';
 	    $v = $v[0];
 	    if (empty($v)) continue;
+
 	    if (empty($t)) $t = htmlspecialchars(pathinfo($v)['filename']);
 
 	    //~ echo '<pre>';
@@ -45,17 +89,49 @@ class PluginWikiLinks {
 	    //~ var_dump($t);
 	    //~ echo '</pre>';
 	    //~ Util::log(Util::vdump($v));
+	    if (substr($v,0,1) == '!') {
+	      # This is a name search operator
+	      if (is_null(self::$tree_cache)) {
+		list($dirs,$files) = Util::walkTree($wiki->filePath(''));
+		self::$tree_cache = [];
+		foreach (array_merge($dirs,$files) as $f) {
+		  self::$tree_cache['/'.ltrim($f,'/')] = basename($f);
+		}
+	      }
+
+	      $v = substr($v,1);
+	      if (substr($v,0,1) == '/') {
+		# path tail search...
+		$found = false;
+		foreach (self::$tree_cache as $i => $j) {
+		  if (!str_ends_with($i, $v)) continue;
+		  $found = true;
+		  $v = $i;
+		  break;
+		}
+		if (!$found) continue;
+
+	      } else {
+		$i = array_search($v,self::$tree_cache);
+		if ($i === false) continue;
+		$v = $i;
+	      }
+	    }
 	    $v = Util::sanitize($v,$wiki->page);
 	    //~ Util::log(Util::vdump($v));
-
 	    $vars[$k] = sprintf($fmt, $wiki->mkUrl($v), $t,$x);
+
 	  }
 	}
       }
       if (count($vars) == 0) return $html;
       return strtr($html,$vars);
   }
-
+  /**
+   * Loading entry point for this class
+   *
+   * Hooks post-render event implemented by this class
+   */
   static function load(array $cfg) : void {
     Plugins::registerEvent('post-render', function(\NacoWikiApp $wiki, array &$ev) {
       $ev['html'] = self::wikiLinks($wiki, $ev['html']);

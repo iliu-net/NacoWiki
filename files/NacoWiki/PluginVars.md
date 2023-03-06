@@ -1,7 +1,10 @@
 ---
 title: PluginVars
-date: "2023-03-03"
 ---
+NacoWiki Vars Plugin
+
+This plugin is used to render config and meta data on a page
+
 This plugin is used to create text substitutions.  There are two
 sets of substitutions.  Substitutions done **before**
 and **after** rendering.
@@ -26,4 +29,11 @@ This plugin registers two sub-commands:
 
 - `cfg` : dumps current configuration
 - `gvars` : dumps defined global variables ad configured in `[plugins][PluginVars]`.
+
+- @phpcod PluginVars
+ 
+
+***
+* plugins/PluginVars.php,11
+***
 

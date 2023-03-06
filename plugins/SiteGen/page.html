@@ -1,7 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <?php include(APP_DIR . 'views/html_head.html'); ?>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title><?=
+    $wiki->meta['title'] ?
+      htmlspecialchars($wiki->meta['title']).' : '.$wiki->cfg['title'] :
+      $wiki->cfg['title']
+  ?></title>
+  <?php
+    foreach (['file-' => $wiki->filemeta ?? NULL, '' => $wiki->meta ?? NULL] as $px => $meta)
+{
+      if (is_null($meta)) continue;
+      foreach ($meta as $k=>$v) {
+	if ($px.$k == 'title') continue;
+	echo('<meta name="'.$px.htmlspecialchars($k).'" content="'.htmlspecialchars($v).'"/>'.
+PHP_EOL);
+      }
+    }
+  ?>
+  <!-- link rel="shortcut icon" href="<?=$wiki->asset('imgs/nanowiki-favicon.png')   ?>" type="image/png" -->
 
   <!-- syntax hilite -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
@@ -11,11 +31,37 @@
 </head>
 <body>
   <div class="page">
-    <?php include(APP_DIR . 'views/header.html'); ?>
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="<?= $wiki->cfg['ext_url'] ?>"><img src="<?= $wiki->asset('nanowiki-logo.png') ?>" width=32 height=32></a>
+	<?=
+	$wiki->meta['title'] ?  htmlspecialchars($wiki->meta['title']) :  '&#x2302; '. $wiki->cfg['title']
+	?></h1>
+      <hr/>
+    </header>
+
     <div id="main" class="main">
     <?= $wiki->html ?>
     </div>
   </div>
+
+<footer>
+  <?php
+    if (isset($wiki->filemeta) && isset($wiki->filemeta['year'])) {
+      $year = $wiki->filemeta['year'];
+    } else {
+      $year = gmdate('Y');
+    }
+  ?>
+  <hr/>
+  <small>
+    SiteGen <?= SiteGen::VERSION ?> <a href="<?= APP_URL ?>" target="_blank"><?= APP_NAME ?>: <?= APP_VERSION ?></a><br/>
+    Copyright &copy; <?=$year?> <?=$wiki->cfg['copyright']?> <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
   <script>hljs.highlightAll();</script>
 </body>
 </html>

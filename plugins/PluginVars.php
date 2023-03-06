@@ -1,17 +1,60 @@
 <?php
-/**
- * NacoWiki Vars
+/** PluginVars
  *
- * This plugin is used to render config and meta data on a page
- * @package Plugins\PluginVars
+ * Implements variable substitutions
+ *
+ * @package Plugins
+ * @phpcod Plugins##PluginVars
  */
 use NWiki\PluginCollection as Plugins;
 
-
+/** NacoWiki Vars Plugin
+ *
+ * This plugin is used to render config and meta data on a page
+ *
+ * This plugin is used to create text substitutions.  There are two
+ * sets of substitutions.  Substitutions done **before**
+ * and **after** rendering.
+ *
+ * - Before rendering:
+ *   - `$ urls$`: Current url
+ *   - `$ cfg$` : current configuration (as a YAML document)
+ *   - `$ vars$` : current config variables defined in `cfg[plugins][PluginVars]` (as a YAML document)
+ *   - `$ cfg.key$`: values in the `cofg` table
+ *   - `$ meta.key$` : values defined in the meta data block of the page.
+ *   - `$ file.key$` : file system metadata (usually just the file time stamp).
+ *   - `$ prop.key$` : File properties (managed by `NacoWiki`.
+ *   - `$ key$` : Additional variables as defined in `cfg[plugins][PluginVars]`
+ * - After rendering:
+ *   - `$ plugins$` an unordered HTML list containing loaded plugins.
+ *   - `$ attachments$` an unordered HTML list containg links to
+ *     the current document's attachments.
+ *
+ * # CLI sub-commands
+ *
+ * This plugin registers two sub-commands:
+ *
+ * - `cfg` : dumps current configuration
+ * - `gvars` : dumps defined global variables ad configured in `[plugins][PluginVars]`.
+ *
+ * @phpcod PluginVars
+ */
 class PluginVars {
+  /** var string */
   const VERSION = '2.0.0';
 
-  /** Dump global variables */
+  /** Dump global variables
+   *
+   * This implements the cli sub-command gvars
+   *
+   * This will dump all the variables defined in the configuration
+   * of the wiki user cfg[plugins][PluginVars]
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array $argv Command line arguments
+   * @event cli:gvars
+   * @phpcod commands##gvars
+   **/
   static function dumpVars(\NacoWikiApp $wiki, array $argv) : ?bool {
     $key = basename(__FILE__,'.php');
     if (empty($wiki->cfg['plugins'][$key])) {
@@ -22,14 +65,28 @@ class PluginVars {
     exit;
   }
 
-  /** Dump config */
+  /** Dump config
+   *
+   * This implements the cli sub-command cfg
+   *
+   * This shows current running configuration of the wiki.
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array $argv Command line arguments
+   * @event cli:gvars
+   * @phpcod commands##cfg
+   */
   static function dumpCfg(\NacoWikiApp $wiki, array $argv) : ?bool {
     if (empty($wiki->cfg)) die('Configuration error'.PHP_EOL);
     //~ print_r($wiki->cfg);
     echo yaml_emit($wiki->cfg);
     exit;
   }
-
+  /**
+   * Loading entry point for this class
+   *
+   * Adds commands and event hooks implemented by this class
+   */
   static function load(array $cfg) : void {
     Plugins::registerEvent('cli:gvars', [self::class, 'dumpVars']);
     Plugins::registerEvent('cli:cfg', [self::class, 'dumpCfg']);

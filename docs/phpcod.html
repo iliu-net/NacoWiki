@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>my-php-file.php : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-06 19:51:54"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-06"/>
+<meta name="file-mtime" content="1678132314"/>
+<meta name="date" content="2023-03-05"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	my-php-file.php</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <pre><code class="language-yaml">---
+sections:
+  configuration:
+    &quot;NacoWiki configuration#1&quot;:
+      collection: configuration
+      level: 1
+      section: NacoWiki configuration
+      text:
+        - 
+          - |
+            |
+                        
+                        - umask (int) - Optional umask
+                        - proxy-ips (array|string) : list of IP addresses of trusted reverse proxies
+                          Either as an array of strings, or as string with comma separated IP addresses.
+                        - no_cache (bool) : defaults to false.  If set to true, enables
+                          sending of headers that disable browser caches.
+                        - plugins_path (array|string) : list of directories where to look for plugins. \
+                          Defaults to `APP_DIR/plugins`. \
+                          It can be specified as an array of strings, or as single array with
+                          paths separated by PHP's PATH_SEPARATOR `:` under Linux, `;` under Windows.
+                        - base_url (string) - Base Application URL \
+                          Normally defaults to the HTTP SCRIPT_NAME value.  However, it can
+                          be changed for placing after a reverse proxy which changes the path.
+                        - static_url (string) - URL Path to static resources \
+                          Normally defaults to the dirname of HTTP SCRIPT_NAME.  However, it can
+                          be changed for placing after a reverse proxy which changes the path. \
+                          It has to be a HTTP path that can reach the static resources.
+                        - static_path (string) - File Path to static resources \
+                          Path in the filesystem to reach the actual static resources.  Defaults
+                          to `APP_DIR/assets`.
+                        - file_store (string) -  Location where data files are stored \
+                          Defaults to `CWD/files`.  These files do *NOT* need to be served
+                          by the web server, so that the PHP script can control all access
+                          to them.
+                        - read_only (bool|string) - if true, makes the wiki read-only.  Defaults to false. \
+                          if set to `not-auth`, it will make it read-only until the user
+                          authenticates.
+                        - unix_eol (bool) - force all input files to be converted from CRLF to UNIX style
+                          LF for the EOL marker.  Defaults to true.  Set to false if you want
+                          to keep CRLF as EOL markers.
+                        - default_doc (string) - the default document for browsing into folders. \
+                          defaults to `index.md`.
+                        - plugins (array) - Plugin configuration \
+                          Plugins can read its own configuration from this array. By
+                          convention, they should read only from the keys matching the
+                          plugin name.  In addition, you can enable or disable
+                          plugins with the keys:
+                          - enabled (string|array) - list of plugins to enable either as a
+                            string with comma separated name of plugins or as an array with
+                            plugin names.
+                          - disabled (string|array) - list of plugins to disable either as a
+                            string with comma separated name of plugins or as an array with
+                            plugin names.
+                          By default all found plugins will be enabled.
+                        - cookie_id (string) - used to keep cookies unique
+                        - cookie_age (int) - seconds to keep the cookies alive. \
+                          Defaults to 30 days.
+                        - ext_url (string) - URL used in the logo link.  Defaults to
+                          the current http host home page.
+                        - title (string) - Window title bar
+                        - copyright (string) - copyright text show in the footer
+                        - theme (string) - Overall nacowiki theme
+                        - theme-highlight-js (string) - theme to be used for syntax highlighting
+                        - theme-codemirror (string) - CodeMirror theme
+                        
+          - nacowiki.php,39
+  events-list:
+    &quot;error_msg#2&quot;:
+      collection: events-list
+      level: 2
+      section: error_msg
+      text:
+        - 
+          - |
+            |
+                        This event is called to implement custom error handlers.
+                        
+                        Event data:
+                        - `msg` (input) : error message
+                        - `tag` (input) : error tag
+                        - `opts` (input) : flags `EM_NONE` or `EM_PHPERR`.
+                        
+          - nacowiki.php,215
+    &quot;check_writable#2&quot;:
+      collection: events-list
+      level: 2
+      section: check_writable
+      text:
+        - 
+          - |
+            |
+                        This event can be used by plugins that implement access control.
+                        This event is used to check if the given file path can be written
+                        by the current user.
+                        
+                        Event data:
+                        
+                        - `page` (input): URL being checked
+                        - `fpath` (input): File system path to the URL.
+                        - `access` (output): pre-loaded with the access.  Event handler
+                           must populate with the right access.  This can be
+                          one of:
+                          - `true` : access is allowed
+                          - `false` : access is denied
+                          - `NULL` : access is denied due to not being authenticated.
+                        
+          - nacowiki.php,254
+    &quot;check_readable#2&quot;:
+      collection: events-list
+      level: 2
+      section: check_readable
+      text:
+        - 
+          - |
+            |
+                        This event can be used by plugins that implement access control.
+                        This event is used to check if the given file path can be read
+                        by the current user.
+                        
+                        Event data:
+                        
+                        - `page` (input): URL being checked
+                        - `fpath` (input): File system path to the URL.
+                        - `access` (output): pre-loaded with the access.  Event handler
+                           must populate with the right access.  This can be
+                          one of:
+                          - `true` : access is allowed
+                          - `false` : access is denied
+                          - `NULL` : access is denied due to not being authenticated.
+                        
+          - nacowiki.php,285
+    &quot;cli:[name]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'cli:[name]'
+      text:
+        - 
+          - |
+            |
+                        This event is used to handle CLI the `[name]` sub-command.
+                        
+                        The event data contains the command line arguments for the
+                        sub-command.
+                        
+          - nacowiki.php,399
+    &quot;run_init#2&quot;:
+      collection: events-list
+      level: 2
+      section: run_init
+      text:
+        - 
+          - |
+            |
+                        This event is called right when the `run` method is called.
+                        Plugins can use this to initialize things.  Specifically
+                        for using the `declareContext`.
+                        
+                        There are no special event parameters
+                        
+          - nacowiki.php,419
+    &quot;context_loaded#2&quot;:
+      collection: events-list
+      level: 2
+      section: context_loaded
+      text:
+        - 
+          - |
+            |
+                        This event is called right after the context has been loaded.
+                        
+                        There are no special event parameters
+                        
+          - nacowiki.php,440
+    &quot;do:[name]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'do:[name]'
+      text:
+        - 
+          - |
+            |
+                        This event is called in response of a `$_GET[do]` in the URL's
+                        query string.  It is used to trigger a specific command.
+                        
+                        There are no special event parameters
+                        
+          - nacowiki.php,466
+    &quot;api:[name]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'api:[name]'
+      text:
+        - 
+          - |
+            |
+                        This event is called in response of a `$_GET[api]` in the URL's
+                        query string.  It is used to trigger a specific REST API end point.
+                        
+                        Event data:
+                        
+                        - `status` (output): pre-loaded with Plugins::API_OK to optimistically
+                          assume success.  Event handlers should change this to
+                          Plugins:API_ERROR in the event of an error.
+                        - `msg` (output): event handler **must** fill this if an error
+                          happens.  The convenience function Plugins::apiError is available
+                          to help this.
+                        - __additional items__ (output): The API end-point shoudl populate the
+                          event data with additional items.  The whole event data array
+                          is then send to the client in JSON format.
+                        
+          - nacowiki.php,478
+    &quot;action:[name]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'action:[name]'
+      text:
+        - 
+          - |
+            |
+                        This event is called in response of a `$_POST[action]` in the
+                        HTTP request.  It is used to trigger a specific action in response
+                        to a HTTP post request.
+                        
+                        There are no special event parameters
+                        
+          - nacowiki.php,508
+    &quot;read_folder#2&quot;:
+      collection: events-list
+      level: 2
+      section: read_folder
+      text:
+        - 
+          - |
+            |
+                        This event is used to handle navigation to a folder.  i.e.
+                        URL is a folder.
+                        
+                        There are no special event parameters
+                        
+          - nacowiki.php,525
+    &quot;read_page#2&quot;:
+      collection: events-list
+      level: 2
+      section: read_page
+      text:
+        - 
+          - |
+            |
+                        This event is used to handle navigation to a page.  i.e.
+                        URL is an actual file.
+                        
+                        There are no special event parameters
+                        
+          - nacowiki.php,537
+    &quot;missing_page#2&quot;:
+      collection: events-list
+      level: 2
+      section: missing_page
+      text:
+        - 
+          - |
+            |
+                        This event is used to handle http 404 errors (missing resource)
+                        
+                        There are no special event parameters
+                        
+          - nacowiki.php,545
+    &quot;read:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'read:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        This event is used for media handlers to parse source text
+                        and extract header meta data, and the actual payload containing
+                        the body of the page content.
+                        
+                        Event data:
+                        
+                        - `filepath` (input) : file system path to source
+                        - `url` (input) : web url to source
+                        - `source` (input) : text containing the page document verbatim
+                        - `filemeta` (input) : pre-loaded file-system based meta data
+                        - `meta` (output) : to be filed by event handler with meta-data.
+                           it is pre-loaded with data derived from filemeta.
+                        - `payload` (output) : to be filed by event handler with the body of the page.
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,346
+    &quot;pre-render:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'pre-render:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to pre-process data.  This
+                        specific event only triggers for pages matching the given
+                        file extension.
+                        
+                        Since this is a pre-render event, the `html` element
+                        actually contains text before HTML is generated, but may
+                        be modified by the pre-render hook.
+                        
+                        Event data:
+                        
+                        - `html` (input|output) : current page contents which will be eventually rendered.
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,412
+    &quot;pre-render#2&quot;:
+      collection: events-list
+      level: 2
+      section: pre-render
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to pre-process data.  This
+                        specific event triggers for any file regardless of the
+                        file extension.
+                        
+                        Since this is a pre-render event, the `html` element
+                        actually contains text before HTML is generated, but may
+                        be modified by the pre-render hook.
+                        
+                        Event data:
+                        
+                        - `html` (input|output) : current page contents which will be eventually rendered.
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,428
+    &quot;render:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'render:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by media handlers to convert the
+                        source to HTML.
+                        
+                        The hook must take the `html` element from the event
+                        which contains possibily pre-processed input, and
+                        convert it to HTML.
+                        
+                        Event data:
+                        
+                        - `html` (input|output) : current page contents which will be eventually rendered.
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,444
+    &quot;post-render:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'post-render:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to post-process data.  This
+                        specific event only triggers for pages matching the given
+                        file extension.
+                        
+                        Plugins using this hook can post-process the generated HTML.
+                        
+                        Event data:
+                        
+                        - `html` (input|output) : current page contents which will be eventually rendered.
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,459
+    &quot;post-render#2&quot;:
+      collection: events-list
+      level: 2
+      section: post-render
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to post-process data.  This
+                        specific event triggers for any file regardless of the
+                        file extension.
+                        
+                        Plugins using this hook can post-process the generated HTML.
+                        
+                        Event data:
+                        
+                        - `html` (input|output) : current page contents which will be eventually rendered.
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,473
+    &quot;layout:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'layout:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by media handlers to output to the web
+                        browser a possibly custom layout for the given media type.
+                        
+                        Event data:
+                        
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,489
+    &quot;missing:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'missing:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by media handlers to output to the web
+                        browser a possibly custom page to create missing media.
+                        
+                        Event data:
+                        
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,533
+    &quot;edit:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'edit:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by media handlers to output to the web
+                        browser a possibly custom page to edit media.
+                        
+                        Typically this is used to pre-format the editable content
+                        separating metadata and body text.  Also, to display
+                        a codemirror with the right modules loaded and initialized
+                        to the right mode.
+                        
+                        Event data:
+                        
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,690
+    &quot;preSave#2&quot;:
+      collection: events-list
+      level: 2
+      section: preSave
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to pre-parse text before
+                        saving to storage.
+                        
+                        Hooks can examine the data to be saved in the `text` element
+                        of the event array and modify it if needed.
+                        
+                        Event data:
+                        
+                        - `text` (input|output) : textual data to save
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,752
+    &quot;preSave:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'preSave:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to pre-parse text before
+                        saving to storage.
+                        
+                        Hooks can examine the data to be saved in the `text` element
+                        of the event array and modify it if needed.
+                        
+                        Usually is used by media handlers to pre-parse data, separating
+                        header meta data from actual content.  And sanitizing any
+                        problematic input.
+                        
+                        Event data:
+                        
+                        - `text` (input|output) : textual data to save
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,766
+    &quot;save:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'save:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to save to storage.
+                        
+                        Usually is used by media handlers to save data using custom
+                        file formats.
+                        
+                        Event data:
+                        
+                        - `text` (input) : textual data to save
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,785
+    &quot;postSave#2&quot;:
+      collection: events-list
+      level: 2
+      section: postSave
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by plugins to examine data after it
+                        was saved to storage.
+                        
+                        Usually used to update additional meta data files, like for
+                        example update a tag cloud index.
+                        
+                        Event data:
+                        
+                        - `text` (input) : textual data to save
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,802
+    &quot;postSave:[file-extension]#2&quot;:
+      collection: events-list
+      level: 2
+      section: 'postSave:[file-extension]'
+      text:
+        - 
+          - |
+            |
+                        
+                        This event is used by media handlers to examine data after it
+                        was saved to storage.
+                        
+                        Event data:
+                        
+                        - `text` (input) : textual data to save
+                        - `ext` (input) : file extension for the given media
+                        
+          - classes/Core.php,816
+markers:
+  error-catalog:
+    config:
+      WIKI configuration error:
+        collection: error-catalog
+        tag: config
+        text: WIKI configuration error
+        file-line:
+          - nacowiki.php,175
+    invalid_param:
+      Specified DO does not exist:
+        collection: error-catalog
+        tag: invalid_param
+        text: Specified DO does not exist
+        file-line:
+          - nacowiki.php,473
+      Specified action does not exist:
+        collection: error-catalog
+        tag: invalid_param
+        text: Specified action does not exist
+        file-line:
+          - nacowiki.php,516
+    write_access:
+      User does not have write-access.:
+        collection: error-catalog
+        tag: write_access
+        text: User does not have write-access.
+        file-line:
+          - nacowiki.php,503
+    missing_param:
+      Missing input parameter:
+        collection: error-catalog
+        tag: missing_param
+        text: Missing input parameter
+        file-line:
+          - nacowiki.php,506
+    read_access:
+      User does not have read-access.:
+        collection: error-catalog
+        tag: read_access
+        text: User does not have read-access.
+        file-line:
+          - nacowiki.php,522
+          - nacowiki.php,534
+doc-strings:
+  commands:
+    &quot;help#2&quot;:
+      collection: commands
+      section: help
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        
+                        Show this help
+                        
+                        This implements a CLI sub-command for HELP
+                        
+                        It will look into the plugin configuration and display what
+                        are the available sub-commands.  In addition if there is
+                        a docstring for the implementing function, it will display
+                        it.  It also shows what plugin's class is providing this
+                        command.
+                        
+                        - @param \NanoWikiApp $wiki running wiki instance
+                        - @param array $argv Command line arguments
+                        - @event cli:help
+                        - @phpcod commands##help
+                           
+                        
+          - classes/Cli.php,70
+    &quot;plugins#2&quot;:
+      collection: commands
+      section: plugins
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        List available plugins
+                        
+                        This implements a CLI sub-command for plugins.
+                        
+                        This looks in the plugin configuration and shows what plugins
+                        are currently available, its source file and the plugin version
+                        if any
+                        
+                        - @param \NanoWikiApp $wiki running wiki instance
+                        - @param array $argv Command line arguments
+                        - @event cli:plugins
+                        - @phpcod commands##plugins
+                           
+                        
+          - classes/Cli.php,105
+    &quot;install#2&quot;:
+      collection: commands
+      section: install
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        
+                        Install assets
+                        
+                        This implements a CLI sub-command for plugins.
+                        
+                        This will check if the assets directory specified in the
+                        \NanoWikiApp configuration exists, and if it does not
+                        exist, it will create it.
+                        
+                        - @param \NanoWikiApp $wiki running wiki instance
+                        - @param array $argv Command line arguments
+                        - @event cli:install
+                        - @phpcod commands##install
+                           
+                        
+          - classes/Cli.php,130
+    &quot;gvars#2&quot;:
+      collection: commands
+      section: gvars
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        Dump global variables
+                        
+                        This implements the cli sub-command gvars
+                        
+                        This will dump all the variables defined in the configuration
+                        of the wiki user cfg[plugins][PluginVars]
+                        
+                        - @param \NanoWikiApp $wiki running wiki instance
+                        - @param array $argv Command line arguments
+                        - @event cli:gvars
+                        - @phpcod commands##gvars
+                        
+                        
+          - plugins/PluginVars.php,46
+    &quot;cfg#2&quot;:
+      collection: commands
+      section: cfg
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        Dump config
+                        
+                        This implements the cli sub-command cfg
+                        
+                        This shows current running configuration of the wiki.
+                        
+                        - @param \NanoWikiApp $wiki running wiki instance
+                        - @param array $argv Command line arguments
+                        - @event cli:gvars
+                        - @phpcod commands##cfg
+                           
+                        
+          - plugins/PluginVars.php,68
+    &quot;render#2&quot;:
+      collection: commands
+      section: render
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        
+                        Render a wiki page as HTML
+                        
+                        - @param \NanoWikiApp $wiki running wiki instance
+                        - @param array $argv Command line arguments
+                        - @phpcod commands##render
+                        - @event cli:render
+                           
+                        
+          - plugins/SiteGen.php,68
+    &quot;mkassets#2&quot;:
+      collection: commands
+      section: mkassets
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        Copy assets
+                        
+                         Makes a copy of static assets to the generated site
+                        
+                        - @phpcod commands##mkassets
+                        - @event cli:mkassets
+                           
+                        
+          - plugins/SiteGen.php,121
+    &quot;files#2&quot;:
+      collection: commands
+      section: files
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        List files
+                        
+                         Makes a list of Wiki files
+                        
+                        - @phpcod commands##files
+                        - @event cli:files
+                           
+                        
+          - plugins/SiteGen.php,156
+  RESTAPI:
+    &quot;page-list#2&quot;:
+      collection: RESTAPI
+      section: page-list
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        Returns a page list
+                        
+                        This is used by the JavaScript to render a tree of available pages.
+                        
+                        The event parameter is filled with a property `output` containing
+                        
+                        - array with directories
+                        - array with files
+                        - current page
+                        - base URL from $cfg[base_url]
+                        
+                        - @todo Should check permissions when returning files
+                        - @todo Should filter out attachment folders
+                        - @see \NWiki\PluginCollection::dispatchEvent
+                        - @phpcod RESTAPI##page-list
+                        - @event api:page-list
+                        - @param \NacoWikiApp $wiki NacoWiki instance
+                        - @param array $ev Event data.
+                        - @return ?bool Returns \NWiki\PluginCollection::OK to indicate that it was handled.
+                           
+                        
+          - classes/Core.php,896
+  Plugins:
+    &quot;PluginCode#2&quot;:
+      collection: Plugins
+      section: PluginCode
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        Source code renderer
+                        
+                        Media handler for source code files.
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##PluginCode
+                         
+                        
+          - plugins/PluginCode.php,2
+    &quot;PluginEmoji#2&quot;:
+      collection: Plugins
+      section: PluginEmoji
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        PluginEmoji
+                        
+                        Generate Emojjis
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##PluginEmoji
+                         
+                        
+          - plugins/PluginEmoji.php,2
+    &quot;PluginHTML#2&quot;:
+      collection: Plugins
+      section: PluginHTML
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        HTML renderer
+                        
+                        Media handler for HTML
+                        - @package Plugins
+                        - @phpcod Plugins##PluginHTML
+                         
+                        
+          - plugins/PluginHTML.php,2
+    &quot;PluginIncludes#2&quot;:
+      collection: Plugins
+      section: PluginIncludes
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        Include file
+                        
+                        This plugin is used to include files
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##PluginIncludes
+                         
+                        
+          - plugins/PluginIncludes.php,2
+    &quot;PluginMarkDown#2&quot;:
+      collection: Plugins
+      section: PluginMarkDown
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        Markdown media handler
+                        
+                        Media handler for Markdown files
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##PluginMarkDown
+                         
+                        
+          - plugins/PluginMarkDown.php,2
+    &quot;PluginVars#2&quot;:
+      collection: Plugins
+      section: PluginVars
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        PluginVars
+                        
+                        Implements variable substitutions
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##PluginVars
+                         
+                        
+          - plugins/PluginVars.php,2
+    &quot;PluginWikiLinks#2&quot;:
+      collection: Plugins
+      section: PluginWikiLinks
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        PluginWikiLinks
+                        
+                        Implements Wiki-style links
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##PluginWikiLinks
+                         
+                        
+          - plugins/PluginWikiLinks.php,2
+    &quot;Sitegen#2&quot;:
+      collection: Plugins
+      section: Sitegen
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        SiteGen
+                        
+                        Site generation functionality
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##Sitegen
+                        - @todo This is still a work in progress
+                         
+                        
+          - plugins/SiteGen.php,2
+    &quot;YoutubeLinks#2&quot;:
+      collection: Plugins
+      section: YoutubeLinks
+      level: 2
+      text:
+        - 
+          - |
+            |
+                        YoutubeLinks
+                        
+                        Shortcode for youtube links
+                        
+                        - @package Plugins
+                        - @phpcod Plugins##YoutubeLinks
+                         
+                        
+          - plugins/YoutubeLinks.php,2
+  PluginCode:
+    &quot;#0&quot;:
+      collection: PluginCode
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        Implements media handling for programming source code
+                        
+                        This media handler handles programing languages source code.  This
+                        is useful for storing code snippets in the wiki.
+                        
+                        Source code meta-data can be stored in the file as comments:
+                        
+                        For PHP:
+                        ```php
+                        ##---
+                        ## title: my-php-file.php
+                        ## date: 2023-03-05
+                        ##---
+                        ```
+                        
+                        For python:
+                        ```python
+                        ##---
+                        ## title: sample-python.py
+                        ## date: 2023-03-25
+                        ##---
+                        ```
+                        
+                        ## Adding additional languages
+                        
+                        To add an additional language, create anew entry in the TYPES
+                        constant.
+                        
+                        - array-key : should be the main file extension for this file type.
+                        
+                        Each array entry contains:
+                        
+                        - `exts` (optional) - array with additional file extensions
+                        - `meta-re-start` - regular expression used to match begining of metadata block
+                        - `meta-re-end` - regular expression used to match end of metadata block
+                        - `meta-re-line` - regular expression used to extract metadata line
+                        - `hl-js-class' - syntax highlighting class.  Refer to [Highlight.js](https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md)
+                        - `cm-mode` - CodeMirror mode.  [See CodeMirror](https://github.com/codemirror/codemirror5/tree/master/mode)
+                        - `cm-deps` - Additional dependancies for CodeMirror.
+                        - `template` - Template to use to create new files.
+                        
+                        - @todo Adding additional languages:
+                        	C/C++, sh/bash,batch, tcl/tk, perl, make, javascript, css
+                        	go, rust, jinja2, lua, properties, sql, yaml
+                        - @phpcod PluginCode
+                        - @link https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md
+                        - @link https://github.com/codemirror/codemirror5/tree/master/mode
+                         
+                        
+          - plugins/PluginCode.php,12
+  PluginEmoji:
+    &quot;#0&quot;:
+      collection: PluginEmoji
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        Emoji ッ Plugin
+                        
+                        This plugin auto-detects smiley shortcuts and replaces them with emojis
+                        
+                        - EMOJI Source www.emoji-cheat-sheet.com
+                        - ADD WHAT YOU LIKE: https://gist.github.com/hkan/264423ab0ee720efb55e05a0f5f90887
+                        - More Unicode searches: http://xahlee.info/comp/unicode_index.html
+                        
+                        - @author Igor Gaffling
+                        - @phpcod PluginEmoji
+                         
+                        
+          - plugins/PluginEmoji.php,11
+  PluginHTML:
+    &quot;#0&quot;:
+      collection: PluginHTML
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        HTML media handler
+                        
+                        NacoWiki HTML render.
+                        
+                        This plugin is used to handle HTML files.  Implements a media
+                        handler interface.
+                        
+                        To maintain the HTML syntax, HTML documents must follow this template:
+                        
+                        ```html
+                        &lt;html&gt;
+                          &lt;head&gt;
+                            &lt;!-- texts in meta tags are assumed to be url encoded --&gt;
+                            &lt;!--    Use &quot;%22&quot; to insert a quote (&quot;) --&gt;
+                            &lt;!--    Use &quot;%25&quot; to insert a &quot;%&quot; --&gt;
+                            &lt;title&gt;Test HTML document&lt;/title&gt;
+                            &lt;meta name=&quot;sample&quot; content=&quot;meta-data&quot;&gt;
+                            &lt;!--meta name=&quot;example-key&quot; content=&quot;example-value&quot;--&gt;
+                          &lt;/head&gt;
+                          &lt;body&gt;
+                            HTML content
+                          &lt;/body&gt;
+                        &lt;/html&gt;
+                        ```
+                        
+                        Note, only the HTML between `&lt;body&gt;` and `&lt;/body&gt;` will be rendered.
+                        Also, the meta data is read from the `&lt;head&gt;` section.  However,
+                        only the lines with `&lt;title&gt;` and `&lt;meta&gt;` tags are recognized.
+                        
+                        The `&lt;title&gt;` contents uses `htmlspecialchars` for escaping.  On the
+                        other hand, the content of the `&lt;meta&gt;` is URL encoded at least for the
+                        `%` (`%25`) and `&quot;` (`%22`) characters.
+                        
+                        
+                        - @phpcod PluginHTML
+                         
+                        
+          - plugins/PluginHTML.php,12
+  PluginIncludes:
+    &quot;#0&quot;:
+      collection: PluginIncludes
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        PluginIncludes
+                        
+                        This plugin can be used to include files into a document before
+                        rendering.
+                        
+                        In a new line use: `$include: file $` to include a file.
+                        
+                        Include file paths are to the current directory unless they start
+                        with '/'.  In that case they are relative to the root of the
+                        wiki.
+                        
+                        Included files can further include more files if needed.
+                        
+                        - @phpcod PluginIncludes
+                         
+                        
+          - plugins/PluginIncludes.php,14
+  PluginMarkDown:
+    &quot;#0&quot;:
+      collection: PluginMarkDown
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        
+                        NacoWiki MarkDown
+                        
+                        This plugin is used to provide [Markdown][md] functionality to [NacoWiki][NW].  It provides
+                        the following:
+                        
+                        - [Markdown][md] renderer with extended syntax.
+                        - [CodeMirror][cm] for editor.
+                        - Allows the inclusion of a [YAML][yaml] block at the beginning to store meta data.
+                        
+                        # Meta data
+                        
+                        Meta data is stored in a block at the top of the file of the form:
+                        
+                        ```yaml
+                        ---
+                        title: sample block
+                        date: &quot;2023-03-02&quot;
+                        ---
+                        ```
+                        
+                        Only the `title` attribute is used by [NacoWiki][NW].  But any data can be stored in the
+                        [YAML][yaml] block.
+                        
+                        # Markup
+                        
+                        In addition to [Parsedown][parsedown] and [ParsedownExtra][pdextra] markup it adds the following
+                        extensions:
+                        
+                        - checkboxes in lists [x] and [ ] markup
+                        - table span. [See markup][tspan]
+                        - `~~` ~~strike-through~~ (del)
+                        - `++` ++insert++ (ins)
+                        - `^^` ^^superscript^^ (sup)
+                        - `,,` ,,subscript,, (sub)
+                        - `==` ==keyboard== (kbd)
+                        - `??` ??highlight?? (mark)
+                        - &quot;\\&quot; at the end of the line to generate a line break
+                        - Links ending with `^` will open in a new window.
+                        - headown
+                          - header html tags in the content start at H2 (since H1 is used
+                            by the wiki's document title.
+                          - `#++` and `#--` is used to increment headown level.  (Use this in
+                            combination with file includes.
+                        - diagrams in fenced code blocks.
+                          - Adding to a fenced code block a tag such as:
+                            - graphviz-dot
+                            - graphviz-neato
+                            - graphviz-fdp
+                            - graphviz-sfdp
+                            - graphviz-twopi
+                            - graphviz-circo
+                            - `lineart` or `bob` or `aafigure` : parsed using [svgbob][svgbob]
+                          - This will render the given code as a SVG.
+                        - Allows the use of fenced code blocks with tags to allow for syntax highlighting.
+                          - Lines begining with \`\`\`tag
+                            where `tag` is a language for syntax highlighting.
+                        - Markdown libraries:
+                          - [Parsedown][parsedown]
+                          - [PardownExtra][pdextra]
+                          - `[toc]` tag implemented using the
+                          [TOC extension](https://github.com/KEINOS/parsedown-extension_table-of-contents/^)
+                          but tweaked to allow for case insensitive tags.
+                        - Unordered list are tweaked to my personal preferences.
+                        
+                        [md]: https://www.markdownguide.org/basic-syntax/
+                        [tspan]: https://github.com/KENNYSOFT/parsedown-tablespan^
+                        [NW]: https://github.com/iliu-net/NacoWiki/
+                        [cm]: https://codemirror.net/
+                        [parsedown]: https://github.com/erusev/parsedown
+                        [pdextra]: https://github.com/erusev/parsedown-extra
+                        [svgbob]: https://github.com/ivanceras/svgbob
+                        [yaml]: https://yaml.org/.
+                        
+                        - @phpcod PluginMarkDown
+                         
+                        
+          - plugins/PluginMarkDown.php,12
+  PluginVars:
+    &quot;#0&quot;:
+      collection: PluginVars
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        NacoWiki Vars Plugin
+                        
+                        This plugin is used to render config and meta data on a page
+                        
+                        This plugin is used to create text substitutions.  There are two
+                        sets of substitutions.  Substitutions done **before**
+                        and **after** rendering.
+                        
+                        - Before rendering:
+                          - `$ urls$`: Current url
+                          - `$ cfg$` : current configuration (as a YAML document)
+                          - `$ vars$` : current config variables defined in `cfg[plugins][PluginVars]` (as a YAML document)
+                          - `$ cfg.key$`: values in the `cofg` table
+                          - `$ meta.key$` : values defined in the meta data block of the page.
+                          - `$ file.key$` : file system metadata (usually just the file time stamp).
+                          - `$ prop.key$` : File properties (managed by `NacoWiki`.
+                          - `$ key$` : Additional variables as defined in `cfg[plugins][PluginVars]`
+                        - After rendering:
+                          - `$ plugins$` an unordered HTML list containing loaded plugins.
+                          - `$ attachments$` an unordered HTML list containg links to
+                            the current document's attachments.
+                        
+                        # CLI sub-commands
+                        
+                        This plugin registers two sub-commands:
+                        
+                        - `cfg` : dumps current configuration
+                        - `gvars` : dumps defined global variables ad configured in `[plugins][PluginVars]`.
+                        
+                        - @phpcod PluginVars
+                         
+                        
+          - plugins/PluginVars.php,11
+  PluginWikiLinks:
+    &quot;#0&quot;:
+      collection: PluginWikiLinks
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        Wiki style links
+                        
+                        This plugin is used to create links that have a shorter format
+                        than Markdown style links.
+                        
+                        Simplified markup for internal links.  It supports:
+                        
+                        - hypertext links
+                          - `[[` : opening
+                          - __url-path__.
+                          - ==space== followed by html attribute tags (if any, can be omitted)
+                          - `|` followed by the link text if not specified, defaults to the
+                            __url-path__
+                          - `]]` : closing
+                        - img tags
+                          - `{{` : opening
+                          - __url-path__
+                          - ==space== followed by html attribute tags (if any, can be omitted)
+                          - `|` followed by the `alt` and `title` text.  Defaults to
+                            __url-path__.
+                          - `}}` : closing
+                        
+                        URL paths rules:
+                        
+                        - paths beginning with `/` are relative to the root of the wiki
+                        - paths beginning with `!/` search for full file paths that end with
+                          that path in the entire wiki.
+                        - paths beginnig with `!` (without `/`) match basename in the entire wiki.
+                        - paths are relative to the current document.
+                        
+                        - @phpcod PluginWikiLinks
+                         
+                        
+          - plugins/PluginWikiLinks.php,14
+  SiteGen:
+    &quot;#0&quot;:
+      collection: SiteGen
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        Site generation
+                        
+                        Class that actually implements SiteGen
+                        
+                        - @phpcod SiteGen
+                         
+                        
+          - plugins/SiteGen.php,16
+  YoutubeLinks:
+    &quot;#0&quot;:
+      collection: YoutubeLinks
+      section:
+      level: 0
+      text:
+        - 
+          - |
+            |
+                        Shortocdes for youtube links
+                        
+                        This plugin is used to create youtube links from shortcodes.
+                        
+                        Link format:
+                        
+                        - `[[`
+                        - `youtube:`
+                        - __youtube id__
+                        - Optionally append `^` to open in a new window
+                        - Optionally append `|` and text to show text when hovering
+                        - `]]`
+                        
+                        - @phpcod YoutubeLinks
+                        - @link https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages
+                         
+                        
+          - plugins/YoutubeLinks.php,14
+</code></pre>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc2</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

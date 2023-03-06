@@ -12,24 +12,10 @@ tags: development, php
 
 - Render correctly:
   - [[/0ink-drafts/2021/2021-12-26-pelican_tests.md]]
-- more attachment logic
-  - walktree -- should filter out attachment folders
-  - when removing page, should remove attachment folders
-  - when doing makePath, we should check if we are creating folders within attachment folders.
-  - when creating file, make sure a file with the same name (but different extension)
-    doesn't exist.
 
 # Mark-up
 
-- WikiLinks
-  - Code snippets to load YouTube videos or Google Maps, etc.
-    - https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages
-    - [[youtube:91233]] Or [[tryme.md]] 
-  - if no `/` but a `!` should search the name all
-    over the place.
-    - https://www.php.net/fnmatch
-  - Confirm if attachments are referenced properly
-    - Attachments should be linked directly
+
 
 # Tools
 
@@ -39,8 +25,44 @@ tags: development, php
   - Search: https://stork-search.net/
   - Sitemap generator
 
+# More docs
+
+We need more markup (beyond phpDoc) to document `event` hooks and API.  So we search
+the code for special strings and extract them.  We parse these as Markdown.
+
+- search for `'/^\s*##---\s?(.*)$/m'` 
+- collect in-between text until the next pattern.
+- The `$match[1]` is treated as:
+  - `file-name` 
+  - `#` (optional, and can be 1 `#` or more)
+  - `section name` (optional, only if `#`'s were present)
+- between matches, we collect lines that begin with:
+  - `/^\s*##\s?/`
+- these is saved to a file `file-name` with the optional header if specified.
+
+When generating document, we use `$ include` to include the extracted text
+in the right structure.
+
+For error messages:
+
+`##!! (file-name)|(element)|(optional? description)`
+
+We collect these and we sort description by how often they happen.  And length as tie breaker.
+
+- extract from source code write to markdown files
+- use SiteGen to convert .md to .html
+- include in docs directory
+
 # done 
 
+- [x] Youtube Links: Code snippets to load YouTube videos
+  - https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages
+- [x] WikiLinks
+  - [x] if no `/` but a `!` should search the name all
+    over the place.
+    - ~~https://www.php.net/fnmatch~~
+  - ~~Confirm if attachments are referenced properly~~
+    - ~~Attachments should be linked directly~~
 - [x] attachments not done properly at the moment.
   - [x] add file attachments (only for actual media handled pages)
   - [x] ~~handle it in PluginVars~~
@@ -57,32 +79,23 @@ tags: development, php
 - [x] implement a dark theme
 - [x] generate links that open new windows if URL ends with "^".  ^ is stripped.
 - [x] File tree display doesn't handle symlinks.
--[x]  tweak `css`.
+- [x]  tweak `css`.
+- [x] ghrelease checks and gh-actions
+- [x] phpDoc
+- ~~more attachment logic~~
+  - ~~walktree -- should filter out attachment folders~~
+  - ~~when removing page, should remove attachment folders~~
+  - ~~when doing makePath, we should check if we are creating folders within attachment folders.~~
+  - ~~when creating file, make sure a file with the same name (but different extension)~~
+    ~~doesn't exist.~~
+  - [x] Document that attachment's are just a convenience logic of storing files in a folder
+    of the same name as the page (without extension)
+- [x] phpdoc
+- [x] add a 'do=raw' link to allow for downloading of source code.
 
-# phpDoc
-
-- must run as docker container (since void does not include `phar` in PHP.
-  - `docker run --rm -v ${PWD}:/data phpdoc/phpdoc:3 -d . -t docs/API
-- using composer didn't work
-- For plugins:
-  ```php
-  /**
-  * @package Plugins\PluginName
-  */
-  ```
-  at the top to have plugins show up as a different package. \
-  See https://docs.phpdoc.org/3.0/guide/references/phpdoc/tags/package.html
-- Docblocks
-  - https://docs.phpdoc.org/3.0/guide/getting-started/what-is-a-docblock.html#what-is-a-docblock
-  - https://docs.phpdoc.org/3.0/guide/guides/docblocks.html#more-on-docblocks
-- Running:
-  - https://docs.phpdoc.org/3.0/guide/guides/running-phpdocumentor.html
-- configuring
-  - https://docs.phpdoc.org/3.0/guide/references/configuration.html
 
 # Maybe
 
-- ghrelease checks and gh-actions
 - Properties
   - Create files that begin with `.prop;`. followed by the page.  Track:
     - Remote user

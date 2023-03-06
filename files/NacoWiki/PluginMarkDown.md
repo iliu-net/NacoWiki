@@ -1,7 +1,9 @@
 ---
 title: PluginMarkDown
-date: "2023-03-01"
 ---
+
+NacoWiki MarkDown
+
 This plugin is used to provide [Markdown][md] functionality to [NacoWiki][NW].  It provides
 the following:
 
@@ -19,9 +21,9 @@ title: sample block
 date: "2023-03-02"
 ---
 ```
+
 Only the `title` attribute is used by [NacoWiki][NW].  But any data can be stored in the
 [YAML][yaml] block.
-
 
 # Markup
 
@@ -64,7 +66,6 @@ extensions:
   but tweaked to allow for case insensitive tags.
 - Unordered list are tweaked to my personal preferences.
 
-
 [md]: https://www.markdownguide.org/basic-syntax/
 [tspan]: https://github.com/KENNYSOFT/parsedown-tablespan^
 [NW]: https://github.com/iliu-net/NacoWiki/
@@ -73,3 +74,11 @@ extensions:
 [pdextra]: https://github.com/erusev/parsedown-extra
 [svgbob]: https://github.com/ivanceras/svgbob
 [yaml]: https://yaml.org/.
+
+- @phpcod PluginMarkDown
+ 
+
+***
+* plugins/PluginMarkDown.php,12
+***
+

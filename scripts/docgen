@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# Generate documentation
+#
+( set -o pipefail 2>/dev/null ) && set -o pipefail
+set -eu
+
+scriptdir=$(dirname "$0")
+appdir=$(readlink -f "$scriptdir/..")
+
+#~ srcdir="files/NacoWiki"
+baseurl=/NacoWiki/
+#~ baseurl=$(readlink -f "$appdir/docs")
+outdir=docs
+srcdir=$appdir/files/NacoWiki
+author="Alejandro Liu"
+
+cd $appdir
+
+update_file() {
+  local dstf="$1" srctxt dsttxt
+
+  srctxt=$(sed -e 's/^/:/')
+
+  if [ -f "$dstf" ] ; then
+    dsttxt=$(sed -e 's/^/:/' "$dstf")
+    [ x"$srctxt" = x"$dsttxt" ] && return 0 # No changes!
+  fi
+  echo "$srctxt" | sed -e 's/^://' > "$dstf" && echo "$dstf: updated"
+}
+
+render() {
+  local src="$1" dst
+  dst=$(echo "$src" | sed -e 's![^\./]*$!html!' -e "s!$srcdir!$outdir!")
+  php web/index.php render \
+	--cfg-base_url=$baseurl \
+	--cfg-static_url=$baseurl/ \
+	--cfg-file_store=$srcdir \
+	--cfg-default_doc=default.md \
+	--cfg-ext_url=$baseurl \
+	--cfg-copyright="$author" \
+	 "$src" | update_file "$dst"
+}
+render_link() {
+  local src="$1" txt
+  [ ! -f "$src" ] && return
+  #~ set -x
+  local lnk=$(readlink "$src")
+  txt=$(sed -e 's/^/:/' "$src")
+  local rc=0
+  (
+    rm -f "$src"
+    echo "$txt" | sed -e 's/^://' > "$src"
+    ls -sh "$src"
+    render "$src"
+  ) || rc=$?
+  rm -f "$src"
+  ln -s "$lnk" "$src"
+  return $rc
+}
+
+php web/index.php mkassets --output="$outdir"
+php $scriptdir/phpcod.php \
+	--output="$srcdir"  \
+	--yaml=$srcdir/phpcod.yaml \
+	--title="NacoWiki Docs" \
+	nacowiki.php classes/* plugins/*.php
+
+render_link $srcdir/README.md
+for src in $srcdir/*
+do
+  [ -L "$src" ] && continue;
+
+  if [ -f "$src" ] ; then
+    case "$src" in
+    *.md|*.yaml)
+      render "$src"
+      ;;
+    *)
+      echo "IGNORE $src"
+      ;;
+    esac
+  fi
+done

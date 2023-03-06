@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>PluginVars : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-06 15:22:54"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-06"/>
+<meta name="file-mtime" content="1678116174"/>
+<meta name="date" content="2023-03-06"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	PluginVars</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <p>NacoWiki Vars Plugin</p>
+<p>This plugin is used to render config and meta data on a page</p>
+<p>This plugin is used to create text substitutions.  There are two
+sets of substitutions.  Substitutions done <strong>before</strong>
+and <strong>after</strong> rendering.</p>
+<ul>
+<li>Before rendering:
+<ul>
+<li><code>$ urls$</code>: Current url</li>
+<li><code>$ cfg$</code> : current configuration (as a YAML document)</li>
+<li><code>$ vars$</code> : current config variables defined in <code>cfg[plugins][PluginVars]</code> (as a YAML document)</li>
+<li><code>$ cfg.key$</code>: values in the <code>cofg</code> table</li>
+<li><code>$ meta.key$</code> : values defined in the meta data block of the page.</li>
+<li><code>$ file.key$</code> : file system metadata (usually just the file time stamp).</li>
+<li><code>$ prop.key$</code> : File properties (managed by <code>NacoWiki</code>.</li>
+<li><code>$ key$</code> : Additional variables as defined in <code>cfg[plugins][PluginVars]</code></li>
+</ul></li>
+<li>After rendering:
+<ul>
+<li><code>$ plugins$</code> an unordered HTML list containing loaded plugins.</li>
+<li><code>$ attachments$</code> an unordered HTML list containg links to
+the current document's attachments.</li>
+</ul></li>
+</ul>
+<h2 id="CLI+sub-commands" name="CLI+sub-commands">CLI sub-commands</h2>
+<p>This plugin registers two sub-commands:</p>
+<ul>
+<li>
+<p><code>cfg</code> : dumps current configuration</p>
+</li>
+<li>
+<p><code>gvars</code> : dumps defined global variables ad configured in <code>[plugins][PluginVars]</code>.</p>
+</li>
+<li>
+<p>@phpcod PluginVars</p>
+</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/PluginVars.php,11
+<hr /></li>
+</ul>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc2</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

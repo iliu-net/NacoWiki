@@ -55,8 +55,12 @@
 		  echo '<p>';
 		  list($line,$hl) = $matches[$doc];
 		  $line = htmlspecialchars($line);
-		  $hl = htmlspecialchars($hl);
-		  echo str_replace($hl, '<em class="search-term">'.$hl.'</em>',$line);
+		  if (empty($hl)) {
+		    echo $line;
+		  } else {
+		    $hl = htmlspecialchars($hl);
+		    echo str_replace($hl, '<em class="search-term">'.$hl.'</em>',$line);
+		  }
 		  echo '</p>';
 		}
 	      }

@@ -18,6 +18,16 @@ date: "2023-03-01"
 - **File-based** Easily editable
 - Simple off-tree installation with multiple instances.
 - CLI interface.
+- Syntax highlight'ing based on [hihglight.js](https://highlightjs.org/)
+- Highlighting editor based on [CodeMirror](https://codemirror.net/)
+- Support of front-matter Meta data.
+- Standard Plugins:
+  - Generate [grapviz](https://graphviz.org/) or [svgbob](https://github.com/ivanceras/svgbob) drawings from tagged/fenced code blocks
+  - Extended Markdown markup.
+  - Support for source code with display and editing with syntax highlighting for supported
+    languages.  This is meant to be aused to store snippets
+  - Wiki style links
+  - Emojis
 
 ***
 
@@ -59,14 +69,6 @@ through the same plugin mechanism.
 Copyright &copy; 2023 Alejandro Liu. \
 Licensed under [MIT](https://opensource.org/licenses/MIT).
 
-[NanoWiki](https://github.com/iliu-net/nanowiki) \
-Copyright &copy; 2022 Alejandro Liu. \
-Licensed under [MIT](https://opensource.org/licenses/MIT).
-
-[PicoWiki](https://github.com/luckyshot/picowiki) \
-Copyright &copy; 2018-2019 [Xavi Esteve](https://xaviesteve.com/). \
-Licensed under [MIT](https://opensource.org/licenses/MIT).
-
 [Parsedown](https://github.com/erusev/parsedown) by Emanuil Rusev also licensed under a MIT License.
 
-Some plugins copyright by their respective authors.
+Some plugins and parsedown extensions copyright by their respective authors.

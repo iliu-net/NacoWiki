@@ -21,10 +21,14 @@ if [ ! -x "$phpdoc" ] ; then
   chmod a+x "$phpdoc"
 fi
 
+cd $appdir
 
-$phpdoc -t docs/api -d "$appdir" -t docs \
+$phpdoc -t $appdir/docs/php-api -d "$appdir" -t docs/php-api \
+	--title "PHP API" \
+	--defaultpackagename "NWikiApp" \
 	--ignore assets/ --ignore compat/ --ignore files/ \
 	--ignore scripts/ --ignore views/ --ignore web/
+cp $appdir/docs/landing.html $appdir/docs/index.html
 
 
 

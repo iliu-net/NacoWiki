@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>commands : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-06 19:51:54"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-06"/>
+<meta name="file-mtime" content="1678132314"/>
+<meta name="date" content="2023-03-06"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	commands</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <h3 id="cfg" name="cfg">cfg</h3>
+<p>Dump config</p>
+<p>This implements the cli sub-command cfg</p>
+<p>This shows current running configuration of the wiki.</p>
+<ul>
+<li>@param \NanoWikiApp $wiki running wiki instance</li>
+<li>@param array $argv Command line arguments</li>
+<li>@event cli:gvars</li>
+<li>@phpcod commands##cfg</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/PluginVars.php,68
+<hr /></li>
+</ul>
+<h3 id="files" name="files">files</h3>
+<p>List files</p>
+<p>Makes a list of Wiki files</p>
+<ul>
+<li>@phpcod commands##files</li>
+<li>@event cli:files</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/SiteGen.php,156
+<hr /></li>
+</ul>
+<h3 id="gvars" name="gvars">gvars</h3>
+<p>Dump global variables</p>
+<p>This implements the cli sub-command gvars</p>
+<p>This will dump all the variables defined in the configuration
+of the wiki user cfg[plugins][PluginVars]</p>
+<ul>
+<li>@param \NanoWikiApp $wiki running wiki instance</li>
+<li>@param array $argv Command line arguments</li>
+<li>@event cli:gvars</li>
+<li>@phpcod commands##gvars</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/PluginVars.php,46
+<hr /></li>
+</ul>
+<h3 id="help" name="help">help</h3>
+<p>Show this help</p>
+<p>This implements a CLI sub-command for HELP</p>
+<p>It will look into the plugin configuration and display what
+are the available sub-commands.  In addition if there is
+a docstring for the implementing function, it will display
+it.  It also shows what plugin's class is providing this
+command.</p>
+<ul>
+<li>@param \NanoWikiApp $wiki running wiki instance</li>
+<li>@param array $argv Command line arguments</li>
+<li>@event cli:help</li>
+<li>@phpcod commands##help</li>
+</ul>
+<hr />
+<ul>
+<li>classes/Cli.php,70
+<hr /></li>
+</ul>
+<h3 id="install" name="install">install</h3>
+<p>Install assets</p>
+<p>This implements a CLI sub-command for plugins.</p>
+<p>This will check if the assets directory specified in the
+\NanoWikiApp configuration exists, and if it does not
+exist, it will create it.</p>
+<ul>
+<li>@param \NanoWikiApp $wiki running wiki instance</li>
+<li>@param array $argv Command line arguments</li>
+<li>@event cli:install</li>
+<li>@phpcod commands##install</li>
+</ul>
+<hr />
+<ul>
+<li>classes/Cli.php,130
+<hr /></li>
+</ul>
+<h3 id="mkassets" name="mkassets">mkassets</h3>
+<p>Copy assets</p>
+<p>Makes a copy of static assets to the generated site</p>
+<ul>
+<li>@phpcod commands##mkassets</li>
+<li>@event cli:mkassets</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/SiteGen.php,121
+<hr /></li>
+</ul>
+<h3 id="plugins" name="plugins">plugins</h3>
+<p>List available plugins</p>
+<p>This implements a CLI sub-command for plugins.</p>
+<p>This looks in the plugin configuration and shows what plugins
+are currently available, its source file and the plugin version
+if any</p>
+<ul>
+<li>@param \NanoWikiApp $wiki running wiki instance</li>
+<li>@param array $argv Command line arguments</li>
+<li>@event cli:plugins</li>
+<li>@phpcod commands##plugins</li>
+</ul>
+<hr />
+<ul>
+<li>classes/Cli.php,105
+<hr /></li>
+</ul>
+<h3 id="render" name="render">render</h3>
+<p>Render a wiki page as HTML</p>
+<ul>
+<li>@param \NanoWikiApp $wiki running wiki instance</li>
+<li>@param array $argv Command line arguments</li>
+<li>@phpcod commands##render</li>
+<li>@event cli:render</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/SiteGen.php,68
+<hr /></li>
+</ul>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc2</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

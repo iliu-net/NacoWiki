@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>themes.md : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-02 22:25:16"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-02"/>
+<meta name="file-mtime" content="1677795916"/>
+<meta name="date" content="2023-03-02"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	themes.md</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <p>You can configure a theme for the overall wiki and for the <a href="https://codemirror.net/">CodeMirror</a> and <a href="https://highlightjs.org/">Highlight.js</a>
+add-on libraries.</p>
+<p>To configure the themes, you must add to the configuration the following keys:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>theme</td>
+<td>Configure the overall theme of the wiki</td>
+</tr>
+<tr>
+<td>theme-highlight-js</td>
+<td><a href="https://highlightjs.org/">highlight.js</a> theme used for syntax highlighting of code blocks</td>
+</tr>
+<tr>
+<td>theme-codemirror</td>
+<td><a href="https://codemirror.net/">CodeMirror</a> theme used in the editor page</td>
+</tr>
+</tbody>
+</table>
+<h2 id="NacoWiki+themes" name="NacoWiki+themes">NacoWiki themes</h2>
+<p>These are found in the <code>assets/themes</code> folder.  There is a theme per folder. To create a new
+theme, create a new folder, and copy the assets in there.  You do not need to create all
+new assets.  You can just create symbolic links to assets that you want to re-use.</p>
+<h2 id="%5BCodeMirror%5D%5Bcm%5D+themes" name="%5BCodeMirror%5D%5Bcm%5D+themes"><a href="https://codemirror.net/">CodeMirror</a> themes</h2>
+<p>You just need to specify the theme to be used.  You can preview the themes here:</p>
+<ul>
+<li><a href="https://codemirror.net/5/demo/theme.html" target="_blank">CodeMirror themes demo</a></li>
+</ul>
+<p>Just use the same name in the configuration key.</p>
+<h2 id="%5Bhighlight.js%5D%5Bhljs%5D+themes" name="%5Bhighlight.js%5D%5Bhljs%5D+themes"><a href="https://highlightjs.org/">highlight.js</a> themes</h2>
+<p>Just specify the theme to use.  You may need to append <code>.min</code> to the theme name depending
+on the CDN.</p>
+<p>YOu can preview themes here:</p>
+<ul>
+<li><a href="https://highlightjs.org/static/demo/" target="_blank">highlight.js demo</a></li>
+</ul>
+<p>Once you have selected the theme, look in the source of the page to look-up the CSS
+file for that theme.</p>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc2</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
