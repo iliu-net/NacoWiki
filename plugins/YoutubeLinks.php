@@ -29,7 +29,7 @@ use NWiki\Cli as Cli;
  */
 class YoutubeLinks {
   /** var string */
-  const VERSION = '0.0';
+  const VERSION = '1.0';
 
 
   /** Youtube Links implementation

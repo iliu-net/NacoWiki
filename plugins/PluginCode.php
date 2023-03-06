@@ -59,7 +59,7 @@ use NWiki\Core as Core;
  */
 class PluginCode {
   /** @var string */
-  const VERSION = '0.1.0';
+  const VERSION = '1.0';
   /** @var mixed */
   const TYPES = [
     'yaml' => [
