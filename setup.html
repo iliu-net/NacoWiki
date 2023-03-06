@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Setup : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-06 20:12:08"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-06"/>
+<meta name="file-mtime" content="1678133528"/>
+<meta name="date" content="2023-03-06"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	Setup</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <ul>
+<li>copy dist</li>
+<li>create a folder to store entry php and assets.
+<ul>
+<li>one instance == one entry php.</li>
+<li>entry php contains configuration to that specific instance.</li>
+<li>Assets can be shared with multiple instance as long as they use the same code base.</li>
+</ul></li>
+<li>php <em>instance-php</em> install</li>
+</ul>
+<h2 id="NacoWiki+configuration" name="NacoWiki+configuration">NacoWiki configuration</h2>
+<ul>
+<li>umask (int) - Optional umask</li>
+<li>proxy-ips (array|string) : list of IP addresses of trusted reverse proxies
+Either as an array of strings, or as string with comma separated IP addresses.</li>
+<li>no_cache (bool) : defaults to false.  If set to true, enables
+sending of headers that disable browser caches.</li>
+<li>plugins_path (array|string) : list of directories where to look for plugins. <br />Defaults to <code>APP_DIR/plugins</code>. <br />It can be specified as an array of strings, or as single array with
+paths separated by PHP's PATH_SEPARATOR <code>:</code> under Linux, <code>;</code> under Windows.</li>
+<li>base_url (string) - Base Application URL <br />Normally defaults to the HTTP SCRIPT_NAME value.  However, it can
+be changed for placing after a reverse proxy which changes the path.</li>
+<li>static_url (string) - URL Path to static resources <br />Normally defaults to the dirname of HTTP SCRIPT_NAME.  However, it can
+be changed for placing after a reverse proxy which changes the path. <br />It has to be a HTTP path that can reach the static resources.</li>
+<li>static_path (string) - File Path to static resources <br />Path in the filesystem to reach the actual static resources.  Defaults
+to <code>APP_DIR/assets</code>.</li>
+<li>file_store (string) -  Location where data files are stored <br />Defaults to <code>CWD/files</code>.  These files do <em>NOT</em> need to be served
+by the web server, so that the PHP script can control all access
+to them.</li>
+<li>read_only (bool|string) - if true, makes the wiki read-only.  Defaults to false. <br />if set to <code>not-auth</code>, it will make it read-only until the user
+authenticates.</li>
+<li>unix_eol (bool) - force all input files to be converted from CRLF to UNIX style
+LF for the EOL marker.  Defaults to true.  Set to false if you want
+to keep CRLF as EOL markers.</li>
+<li>default_doc (string) - the default document for browsing into folders. <br />defaults to <code>index.md</code>.</li>
+<li>plugins (array) - Plugin configuration <br />Plugins can read its own configuration from this array. By
+convention, they should read only from the keys matching the
+plugin name.  In addition, you can enable or disable
+plugins with the keys:
+<ul>
+<li>enabled (string|array) - list of plugins to enable either as a
+string with comma separated name of plugins or as an array with
+plugin names.</li>
+<li>disabled (string|array) - list of plugins to disable either as a
+string with comma separated name of plugins or as an array with
+plugin names.
+By default all found plugins will be enabled.</li>
+</ul></li>
+<li>cookie_id (string) - used to keep cookies unique</li>
+<li>cookie_age (int) - seconds to keep the cookies alive. <br />Defaults to 30 days.</li>
+<li>ext_url (string) - URL used in the logo link.  Defaults to
+the current http host home page.</li>
+<li>title (string) - Window title bar</li>
+<li>copyright (string) - copyright text show in the footer</li>
+<li>theme (string) - Overall nacowiki theme</li>
+<li>theme-highlight-js (string) - theme to be used for syntax highlighting</li>
+<li>theme-codemirror (string) - CodeMirror theme</li>
+</ul>
+<hr />
+<ul>
+<li>nacowiki.php,39
+<hr /></li>
+</ul>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc3</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

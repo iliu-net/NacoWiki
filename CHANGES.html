@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CHANGES : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-03 10:24:06"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-03"/>
+<meta name="file-mtime" content="1677839046"/>
+<meta name="date" content="2023-02-12"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	CHANGES</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <div id="toc"><ul>
+<li><a href="#3.0.0">3.0.0</a></li>
+</ul></div>
+<h2 id="3.0.0" name="3.0.0">3.0.0</h2>
+<ul>
+<li>Renamed to <code>NacoWiki</code></li>
+<li>Full rewrite of <a href="https://github.com/iliu-net/nanowiki">NanoWiki</a>.  ~20% reduction of lines of code.</li>
+<li>Cleaner and more functional UI.</li>
+<li>Initial REST-API support.</li>
+<li>Added a CLI interface.</li>
+<li>Off-tree installation, with the option of co-existing multiple instances.</li>
+<li>Code modularization,
+<ul>
+<li><code>nanowiki</code> main class that integrates everything together.</li>
+<li><code>Core</code>: main WIKI functionality</li>
+<li><code>Cli</code>: CLI interface</li>
+<li><code>PluginCollection</code>: plugin support</li>
+</ul></li>
+<li><code>CodeMirror</code> support now in the <code>Core</code> (instead of depending of Plugin implementations.</li>
+</ul>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc3</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

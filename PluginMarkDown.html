@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>PluginMarkDown : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-06 20:12:08"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-06"/>
+<meta name="file-mtime" content="1678133528"/>
+<meta name="date" content="2023-03-06"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	PluginMarkDown</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <p>NacoWiki MarkDown</p>
+<p>This plugin is used to provide <a href="https://www.markdownguide.org/basic-syntax/">Markdown</a> functionality to <a href="https://github.com/iliu-net/NacoWiki/">NacoWiki</a>.  It provides
+the following:</p>
+<ul>
+<li><a href="https://www.markdownguide.org/basic-syntax/">Markdown</a> renderer with extended syntax.</li>
+<li><a href="https://codemirror.net/">CodeMirror</a> for editor.</li>
+<li>Allows the inclusion of a <a href="https://yaml.org/.">YAML</a> block at the beginning to store meta data.</li>
+</ul>
+<h2 id="Meta+data" name="Meta+data">Meta data</h2>
+<p>Meta data is stored in a block at the top of the file of the form:</p>
+<pre><code class="language-yaml">---
+title: sample block
+date: "2023-03-02"
+---</code></pre>
+<p>Only the <code>title</code> attribute is used by <a href="https://github.com/iliu-net/NacoWiki/">NacoWiki</a>.  But any data can be stored in the
+<a href="https://yaml.org/.">YAML</a> block.</p>
+<h2 id="Markup" name="Markup">Markup</h2>
+<p>In addition to <a href="https://github.com/erusev/parsedown">Parsedown</a> and <a href="https://github.com/erusev/parsedown-extra">ParsedownExtra</a> markup it adds the following
+extensions:</p>
+<ul>
+<li>
+<p>checkboxes in lists [x] and [ ] markup</p>
+</li>
+<li>
+<p>table span. <a href="https://github.com/KENNYSOFT/parsedown-tablespan" target="_blank">See markup</a></p>
+</li>
+<li>
+<p><code>~~</code> <del>strike-through</del> (del)</p>
+</li>
+<li>
+<p><code>++</code> <ins>insert</ins> (ins)</p>
+</li>
+<li>
+<p><code>^^</code> <sup>superscript</sup> (sup)</p>
+</li>
+<li>
+<p><code>,,</code> <sub>subscript</sub> (sub)</p>
+</li>
+<li>
+<p><code>==</code> <kbd>keyboard</kbd> (kbd)</p>
+</li>
+<li>
+<p><code>??</code> <mark>highlight</mark> (mark)</p>
+</li>
+<li>
+<p>&quot;\&quot; at the end of the line to generate a line break</p>
+</li>
+<li>
+<p>Links ending with <code>^</code> will open in a new window.</p>
+</li>
+<li>
+<p>headown</p>
+<ul>
+<li>header html tags in the content start at H2 (since H1 is used
+by the wiki's document title.</li>
+<li><code>#++</code> and <code>#--</code> is used to increment headown level.  (Use this in
+combination with file includes.</li>
+</ul>
+</li>
+<li>
+<p>diagrams in fenced code blocks.</p>
+<ul>
+<li>Adding to a fenced code block a tag such as:
+<ul>
+<li>graphviz-dot</li>
+<li>graphviz-neato</li>
+<li>graphviz-fdp</li>
+<li>graphviz-sfdp</li>
+<li>graphviz-twopi</li>
+<li>graphviz-circo</li>
+<li><code>lineart</code> or <code>bob</code> or <code>aafigure</code> : parsed using <a href="https://github.com/ivanceras/svgbob">svgbob</a></li>
+</ul></li>
+<li>This will render the given code as a SVG.</li>
+</ul>
+</li>
+<li>
+<p>Allows the use of fenced code blocks with tags to allow for syntax highlighting.</p>
+<ul>
+<li>Lines begining with ```tag
+where <code>tag</code> is a language for syntax highlighting.</li>
+</ul>
+</li>
+<li>
+<p>Markdown libraries:</p>
+<ul>
+<li><a href="https://github.com/erusev/parsedown">Parsedown</a></li>
+<li><a href="https://github.com/erusev/parsedown-extra">PardownExtra</a></li>
+<li><code>[toc]</code> tag implemented using the
+<a href="https://github.com/KEINOS/parsedown-extension_table-of-contents/" target="_blank">TOC extension</a>
+but tweaked to allow for case insensitive tags.</li>
+</ul>
+</li>
+<li>
+<p>Unordered list are tweaked to my personal preferences.</p>
+</li>
+<li>
+<p>@phpcod PluginMarkDown</p>
+</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/PluginMarkDown.php,12
+<hr /></li>
+</ul>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc3</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>

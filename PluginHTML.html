@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--   Standard HTML head fragment  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>PluginHTML : NacoWiki</title>
+  <meta name="file-datetime" content="2023-03-06 20:12:08"/>
+<meta name="file-year" content="2023"/>
+<meta name="file-date" content="2023-03-06"/>
+<meta name="file-mtime" content="1678133528"/>
+<meta name="date" content="2023-03-06"/>
+  <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
+
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <!-- body header -->
+    <header>
+      <h1 class="title">
+	<a href="/NacoWiki/"><img src="/NacoWiki//nanowiki-logo.png" width=32 height=32></a>
+	PluginHTML</h1>
+      <hr/>
+    </header>
+
+    <div id="main" class="main">
+    <p>HTML media handler</p>
+<p>NacoWiki HTML render.</p>
+<p>This plugin is used to handle HTML files.  Implements a media
+handler interface.</p>
+<p>To maintain the HTML syntax, HTML documents must follow this template:</p>
+<pre><code class="language-html">&lt;html&gt;
+  &lt;head&gt;
+    &lt;!-- texts in meta tags are assumed to be url encoded --&gt;
+    &lt;!--    Use "%22" to insert a quote (") --&gt;
+    &lt;!--    Use "%25" to insert a "%" --&gt;
+    &lt;title&gt;Test HTML document&lt;/title&gt;
+    &lt;meta name="sample" content="meta-data"&gt;
+    &lt;!--meta name="example-key" content="example-value"--&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    HTML content
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>Note, only the HTML between <code>&lt;body&gt;</code> and <code>&lt;/body&gt;</code> will be rendered.
+Also, the meta data is read from the <code>&lt;head&gt;</code> section.  However,
+only the lines with <code>&lt;title&gt;</code> and <code>&lt;meta&gt;</code> tags are recognized.</p>
+<p>The <code>&lt;title&gt;</code> contents uses <code>htmlspecialchars</code> for escaping.  On the
+other hand, the content of the <code>&lt;meta&gt;</code> is URL encoded at least for the
+<code>%</code> (<code>%25</code>) and <code>"</code> (<code>%22</code>) characters.</p>
+<ul>
+<li>@phpcod PluginHTML</li>
+</ul>
+<hr />
+<ul>
+<li>plugins/PluginHTML.php,12
+<hr /></li>
+</ul>    </div>
+  </div>
+
+<footer>
+    <hr/>
+  <small>
+    SiteGen 0.0 <a href="https://github.com/iliu-net/NacoWiki/" target="_blank">NacoWiki: 3.0.0-rc3</a><br/>
+    Copyright &copy; 2023 Alejandro Liu <br/>
+    All rights reserved<br/>
+  </small>
+
+</footer>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
