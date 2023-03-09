@@ -29,10 +29,8 @@
     <div id="main" class="main">
     <div id="toc"><ul>
 <li><a href="#Issues">Issues</a></li>
-<li><a href="#Mark-up">Mark-up</a></li>
 <li><a href="#Tools">Tools</a></li>
-<li><a href="#More+docs">More docs</a></li>
-<li><a href="#done">done</a></li>
+<li><a href="#SiteGen">SiteGen</a></li>
 <li><a href="#Maybe">Maybe</a>
 <ul>
 <li><a href="#Tag+Navigation">Tag Navigation</a></li>
@@ -40,8 +38,13 @@
 <li><a href="#Other+diag+integrations">Other diag integrations</a></li>
 <li><a href="#auth">auth</a></li>
 </ul></li>
+<li><a href="#done">done</a>
+<ul>
+<li><a href="#More+docs">More docs</a></li>
+</ul></li>
 </ul></div>
 <hr />
+<p>Ready for 3.0 release.</p>
 <h2 id="Issues" name="Issues">Issues</h2>
 <ul>
 <li>Render correctly:
@@ -49,49 +52,132 @@
 <li><a href="/NacoWiki//0ink-drafts/2021/2021-12-26-pelican_tests.html">2021-12-26-pelican_tests</a></li>
 </ul></li>
 </ul>
-<h2 id="Mark-up" name="Mark-up">Mark-up</h2>
 <h2 id="Tools" name="Tools">Tools</h2>
 <ul>
 <li>Report for checking for broken links (links to pages that don't exist yet), Orphan pages, etc.
 <ul>
 <li>For wiki links Plugin as a CLI tool</li>
 </ul></li>
-<li>static site generator
+</ul>
+<h2 id="SiteGen" name="SiteGen">SiteGen</h2>
 <ul>
 <li>Search: <a href="https://stork-search.net/">https://stork-search.net/</a></li>
 <li>Sitemap generator</li>
+<li>RSS</li>
+<li>Compatibility with <a href="https://getpelican.com/">Pelican?</a>.
+<ul>
+<li>Use <a href="https://twig.symfony.com/">twig</a> : since is derived from <a href="https://palletsprojects.com/p/jinja/">Jinja2</a></li>
+</ul></li>
+<li>Git data: save it in a <code>.git;</code> file.  To track changes.
+<ul>
+<li><code>git rev-list --pretty=raw HEAD  -- file-path</code></li>
+<li>Only hook event if CLI (See: <a href="https://civihosting.com/blog/detect-cli-in-php-script/">https://civihosting.com/blog/detect-cli-in-php-script/</a>)</li>
+<li>modifies <code>fileMeta</code> and <code>props</code></li>
+</ul></li>
+<li>Migrate 0ink.net</li>
+<li>switch to github-actions
+<ul>
+<li><a href="https://github.blog/2022-08-10-github-pages-now-uses-actions-by-default/">https://github.blog/2022-08-10-github-pages-now-uses-actions-by-default/</a></li>
+<li><a href="https://github.com/marketplace/actions/github-pages-action">https://github.com/marketplace/actions/github-pages-action</a></li>
+<li><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site</a></li>
 </ul></li>
 </ul>
-<h2 id="More+docs" name="More+docs">More docs</h2>
-<p>We need more markup (beyond phpDoc) to document <code>event</code> hooks and API.  So we search
-the code for special strings and extract them.  We parse these as Markdown.</p>
+<h2 id="Maybe" name="Maybe">Maybe</h2>
 <ul>
-<li>search for <code>'/^\s*##---\s?(.*)$/m'</code> </li>
-<li>collect in-between text until the next pattern.</li>
-<li>The <code>$match[1]</code> is treated as:
+<li>Properties
 <ul>
-<li><code>file-name</code> </li>
-<li><code>#</code> (optional, and can be 1 <code>#</code> or more)</li>
-<li><code>section name</code> (optional, only if <code>#</code>'s were present)</li>
+<li>Create files that begin with <code>.prop;</code>. followed by the page.  Track:
+<ul>
+<li>Remote user @ renite addr</li>
+<li>Creation date</li>
+<li>Log of modifications.  Keep it so that there is one log entry per day.
+<pre><code class="language-yaml">created:
+- 2023-03-01
+- 
+  - user
+  - 192.168.101.5
+change-log:
+-
+  - 2023-03-02
+  -
+    - user
+    - 192.168.101.5</code></pre></li>
 </ul></li>
-<li>between matches, we collect lines that begin with:
-<ul>
-<li><code>/^\s*##\s?/</code></li>
+<li>save this as <code>wiki-&gt;props</code>.</li>
 </ul></li>
-<li>these is saved to a file <code>file-name</code> with the optional header if specified.</li>
-</ul>
-<p>When generating document, we use <code>$ include</code> to include the extracted text
-in the right structure.</p>
-<p>For error messages:</p>
-<p><code>##!! (file-name)|(element)|(optional? description)</code></p>
-<p>We collect these and we sort description by how often they happen.  And length as tie breaker.</p>
+<li>Hook postSave event to implement backups or track changes
 <ul>
-<li>extract from source code write to markdown files</li>
-<li>use SiteGen to convert .md to .html</li>
-<li>include in docs directory</li>
+<li>backups
+<ul>
+<li>keep {n} versions.  But only overwrite backup if older than a day.</li>
+</ul></li>
+<li>Track changes
+<ul>
+<li>Create files with <code>.n;page.md</code> followed by page.  Where <code>n</code> is a number.</li>
+<li>Store reverse diffs in here.</li>
+<li>Possible libraries for generating diffs:
+<ul>
+<li><a href="https://github.com/baraja-core/simple-php-diff">https://github.com/baraja-core/simple-php-diff</a></li>
+<li><a href="https://github.com/jfcherng/php-diff">https://github.com/jfcherng/php-diff</a></li>
+<li><a href="https://www.php.net/manual/en/function.xdiff-file-diff.php">https://www.php.net/manual/en/function.xdiff-file-diff.php</a></li>
+<li>or just exec <code>diff</code> command.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>markdown and html media handler
+<ul>
+<li>Should be configured globally</li>
+<li>run PHP code</li>
+</ul></li>
+<li>sort - alpha,latest file (in views/folder)
+<ul>
+<li>add it to the context?</li>
+</ul></li>
 </ul>
+<h3 id="Tag+Navigation" name="Tag+Navigation">Tag Navigation</h3>
+<ul>
+<li>nav
+<ul>
+<li>tag-cloud [all files|current context]</li>
+</ul></li>
+<li>tags: GET to add or remove tags from the selection cookie</li>
+<li>tagging
+<ul>
+<li><input type="checkbox" disabled > auto-tagging: based on words and tagcloud</li>
+<li>tag from git</li>
+<li>auto-tags: automatically generated</li>
+<li>tags: manual tags</li>
+<li>exclude-tags: removed.</li>
+</ul></li>
+</ul>
+<h3 id="Markdown+text+diagrams" name="Markdown+text+diagrams">Markdown text diagrams</h3>
+<ul>
+<li>blockdiag
+<ul>
+<li><a href="http://blockdiag.com/en/">http://blockdiag.com/en/</a></li>
+</ul></li>
+</ul>
+<h3 id="Other+diag+integrations" name="Other+diag+integrations">Other diag integrations</h3>
+<ul>
+<li><a href="https://github.com/cidrblock/drawthe.net">https://github.com/cidrblock/drawthe.net</a></li>
+<li><a href="https://github.com/jgraph/drawio">https://github.com/jgraph/drawio</a></li>
+</ul>
+<h3 id="auth" name="auth">auth</h3>
+<ul>
+<li>user authentication
+<ul>
+<li><a href="https://www.devdungeon.com/content/http-basic-authentication-php">https://www.devdungeon.com/content/http-basic-authentication-php</a></li>
+</ul></li>
+<li>http daemon authentication
+<ul>
+<li><a href="https://httpd.apache.org/docs/2.4/howto/auth.html">https://httpd.apache.org/docs/2.4/howto/auth.html</a></li>
+</ul></li>
+</ul>
+<hr />
 <h2 id="done" name="done">done</h2>
 <ul>
+<li><input type="checkbox" disabled checked> UI: when starting page, it shoudl focus automatically on Edit window</li>
+<li><input type="checkbox" disabled checked> Should prevent saving files where there is no change to source.</li>
 <li><input type="checkbox" disabled checked> Youtube Links: Code snippets to load YouTube videos
 <ul>
 <li><a href="https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages">https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages</a></li>
@@ -144,104 +230,33 @@ of the same name as the page (without extension)</li>
 <li><input type="checkbox" disabled checked> phpdoc</li>
 <li><input type="checkbox" disabled checked> add a 'do=raw' link to allow for downloading of source code.</li>
 </ul>
-<h2 id="Maybe" name="Maybe">Maybe</h2>
+<h3 id="More+docs" name="More+docs">More docs</h3>
+<p>We need more markup (beyond phpDoc) to document <code>event</code> hooks and API.  So we search
+the code for special strings and extract them.  We parse these as Markdown.</p>
 <ul>
-<li>Properties
+<li>search for <code>'/^\s*##---\s?(.*)$/m'</code> </li>
+<li>collect in-between text until the next pattern.</li>
+<li>The <code>$match[1]</code> is treated as:
 <ul>
-<li>Create files that begin with <code>.prop;</code>. followed by the page.  Track:
-<ul>
-<li>Remote user</li>
-<li>Creation date</li>
-<li>Log of modifications.  Keep it so that there is one log entry per day.</li>
+<li><code>file-name</code> </li>
+<li><code>#</code> (optional, and can be 1 <code>#</code> or more)</li>
+<li><code>section name</code> (optional, only if <code>#</code>'s were present)</li>
 </ul></li>
-<li>save this as <code>wiki-&gt;props</code>.</li>
-</ul></li>
-<li>preSave and postSave events to implement backups of track changes
+<li>between matches, we collect lines that begin with:
 <ul>
-<li>backups
-<ul>
-<li>keep {n} versions.  But only overwrite backup if older than a day.</li>
+<li><code>/^\s*##\s?/</code></li>
 </ul></li>
-<li>Track changes
-<ul>
-<li>Create files with <code>.n;page.md</code> followed by page.  Where <code>n</code> is a number.</li>
-<li>Store reverse diffs in here.</li>
-<li>Possible libraries for generating diffs:
-<ul>
-<li><a href="https://github.com/baraja-core/simple-php-diff">https://github.com/baraja-core/simple-php-diff</a></li>
-<li><a href="https://github.com/jfcherng/php-diff">https://github.com/jfcherng/php-diff</a></li>
-<li><a href="https://www.php.net/manual/en/function.xdiff-file-diff.php">https://www.php.net/manual/en/function.xdiff-file-diff.php</a></li>
-<li>or just exec <code>diff</code> command.</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>markdown and html media handler
-<ul>
-<li>Should be configured globally</li>
-<li>run PHP code</li>
-</ul></li>
-<li>UI: when starting page, it shoudl focus automatically on Edit window
-<ul>
-<li><mark>don't know how to do this.</mark></li>
-</ul></li>
-<li>sort - alpha,latest file (in views/folder)
-<ul>
-<li>add it to the context?</li>
-</ul></li>
+<li>these is saved to a file <code>file-name</code> with the optional header if specified.</li>
 </ul>
-<h3 id="Tag+Navigation" name="Tag+Navigation">Tag Navigation</h3>
+<p>When generating document, we use <code>$ include</code> to include the extracted text
+in the right structure.</p>
+<p>For error messages:</p>
+<p><code>##!! (file-name)|(element)|(optional? description)</code></p>
+<p>We collect these and we sort description by how often they happen.  And length as tie breaker.</p>
 <ul>
-<li>nav
-<ul>
-<li>tag-cloud [all files|current context]</li>
-</ul></li>
-<li>tags: GET to add or remove tags from the selection cookie</li>
-<li>tagging
-<ul>
-<li><input type="checkbox" disabled > auto-tagging: based on words and tagcloud</li>
-<li>tag from git</li>
-<li>auto-tags: automatically generated</li>
-<li>tags: manual tags</li>
-<li>exclude-tags: removed.</li>
-</ul></li>
-</ul>
-<h3 id="Markdown+text+diagrams" name="Markdown+text+diagrams">Markdown text diagrams</h3>
-<ul>
-<li>blockdiag
-<ul>
-<li><a href="http://blockdiag.com/en/">http://blockdiag.com/en/</a></li>
-</ul></li>
-</ul>
-<h3 id="Other+diag+integrations" name="Other+diag+integrations">Other diag integrations</h3>
-<ul>
-<li><a href="https://github.com/cidrblock/drawthe.net">https://github.com/cidrblock/drawthe.net</a></li>
-<li><a href="https://github.com/jgraph/drawio">https://github.com/jgraph/drawio</a></li>
-</ul>
-<h3 id="auth" name="auth">auth</h3>
-<ul>
-<li>user authentication
-<ul>
-<li><a href="https://www.devdungeon.com/content/http-basic-authentication-php">https://www.devdungeon.com/content/http-basic-authentication-php</a></li>
-</ul></li>
-<li>http daemon authentication
-<ul>
-<li><a href="https://httpd.apache.org/docs/2.4/howto/auth.html">https://httpd.apache.org/docs/2.4/howto/auth.html</a></li>
-</ul></li>
-<li>add front-matter-yaml support
-<ul>
-<li>md : when saving, check yaml</li>
-<li>getRemoteUser
-<ul>
-<li>http user?</li>
-<li>remote IP</li>
-</ul></li>
-<li>if file does not exist</li>
-<li>created: <date> <remote-user></li>
-<li>updated-by: <remote-user></li>
-<li>if (log in meta/yaml) {
-make log empty
-change-log: <date> <remote-user> <log-msg></li>
-</ul></li>
+<li>extract from source code write to markdown files</li>
+<li>use SiteGen to convert .md to .html</li>
+<li>include in docs directory</li>
 </ul>    </div>
   </div>
 

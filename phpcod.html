@@ -109,7 +109,7 @@ sections:
                         - `tag` (input) : error tag
                         - `opts` (input) : flags `EM_NONE` or `EM_PHPERR`.
                         
-          - nacowiki.php,215
+          - nacowiki.php,219
     &quot;check_writable#2&quot;:
       collection: events-list
       level: 2
@@ -133,7 +133,7 @@ sections:
                           - `false` : access is denied
                           - `NULL` : access is denied due to not being authenticated.
                         
-          - nacowiki.php,254
+          - nacowiki.php,258
     &quot;check_readable#2&quot;:
       collection: events-list
       level: 2
@@ -157,7 +157,7 @@ sections:
                           - `false` : access is denied
                           - `NULL` : access is denied due to not being authenticated.
                         
-          - nacowiki.php,285
+          - nacowiki.php,297
     &quot;cli:[name]#2&quot;:
       collection: events-list
       level: 2
@@ -171,7 +171,7 @@ sections:
                         The event data contains the command line arguments for the
                         sub-command.
                         
-          - nacowiki.php,399
+          - nacowiki.php,411
     &quot;run_init#2&quot;:
       collection: events-list
       level: 2
@@ -186,7 +186,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,419
+          - nacowiki.php,431
     &quot;context_loaded#2&quot;:
       collection: events-list
       level: 2
@@ -199,7 +199,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,440
+          - nacowiki.php,452
     &quot;do:[name]#2&quot;:
       collection: events-list
       level: 2
@@ -213,7 +213,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,466
+          - nacowiki.php,478
     &quot;api:[name]#2&quot;:
       collection: events-list
       level: 2
@@ -237,7 +237,7 @@ sections:
                           event data with additional items.  The whole event data array
                           is then send to the client in JSON format.
                         
-          - nacowiki.php,478
+          - nacowiki.php,490
     &quot;action:[name]#2&quot;:
       collection: events-list
       level: 2
@@ -252,7 +252,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,508
+          - nacowiki.php,520
     &quot;read_folder#2&quot;:
       collection: events-list
       level: 2
@@ -266,7 +266,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,525
+          - nacowiki.php,537
     &quot;read_page#2&quot;:
       collection: events-list
       level: 2
@@ -280,7 +280,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,537
+          - nacowiki.php,549
     &quot;missing_page#2&quot;:
       collection: events-list
       level: 2
@@ -293,7 +293,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,545
+          - nacowiki.php,557
     &quot;read:[file-extension]#2&quot;:
       collection: events-list
       level: 2
@@ -502,9 +502,10 @@ sections:
                         Event data:
                         
                         - `text` (input|output) : textual data to save
+                        - `prev` (input) : current file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,752
+          - classes/Core.php,759
     &quot;preSave:[file-extension]#2&quot;:
       collection: events-list
       level: 2
@@ -527,9 +528,10 @@ sections:
                         Event data:
                         
                         - `text` (input|output) : textual data to save
+                        - `prev` (input) : current file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,766
+          - classes/Core.php,774
     &quot;save:[file-extension]#2&quot;:
       collection: events-list
       level: 2
@@ -546,10 +548,14 @@ sections:
                         
                         Event data:
                         
+                        - `saved` (output) : flag to indicates that we saved or not
+                           the file.  If this is set to `false`, then `postSave` events
+                           will be skipped.  Pre-set to `true` by default.
                         - `text` (input) : textual data to save
+                        - `prev` (input) : current file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,785
+          - classes/Core.php,794
     &quot;postSave#2&quot;:
       collection: events-list
       level: 2
@@ -567,10 +573,11 @@ sections:
                         
                         Event data:
                         
-                        - `text` (input) : textual data to save
+                        - `text` (input) : textual data that was saved
+                        - `prev` (input) : previous file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,802
+          - classes/Core.php,821
     &quot;postSave:[file-extension]#2&quot;:
       collection: events-list
       level: 2
@@ -585,10 +592,11 @@ sections:
                         
                         Event data:
                         
-                        - `text` (input) : textual data to save
+                        - `text` (input) : textual data that was saved
+                        - `prev` (input) : previous file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,816
+          - classes/Core.php,836
 markers:
   error-catalog:
     config:
@@ -597,42 +605,42 @@ markers:
         tag: config
         text: WIKI configuration error
         file-line:
-          - nacowiki.php,175
+          - nacowiki.php,179
     invalid_param:
       Specified DO does not exist:
         collection: error-catalog
         tag: invalid_param
         text: Specified DO does not exist
         file-line:
-          - nacowiki.php,473
+          - nacowiki.php,485
       Specified action does not exist:
         collection: error-catalog
         tag: invalid_param
         text: Specified action does not exist
         file-line:
-          - nacowiki.php,516
+          - nacowiki.php,528
     write_access:
       User does not have write-access.:
         collection: error-catalog
         tag: write_access
         text: User does not have write-access.
         file-line:
-          - nacowiki.php,503
+          - nacowiki.php,515
     missing_param:
       Missing input parameter:
         collection: error-catalog
         tag: missing_param
         text: Missing input parameter
         file-line:
-          - nacowiki.php,506
+          - nacowiki.php,518
     read_access:
       User does not have read-access.:
         collection: error-catalog
         tag: read_access
         text: User does not have read-access.
         file-line:
-          - nacowiki.php,522
           - nacowiki.php,534
+          - nacowiki.php,546
 doc-strings:
   commands:
     &quot;help#2&quot;:
@@ -833,7 +841,7 @@ doc-strings:
                         - @return ?bool Returns \NWiki\PluginCollection::OK to indicate that it was handled.
                            
                         
-          - classes/Core.php,896
+          - classes/Core.php,917
   Plugins:
     &quot;PluginCode#2&quot;:
       collection: Plugins

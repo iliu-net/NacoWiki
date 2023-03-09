@@ -376,6 +376,11 @@ Search.appendIndex(
             "summary": "Current\u0020document\u0020is\u0020writable",
             "url": "classes/NacoWikiApp.html#method_isWritable"
         },                {
+            "fqsen": "\\NacoWikiApp\u003A\u003AgetUser\u0028\u0029",
+            "name": "getUser",
+            "summary": "Get\u0020current\u0020user",
+            "url": "classes/NacoWikiApp.html#method_getUser"
+        },                {
             "fqsen": "\\NacoWikiApp\u003A\u003AisReadable\u0028\u0029",
             "name": "isReadable",
             "summary": "Current\u0020document\u0020is\u0020readable",
@@ -440,6 +445,11 @@ Search.appendIndex(
             "name": "remote_addr",
             "summary": "HTTP\u0020client\u0027s\u0020remote\u0020address",
             "url": "classes/NacoWikiApp.html#property_remote_addr"
+        },                {
+            "fqsen": "\\NacoWikiApp\u003A\u003A\u0024remote_user",
+            "name": "remote_user",
+            "summary": "HTTP\u0020client\u0027s\u0020remote\u0020user\u0020\u0028if\u0020any\u0029",
+            "url": "classes/NacoWikiApp.html#property_remote_user"
         },                {
             "fqsen": "\\NacoWikiApp\u003A\u003A\u0024http_host",
             "name": "http_host",
