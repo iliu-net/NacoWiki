@@ -12,6 +12,8 @@ document.onkeydown = function (e) {
     hlink = document.getElementById("editLink");
     if (hlink) {
       window.location = hlink.href;
+      return false;
     }
   }
+
 }

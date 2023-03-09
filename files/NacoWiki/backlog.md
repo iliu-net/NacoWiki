@@ -7,54 +7,109 @@ tags: development, php
 
 ***
 
+Ready for 3.0 release.
 
 # Issues
 
 - Render correctly:
   - [[/0ink-drafts/2021/2021-12-26-pelican_tests.md]]
 
-# Mark-up
-
-
-
 # Tools
 
 - Report for checking for broken links (links to pages that don't exist yet), Orphan pages, etc.
   - For wiki links Plugin as a CLI tool
-- static site generator
-  - Search: https://stork-search.net/
-  - Sitemap generator
 
-# More docs
+# SiteGen
 
-We need more markup (beyond phpDoc) to document `event` hooks and API.  So we search
-the code for special strings and extract them.  We parse these as Markdown.
+- Search: https://stork-search.net/
+- Sitemap generator
+- RSS
+- Compatibility with [Pelican?](https://getpelican.com/).
+  - Use [twig](https://twig.symfony.com/) : since is derived from [Jinja2](https://palletsprojects.com/p/jinja/)
+- Git data: save it in a `.git;` file.  To track changes.
+  - `git rev-list --pretty=raw HEAD  -- file-path`
+  - Only hook event if CLI (See: https://civihosting.com/blog/detect-cli-in-php-script/)
+  - modifies `fileMeta` and `props`
+- Migrate 0ink.net
+- switch to github-actions
+    - https://github.blog/2022-08-10-github-pages-now-uses-actions-by-default/
+    - https://github.com/marketplace/actions/github-pages-action
+    - https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 
-- search for `'/^\s*##---\s?(.*)$/m'` 
-- collect in-between text until the next pattern.
-- The `$match[1]` is treated as:
-  - `file-name` 
-  - `#` (optional, and can be 1 `#` or more)
-  - `section name` (optional, only if `#`'s were present)
-- between matches, we collect lines that begin with:
-  - `/^\s*##\s?/`
-- these is saved to a file `file-name` with the optional header if specified.
+# Maybe
 
-When generating document, we use `$ include` to include the extracted text
-in the right structure.
+- Properties
+  - Create files that begin with `.prop;`. followed by the page.  Track:
+    - Remote user @ renite addr
+    - Creation date
+    - Log of modifications.  Keep it so that there is one log entry per day.
+      ```yaml
+      created:
+      - 2023-03-01
+      - 
+        - user
+        - 192.168.101.5
+      change-log:
+      -
+        - 2023-03-02
+        -
+          - user
+          - 192.168.101.5
+      ```
+  - save this as `wiki->props`.
+- Hook postSave event to implement backups or track changes
+  - backups
+    - keep {n} versions.  But only overwrite backup if older than a day.
+  - Track changes
+    - Create files with `.n;page.md` followed by page.  Where `n` is a number.
+    - Store reverse diffs in here.
+    - Possible libraries for generating diffs:
+      - https://github.com/baraja-core/simple-php-diff
+      - https://github.com/jfcherng/php-diff
+      - https://www.php.net/manual/en/function.xdiff-file-diff.php
+      - or just exec `diff` command.
+- markdown and html media handler
+  - Should be configured globally
+  - run PHP code
+- sort - alpha,latest file (in views/folder)
+  - add it to the context?
 
-For error messages:
+## Tag Navigation
 
-`##!! (file-name)|(element)|(optional? description)`
+- nav
+  - tag-cloud [all files|current context]
+- tags: GET to add or remove tags from the selection cookie
+- tagging
+  - [ ] auto-tagging: based on words and tagcloud
+  - tag from git
+  - auto-tags: automatically generated
+  - tags: manual tags
+  - exclude-tags: removed.
 
-We collect these and we sort description by how often they happen.  And length as tie breaker.
 
-- extract from source code write to markdown files
-- use SiteGen to convert .md to .html
-- include in docs directory
+## Markdown text diagrams
 
-# done 
+- blockdiag
+  - http://blockdiag.com/en/
 
+## Other diag integrations
+
+- https://github.com/cidrblock/drawthe.net
+- https://github.com/jgraph/drawio
+
+## auth
+
+- user authentication
+  - https://www.devdungeon.com/content/http-basic-authentication-php
+- http daemon authentication
+  - https://httpd.apache.org/docs/2.4/howto/auth.html
+
+***
+
+# done
+
+- [x] UI: when starting page, it shoudl focus automatically on Edit window
+- [x] Should prevent saving files where there is no change to source.
 - [x] Youtube Links: Code snippets to load YouTube videos
   - https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages
 - [x] WikiLinks
@@ -93,73 +148,32 @@ We collect these and we sort description by how often they happen.  And length a
 - [x] phpdoc
 - [x] add a 'do=raw' link to allow for downloading of source code.
 
+## More docs
 
-# Maybe
+We need more markup (beyond phpDoc) to document `event` hooks and API.  So we search
+the code for special strings and extract them.  We parse these as Markdown.
 
-- Properties
-  - Create files that begin with `.prop;`. followed by the page.  Track:
-    - Remote user
-    - Creation date
-    - Log of modifications.  Keep it so that there is one log entry per day.
-  - save this as `wiki->props`.
-- preSave and postSave events to implement backups of track changes
-  - backups
-    - keep {n} versions.  But only overwrite backup if older than a day.
-  - Track changes
-    - Create files with `.n;page.md` followed by page.  Where `n` is a number.
-    - Store reverse diffs in here.
-    - Possible libraries for generating diffs:
-      - https://github.com/baraja-core/simple-php-diff
-      - https://github.com/jfcherng/php-diff
-      - https://www.php.net/manual/en/function.xdiff-file-diff.php
-      - or just exec `diff` command.
-- markdown and html media handler
-  - Should be configured globally
-  - run PHP code
-- UI: when starting page, it shoudl focus automatically on Edit window
-  - ??don't know how to do this.??
-- sort - alpha,latest file (in views/folder)
-  - add it to the context?
+- search for `'/^\s*##---\s?(.*)$/m'` 
+- collect in-between text until the next pattern.
+- The `$match[1]` is treated as:
+  - `file-name` 
+  - `#` (optional, and can be 1 `#` or more)
+  - `section name` (optional, only if `#`'s were present)
+- between matches, we collect lines that begin with:
+  - `/^\s*##\s?/`
+- these is saved to a file `file-name` with the optional header if specified.
 
-## Tag Navigation
+When generating document, we use `$ include` to include the extracted text
+in the right structure.
 
-- nav
-  - tag-cloud [all files|current context]
-- tags: GET to add or remove tags from the selection cookie
-- tagging
-  - [ ] auto-tagging: based on words and tagcloud
-  - tag from git
-  - auto-tags: automatically generated
-  - tags: manual tags
-  - exclude-tags: removed.
+For error messages:
+
+`##!! (file-name)|(element)|(optional? description)`
+
+We collect these and we sort description by how often they happen.  And length as tie breaker.
+
+- extract from source code write to markdown files
+- use SiteGen to convert .md to .html
+- include in docs directory
 
 
-## Markdown text diagrams
-
-- blockdiag
-  - http://blockdiag.com/en/
-
-## Other diag integrations
-
-- https://github.com/cidrblock/drawthe.net
-- https://github.com/jgraph/drawio
-
-## auth
-
-- user authentication
-  - https://www.devdungeon.com/content/http-basic-authentication-php
-- http daemon authentication
-  - https://httpd.apache.org/docs/2.4/howto/auth.html
-- add front-matter-yaml support
-  - md : when saving, check yaml
-  - getRemoteUser
-      - http user?
-      - remote IP
-  - if file does not exist
-  - created: <date> <remote-user>
-  - updated-by: <remote-user>
-  - if (log in meta/yaml) {
-    make log empty
-    change-log: <date> <remote-user> <log-msg>
-
-  

@@ -29,16 +29,17 @@
     <div id="main" class="main">
     <div id="toc"><ul>
 <li><a href="#Issues">Issues</a></li>
-<li><a href="#Mark-up">Mark-up</a></li>
 <li><a href="#Tools">Tools</a></li>
-<li><a href="#More+docs">More docs</a></li>
-<li><a href="#done">done</a></li>
 <li><a href="#Maybe">Maybe</a>
 <ul>
 <li><a href="#Tag+Navigation">Tag Navigation</a></li>
 <li><a href="#Markdown+text+diagrams">Markdown text diagrams</a></li>
 <li><a href="#Other+diag+integrations">Other diag integrations</a></li>
 <li><a href="#auth">auth</a></li>
+</ul></li>
+<li><a href="#done">done</a>
+<ul>
+<li><a href="#More+docs">More docs</a></li>
 </ul></li>
 </ul></div>
 <hr />
@@ -49,7 +50,6 @@
 <li><a href="/NacoWiki//0ink-drafts/2021/2021-12-26-pelican_tests.html">2021-12-26-pelican_tests</a></li>
 </ul></li>
 </ul>
-<h2 id="Mark-up" name="Mark-up">Mark-up</h2>
 <h2 id="Tools" name="Tools">Tools</h2>
 <ul>
 <li>Report for checking for broken links (links to pages that don't exist yet), Orphan pages, etc.
@@ -60,89 +60,8 @@
 <ul>
 <li>Search: <a href="https://stork-search.net/">https://stork-search.net/</a></li>
 <li>Sitemap generator</li>
+<li>RSS</li>
 </ul></li>
-</ul>
-<h2 id="More+docs" name="More+docs">More docs</h2>
-<p>We need more markup (beyond phpDoc) to document <code>event</code> hooks and API.  So we search
-the code for special strings and extract them.  We parse these as Markdown.</p>
-<ul>
-<li>search for <code>'/^\s*##---\s?(.*)$/m'</code> </li>
-<li>collect in-between text until the next pattern.</li>
-<li>The <code>$match[1]</code> is treated as:
-<ul>
-<li><code>file-name</code> </li>
-<li><code>#</code> (optional, and can be 1 <code>#</code> or more)</li>
-<li><code>section name</code> (optional, only if <code>#</code>'s were present)</li>
-</ul></li>
-<li>between matches, we collect lines that begin with:
-<ul>
-<li><code>/^\s*##\s?/</code></li>
-</ul></li>
-<li>these is saved to a file <code>file-name</code> with the optional header if specified.</li>
-</ul>
-<p>When generating document, we use <code>$ include</code> to include the extracted text
-in the right structure.</p>
-<p>For error messages:</p>
-<p><code>##!! (file-name)|(element)|(optional? description)</code></p>
-<p>We collect these and we sort description by how often they happen.  And length as tie breaker.</p>
-<ul>
-<li>extract from source code write to markdown files</li>
-<li>use SiteGen to convert .md to .html</li>
-<li>include in docs directory</li>
-</ul>
-<h2 id="done" name="done">done</h2>
-<ul>
-<li><input type="checkbox" disabled checked> Youtube Links: Code snippets to load YouTube videos
-<ul>
-<li><a href="https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages">https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages</a></li>
-</ul></li>
-<li><input type="checkbox" disabled checked> WikiLinks
-<ul>
-<li><input type="checkbox" disabled checked> if no <code>/</code> but a <code>!</code> should search the name all
-over the place.
-<ul>
-<li><del><a href="https://www.php.net/fnmatch">https://www.php.net/fnmatch</a></del></li>
-</ul></li>
-<li><del>Confirm if attachments are referenced properly</del>
-<ul>
-<li><del>Attachments should be linked directly</del></li>
-</ul></li>
-</ul></li>
-<li><input type="checkbox" disabled checked> attachments not done properly at the moment.
-<ul>
-<li><input type="checkbox" disabled checked> add file attachments (only for actual media handled pages)</li>
-<li><input type="checkbox" disabled checked> <del>handle it in PluginVars</del></li>
-</ul></li>
-<li><input type="checkbox" disabled checked> search results page is not very clear</li>
-<li><input type="checkbox" disabled checked> highlight search result matches</li>
-<li><input type="checkbox" disabled checked> Add a drop down to show meta data of current page</li>
-<li><input type="checkbox" disabled checked> dropdown for file list: add link to copy page path to Clipboard &#x29C9;</li>
-<li><input type="checkbox" disabled checked> UI elements</li>
-<li><input type="checkbox" disabled checked> static site first step: single file generator</li>
-<li><input type="checkbox" disabled checked> bind-key to invoke edit link</li>
-<li><input type="checkbox" disabled checked> split css
-<ul>
-<li>layout</li>
-<li>color/types</li>
-</ul></li>
-<li><input type="checkbox" disabled checked> implement a dark theme</li>
-<li><input type="checkbox" disabled checked> generate links that open new windows if URL ends with &quot;^&quot;.  ^ is stripped.</li>
-<li><input type="checkbox" disabled checked> File tree display doesn't handle symlinks.</li>
-<li><input type="checkbox" disabled checked>  tweak <code>css</code>.</li>
-<li><input type="checkbox" disabled checked> ghrelease checks and gh-actions</li>
-<li><input type="checkbox" disabled checked> phpDoc</li>
-<li><del>more attachment logic</del>
-<ul>
-<li><del>walktree -- should filter out attachment folders</del></li>
-<li><del>when removing page, should remove attachment folders</del></li>
-<li><del>when doing makePath, we should check if we are creating folders within attachment folders.</del></li>
-<li><del>when creating file, make sure a file with the same name (but different extension)</del>
-<del>doesn't exist.</del></li>
-<li><input type="checkbox" disabled checked> Document that attachment's are just a convenience logic of storing files in a folder
-of the same name as the page (without extension)</li>
-</ul></li>
-<li><input type="checkbox" disabled checked> phpdoc</li>
-<li><input type="checkbox" disabled checked> add a 'do=raw' link to allow for downloading of source code.</li>
 </ul>
 <h2 id="Maybe" name="Maybe">Maybe</h2>
 <ul>
@@ -150,9 +69,20 @@ of the same name as the page (without extension)</li>
 <ul>
 <li>Create files that begin with <code>.prop;</code>. followed by the page.  Track:
 <ul>
-<li>Remote user</li>
+<li>Remote user @ renite addr</li>
 <li>Creation date</li>
-<li>Log of modifications.  Keep it so that there is one log entry per day.</li>
+<li>Log of modifications.  Keep it so that there is one log entry per day.
+<pre><code class="language-yaml">created:
+- 2023-03-01
+- 
+  - user
+  - 192.168.101.5
+change-log:
+-
+  - 2023-03-02
+  -
+    - user
+    - 192.168.101.5</code></pre></li>
 </ul></li>
 <li>save this as <code>wiki-&gt;props</code>.</li>
 </ul></li>
@@ -227,21 +157,88 @@ of the same name as the page (without extension)</li>
 <ul>
 <li><a href="https://httpd.apache.org/docs/2.4/howto/auth.html">https://httpd.apache.org/docs/2.4/howto/auth.html</a></li>
 </ul></li>
-<li>add front-matter-yaml support
+</ul>
+<h2 id="done" name="done">done</h2>
 <ul>
-<li>md : when saving, check yaml</li>
-<li>getRemoteUser
+<li><input type="checkbox" disabled checked> Youtube Links: Code snippets to load YouTube videos
 <ul>
-<li>http user?</li>
-<li>remote IP</li>
+<li><a href="https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages">https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages</a></li>
 </ul></li>
-<li>if file does not exist</li>
-<li>created: <date> <remote-user></li>
-<li>updated-by: <remote-user></li>
-<li>if (log in meta/yaml) {
-make log empty
-change-log: <date> <remote-user> <log-msg></li>
+<li><input type="checkbox" disabled checked> WikiLinks
+<ul>
+<li><input type="checkbox" disabled checked> if no <code>/</code> but a <code>!</code> should search the name all
+over the place.
+<ul>
+<li><del><a href="https://www.php.net/fnmatch">https://www.php.net/fnmatch</a></del></li>
 </ul></li>
+<li><del>Confirm if attachments are referenced properly</del>
+<ul>
+<li><del>Attachments should be linked directly</del></li>
+</ul></li>
+</ul></li>
+<li><input type="checkbox" disabled checked> attachments not done properly at the moment.
+<ul>
+<li><input type="checkbox" disabled checked> add file attachments (only for actual media handled pages)</li>
+<li><input type="checkbox" disabled checked> <del>handle it in PluginVars</del></li>
+</ul></li>
+<li><input type="checkbox" disabled checked> search results page is not very clear</li>
+<li><input type="checkbox" disabled checked> highlight search result matches</li>
+<li><input type="checkbox" disabled checked> Add a drop down to show meta data of current page</li>
+<li><input type="checkbox" disabled checked> dropdown for file list: add link to copy page path to Clipboard &#x29C9;</li>
+<li><input type="checkbox" disabled checked> UI elements</li>
+<li><input type="checkbox" disabled checked> static site first step: single file generator</li>
+<li><input type="checkbox" disabled checked> bind-key to invoke edit link</li>
+<li><input type="checkbox" disabled checked> split css
+<ul>
+<li>layout</li>
+<li>color/types</li>
+</ul></li>
+<li><input type="checkbox" disabled checked> implement a dark theme</li>
+<li><input type="checkbox" disabled checked> generate links that open new windows if URL ends with &quot;^&quot;.  ^ is stripped.</li>
+<li><input type="checkbox" disabled checked> File tree display doesn't handle symlinks.</li>
+<li><input type="checkbox" disabled checked>  tweak <code>css</code>.</li>
+<li><input type="checkbox" disabled checked> ghrelease checks and gh-actions</li>
+<li><input type="checkbox" disabled checked> phpDoc</li>
+<li><del>more attachment logic</del>
+<ul>
+<li><del>walktree -- should filter out attachment folders</del></li>
+<li><del>when removing page, should remove attachment folders</del></li>
+<li><del>when doing makePath, we should check if we are creating folders within attachment folders.</del></li>
+<li><del>when creating file, make sure a file with the same name (but different extension)</del>
+<del>doesn't exist.</del></li>
+<li><input type="checkbox" disabled checked> Document that attachment's are just a convenience logic of storing files in a folder
+of the same name as the page (without extension)</li>
+</ul></li>
+<li><input type="checkbox" disabled checked> phpdoc</li>
+<li><input type="checkbox" disabled checked> add a 'do=raw' link to allow for downloading of source code.</li>
+</ul>
+<h3 id="More+docs" name="More+docs">More docs</h3>
+<p>We need more markup (beyond phpDoc) to document <code>event</code> hooks and API.  So we search
+the code for special strings and extract them.  We parse these as Markdown.</p>
+<ul>
+<li>search for <code>'/^\s*##---\s?(.*)$/m'</code> </li>
+<li>collect in-between text until the next pattern.</li>
+<li>The <code>$match[1]</code> is treated as:
+<ul>
+<li><code>file-name</code> </li>
+<li><code>#</code> (optional, and can be 1 <code>#</code> or more)</li>
+<li><code>section name</code> (optional, only if <code>#</code>'s were present)</li>
+</ul></li>
+<li>between matches, we collect lines that begin with:
+<ul>
+<li><code>/^\s*##\s?/</code></li>
+</ul></li>
+<li>these is saved to a file <code>file-name</code> with the optional header if specified.</li>
+</ul>
+<p>When generating document, we use <code>$ include</code> to include the extracted text
+in the right structure.</p>
+<p>For error messages:</p>
+<p><code>##!! (file-name)|(element)|(optional? description)</code></p>
+<p>We collect these and we sort description by how often they happen.  And length as tie breaker.</p>
+<ul>
+<li>extract from source code write to markdown files</li>
+<li>use SiteGen to convert .md to .html</li>
+<li>include in docs directory</li>
 </ul>    </div>
   </div>
 

@@ -122,6 +122,8 @@ class NacoWikiApp {
   public ?string $scheme = NULL;
   /** HTTP client's remote address */
   public ?string $remote_addr = NULL;
+  /** HTTP client's remote user (if any) */
+  public ?string $remote_user = NULL;
   /** HTTP request host */
   public ?string $http_host = NULL;
   /** TRUE if using https */
@@ -149,6 +151,7 @@ class NacoWikiApp {
     if (isset($_SERVER['REQUEST_SCHEME'])) $this->scheme = $_SERVER['REQUEST_SCHEME'];
     if (isset($_SERVER['REMOTE_ADDR'])) $this->remote_addr = $_SERVER['REMOTE_ADDR'];
     if (isset($_SERVER['HTTP_HOST'])) $this->http_host = $_SERVER['HTTP_HOST'];
+    if (!empty($_SERVER['REMOTE_USER'])) $this->remote_user = $_SERVER['REMOTE_USER'];
 
     if ($this->remote_addr && !empty($this->cfg['proxy-ips'])) {
       // Handle reverse proxy environments
@@ -159,6 +162,7 @@ class NacoWikiApp {
 	if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) $this->scheme = $_SERVER['HTTP_X_FORWARDED_PROTO'];
 	if (isset($_SERVER['HTTP_X_REAL_IP'])) $this->remote_addr = $_SERVER['HTTP_X_REAL_IP'];
 	if (isset($_SERVER['HTTP_X_FORWARDED_HOST'])) $this->http_host = $_SERVER['HTTP_X_FORWARDED_HOST'];
+	if (!empty($_SERVER['HTTP_REMOTE_USER'])) $this->remote_user = $_SERVER['HTTP_REMOTE_USER'];
       }
       unset($rp);
     }
@@ -269,6 +273,14 @@ class NacoWikiApp {
     ##--
     Plugins::dispatchEvent($this, 'check_writable', $event);
     return $event['access'];
+  }
+
+  /** Get current user
+   * @todo This is only a stub
+   * @return ?string
+   */
+  public function getUser() : ?string {
+    return $this->remote_user;
   }
 
   /** Current document is readable

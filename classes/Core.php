@@ -749,6 +749,13 @@ class Core {
 
     if ($wiki->cfg['unix_eol']) $ev['text'] = str_replace("\r", "", $ev['text']);
 
+    # Pre-read the content
+    if (file_exists($wiki->filePath())) {
+      $ev['prev'] = Util::fileContents($wiki->filePath());
+    } else {
+      $ev['prev'] = NULL;
+    }
+
     ##-- events-list##preSave
     ##
     ## This event is used by plugins to pre-parse text before
@@ -760,6 +767,7 @@ class Core {
     ## Event data:
     ##
     ## - `text` (input|output) : textual data to save
+    ## - `prev` (input) : current file contents (or NULL)
     ## - `ext` (input) : file extension for the given media
     ##--
     Plugins::dispatchEvent($wiki, 'preSave', $ev);
@@ -778,6 +786,7 @@ class Core {
     ## Event data:
     ##
     ## - `text` (input|output) : textual data to save
+    ## - `prev` (input) : current file contents (or NULL)
     ## - `ext` (input) : file extension for the given media
     ##--
     if (!is_null($ext)) Plugins::dispatchEvent($wiki, 'preSave:'.$ext, $ev);
@@ -791,40 +800,52 @@ class Core {
     ##
     ## Event data:
     ##
+    ## - `saved` (output) : flag to indicates that we saved or not
+    ##    the file.  If this is set to `false`, then `postSave` events
+    ##    will be skipped.  Pre-set to `true` by default.
     ## - `text` (input) : textual data to save
+    ## - `prev` (input) : current file contents (or NULL)
     ## - `ext` (input) : file extension for the given media
     ##--
+    $ev['saved'] = true;
     if (is_null($ext) || !Plugins::dispatchEvent($wiki, 'save:'.$ext, $ev)) {
-      self::makePath($wiki, dirname($wiki->page));
-      if (false === file_put_contents($wiki->filePath(), $ev['text']))
+      if (is_null($ev['prev']) || $ev['text'] != $ev['prev']) {
+	self::makePath($wiki, dirname($wiki->page));
+	if (false === file_put_contents($wiki->filePath(), $ev['text']))
 	$wiki->errMsg('os_error',$wiki->page.': write error', EM_PHPERR);
+      } else {
+	$ev['saved'] = false;
+      }
     }
-    ##-- events-list##postSave
-    ##
-    ## This event is used by plugins to examine data after it
-    ## was saved to storage.
-    ##
-    ## Usually used to update additional meta data files, like for
-    ## example update a tag cloud index.
-    ##
-    ## Event data:
-    ##
-    ## - `text` (input) : textual data to save
-    ## - `ext` (input) : file extension for the given media
-    ##--
-    Plugins::dispatchEvent($wiki, 'postSave', $ev);
-    ##-- events-list##postSave:[file-extension]
-    ##
-    ## This event is used by media handlers to examine data after it
-    ## was saved to storage.
-    ##
-    ## Event data:
-    ##
-    ## - `text` (input) : textual data to save
-    ## - `ext` (input) : file extension for the given media
-    ##--
-    if (!is_null($ext)) Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
-
+    if ($ev['saved']) {
+      ##-- events-list##postSave
+      ##
+      ## This event is used by plugins to examine data after it
+      ## was saved to storage.
+      ##
+      ## Usually used to update additional meta data files, like for
+      ## example update a tag cloud index.
+      ##
+      ## Event data:
+      ##
+      ## - `text` (input) : textual data that was saved
+      ## - `prev` (input) : previous file contents (or NULL)
+      ## - `ext` (input) : file extension for the given media
+      ##--
+      Plugins::dispatchEvent($wiki, 'postSave', $ev);
+      ##-- events-list##postSave:[file-extension]
+      ##
+      ## This event is used by media handlers to examine data after it
+      ## was saved to storage.
+      ##
+      ## Event data:
+      ##
+      ## - `text` (input) : textual data that was saved
+      ## - `prev` (input) : previous file contents (or NULL)
+      ## - `ext` (input) : file extension for the given media
+      ##--
+      if (!is_null($ext)) Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
+    }
     header('Location: '.$wiki->mkUrl($wiki->page));
     exit;
   }

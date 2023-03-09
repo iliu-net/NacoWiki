@@ -81,7 +81,7 @@ sections:
                         - `tag` (input) : error tag
                         - `opts` (input) : flags `EM_NONE` or `EM_PHPERR`.
                         
-          - nacowiki.php,215
+          - nacowiki.php,219
     "check_writable#2":
       collection: events-list
       level: 2
@@ -105,7 +105,7 @@ sections:
                           - `false` : access is denied
                           - `NULL` : access is denied due to not being authenticated.
                         
-          - nacowiki.php,254
+          - nacowiki.php,258
     "check_readable#2":
       collection: events-list
       level: 2
@@ -129,7 +129,7 @@ sections:
                           - `false` : access is denied
                           - `NULL` : access is denied due to not being authenticated.
                         
-          - nacowiki.php,285
+          - nacowiki.php,297
     "cli:[name]#2":
       collection: events-list
       level: 2
@@ -143,7 +143,7 @@ sections:
                         The event data contains the command line arguments for the
                         sub-command.
                         
-          - nacowiki.php,399
+          - nacowiki.php,411
     "run_init#2":
       collection: events-list
       level: 2
@@ -158,7 +158,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,419
+          - nacowiki.php,431
     "context_loaded#2":
       collection: events-list
       level: 2
@@ -171,7 +171,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,440
+          - nacowiki.php,452
     "do:[name]#2":
       collection: events-list
       level: 2
@@ -185,7 +185,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,466
+          - nacowiki.php,478
     "api:[name]#2":
       collection: events-list
       level: 2
@@ -209,7 +209,7 @@ sections:
                           event data with additional items.  The whole event data array
                           is then send to the client in JSON format.
                         
-          - nacowiki.php,478
+          - nacowiki.php,490
     "action:[name]#2":
       collection: events-list
       level: 2
@@ -224,7 +224,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,508
+          - nacowiki.php,520
     "read_folder#2":
       collection: events-list
       level: 2
@@ -238,7 +238,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,525
+          - nacowiki.php,537
     "read_page#2":
       collection: events-list
       level: 2
@@ -252,7 +252,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,537
+          - nacowiki.php,549
     "missing_page#2":
       collection: events-list
       level: 2
@@ -265,7 +265,7 @@ sections:
                         
                         There are no special event parameters
                         
-          - nacowiki.php,545
+          - nacowiki.php,557
     "read:[file-extension]#2":
       collection: events-list
       level: 2
@@ -569,42 +569,42 @@ markers:
         tag: config
         text: WIKI configuration error
         file-line:
-          - nacowiki.php,175
+          - nacowiki.php,179
     invalid_param:
       Specified DO does not exist:
         collection: error-catalog
         tag: invalid_param
         text: Specified DO does not exist
         file-line:
-          - nacowiki.php,473
+          - nacowiki.php,485
       Specified action does not exist:
         collection: error-catalog
         tag: invalid_param
         text: Specified action does not exist
         file-line:
-          - nacowiki.php,516
+          - nacowiki.php,528
     write_access:
       User does not have write-access.:
         collection: error-catalog
         tag: write_access
         text: User does not have write-access.
         file-line:
-          - nacowiki.php,503
+          - nacowiki.php,515
     missing_param:
       Missing input parameter:
         collection: error-catalog
         tag: missing_param
         text: Missing input parameter
         file-line:
-          - nacowiki.php,506
+          - nacowiki.php,518
     read_access:
       User does not have read-access.:
         collection: error-catalog
         tag: read_access
         text: User does not have read-access.
         file-line:
-          - nacowiki.php,522
           - nacowiki.php,534
+          - nacowiki.php,546
 doc-strings:
   commands:
     "help#2":

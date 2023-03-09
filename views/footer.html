@@ -15,7 +15,10 @@
 
   <?php if (!empty($wiki->context['debug']) && $wiki->context['debug']) { ?>
   <hr>
-  View: <?= $wiki->view ?><br>
+  View: <code><?= $wiki->view ?></code><br>
+  <?php if (!empty($wiki->remote_user)) { ?>
+    Remote user: <code><?= $wiki->remote_user ?></code><br>
+  <?php } ?>
   <?php \NWiki\Util::dumpLog() ?>
   <?php } ?>
 

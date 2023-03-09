@@ -10,7 +10,7 @@ to a HTTP post request.
 There are no special event parameters
 
 ***
-* nacowiki.php,508
+* nacowiki.php,520
 ***
 
 ## api:[name]
@@ -31,7 +31,7 @@ Event data:
   is then send to the client in JSON format.
 
 ***
-* nacowiki.php,478
+* nacowiki.php,490
 ***
 
 ## check_readable
@@ -52,7 +52,7 @@ Event data:
   - `NULL` : access is denied due to not being authenticated.
 
 ***
-* nacowiki.php,285
+* nacowiki.php,297
 ***
 
 ## check_writable
@@ -73,7 +73,7 @@ Event data:
   - `NULL` : access is denied due to not being authenticated.
 
 ***
-* nacowiki.php,254
+* nacowiki.php,258
 ***
 
 ## cli:[name]
@@ -84,7 +84,7 @@ The event data contains the command line arguments for the
 sub-command.
 
 ***
-* nacowiki.php,399
+* nacowiki.php,411
 ***
 
 ## context_loaded
@@ -94,7 +94,7 @@ This event is called right after the context has been loaded.
 There are no special event parameters
 
 ***
-* nacowiki.php,440
+* nacowiki.php,452
 ***
 
 ## do:[name]
@@ -105,7 +105,7 @@ query string.  It is used to trigger a specific command.
 There are no special event parameters
 
 ***
-* nacowiki.php,466
+* nacowiki.php,478
 ***
 
 ## edit:[file-extension]
@@ -137,7 +137,7 @@ Event data:
 - `opts` (input) : flags `EM_NONE` or `EM_PHPERR`.
 
 ***
-* nacowiki.php,215
+* nacowiki.php,219
 ***
 
 ## layout:[file-extension]
@@ -175,7 +175,7 @@ This event is used to handle http 404 errors (missing resource)
 There are no special event parameters
 
 ***
-* nacowiki.php,545
+* nacowiki.php,557
 ***
 
 ## post-render
@@ -356,7 +356,7 @@ URL is a folder.
 There are no special event parameters
 
 ***
-* nacowiki.php,525
+* nacowiki.php,537
 ***
 
 ## read_page
@@ -367,7 +367,7 @@ URL is an actual file.
 There are no special event parameters
 
 ***
-* nacowiki.php,537
+* nacowiki.php,549
 ***
 
 ## render:[file-extension]
@@ -398,7 +398,7 @@ for using the `declareContext`.
 There are no special event parameters
 
 ***
-* nacowiki.php,419
+* nacowiki.php,431
 ***
 
 ## save:[file-extension]
