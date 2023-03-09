@@ -25,6 +25,6 @@ The event parameter is filled with a property `output` containing
    
 
 ***
-* classes/Core.php,896
+* classes/Core.php,917
 ***
 

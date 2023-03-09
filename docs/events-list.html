@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>events-list : NacoWiki</title>
-  <meta name="date" content="2023-03-06"/>
+  <meta name="date" content="2023-03-09"/>
   <!-- link rel="shortcut icon" href="/NacoWiki//imgs/nanowiki-favicon.png" type="image/png" -->
 
   <!-- syntax hilite -->
@@ -224,12 +224,13 @@ was saved to storage.</p>
 example update a tag cloud index.</p>
 <p>Event data:</p>
 <ul>
-<li><code>text</code> (input) : textual data to save</li>
+<li><code>text</code> (input) : textual data that was saved</li>
+<li><code>prev</code> (input) : previous file contents (or NULL)</li>
 <li><code>ext</code> (input) : file extension for the given media</li>
 </ul>
 <hr />
 <ul>
-<li>classes/Core.php,802
+<li>classes/Core.php,821
 <hr /></li>
 </ul>
 <h3 id="postSave%3A%5Bfile-extension%5D" name="postSave%3A%5Bfile-extension%5D">postSave:[file-extension]</h3>
@@ -237,12 +238,13 @@ example update a tag cloud index.</p>
 was saved to storage.</p>
 <p>Event data:</p>
 <ul>
-<li><code>text</code> (input) : textual data to save</li>
+<li><code>text</code> (input) : textual data that was saved</li>
+<li><code>prev</code> (input) : previous file contents (or NULL)</li>
 <li><code>ext</code> (input) : file extension for the given media</li>
 </ul>
 <hr />
 <ul>
-<li>classes/Core.php,816
+<li>classes/Core.php,836
 <hr /></li>
 </ul>
 <h3 id="pre-render" name="pre-render">pre-render</h3>
@@ -287,11 +289,12 @@ of the event array and modify it if needed.</p>
 <p>Event data:</p>
 <ul>
 <li><code>text</code> (input|output) : textual data to save</li>
+<li><code>prev</code> (input) : current file contents (or NULL)</li>
 <li><code>ext</code> (input) : file extension for the given media</li>
 </ul>
 <hr />
 <ul>
-<li>classes/Core.php,752
+<li>classes/Core.php,759
 <hr /></li>
 </ul>
 <h3 id="preSave%3A%5Bfile-extension%5D" name="preSave%3A%5Bfile-extension%5D">preSave:[file-extension]</h3>
@@ -305,11 +308,12 @@ problematic input.</p>
 <p>Event data:</p>
 <ul>
 <li><code>text</code> (input|output) : textual data to save</li>
+<li><code>prev</code> (input) : current file contents (or NULL)</li>
 <li><code>ext</code> (input) : file extension for the given media</li>
 </ul>
 <hr />
 <ul>
-<li>classes/Core.php,766
+<li>classes/Core.php,774
 <hr /></li>
 </ul>
 <h3 id="read%3A%5Bfile-extension%5D" name="read%3A%5Bfile-extension%5D">read:[file-extension]</h3>
@@ -382,12 +386,16 @@ for using the <code>declareContext</code>.</p>
 file formats.</p>
 <p>Event data:</p>
 <ul>
+<li><code>saved</code> (output) : flag to indicates that we saved or not
+the file.  If this is set to <code>false</code>, then <code>postSave</code> events
+will be skipped.  Pre-set to <code>true</code> by default.</li>
 <li><code>text</code> (input) : textual data to save</li>
+<li><code>prev</code> (input) : current file contents (or NULL)</li>
 <li><code>ext</code> (input) : file extension for the given media</li>
 </ul>
 <hr />
 <ul>
-<li>classes/Core.php,785
+<li>classes/Core.php,794
 <hr /></li>
 </ul>    </div>
   </div>

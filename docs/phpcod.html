@@ -502,9 +502,10 @@ sections:
                         Event data:
                         
                         - `text` (input|output) : textual data to save
+                        - `prev` (input) : current file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,752
+          - classes/Core.php,759
     &quot;preSave:[file-extension]#2&quot;:
       collection: events-list
       level: 2
@@ -527,9 +528,10 @@ sections:
                         Event data:
                         
                         - `text` (input|output) : textual data to save
+                        - `prev` (input) : current file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,766
+          - classes/Core.php,774
     &quot;save:[file-extension]#2&quot;:
       collection: events-list
       level: 2
@@ -546,10 +548,14 @@ sections:
                         
                         Event data:
                         
+                        - `saved` (output) : flag to indicates that we saved or not
+                           the file.  If this is set to `false`, then `postSave` events
+                           will be skipped.  Pre-set to `true` by default.
                         - `text` (input) : textual data to save
+                        - `prev` (input) : current file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,785
+          - classes/Core.php,794
     &quot;postSave#2&quot;:
       collection: events-list
       level: 2
@@ -567,10 +573,11 @@ sections:
                         
                         Event data:
                         
-                        - `text` (input) : textual data to save
+                        - `text` (input) : textual data that was saved
+                        - `prev` (input) : previous file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,802
+          - classes/Core.php,821
     &quot;postSave:[file-extension]#2&quot;:
       collection: events-list
       level: 2
@@ -585,10 +592,11 @@ sections:
                         
                         Event data:
                         
-                        - `text` (input) : textual data to save
+                        - `text` (input) : textual data that was saved
+                        - `prev` (input) : previous file contents (or NULL)
                         - `ext` (input) : file extension for the given media
                         
-          - classes/Core.php,816
+          - classes/Core.php,836
 markers:
   error-catalog:
     config:
@@ -833,7 +841,7 @@ doc-strings:
                         - @return ?bool Returns \NWiki\PluginCollection::OK to indicate that it was handled.
                            
                         
-          - classes/Core.php,896
+          - classes/Core.php,917
   Plugins:
     &quot;PluginCode#2&quot;:
       collection: Plugins

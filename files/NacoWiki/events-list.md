@@ -225,11 +225,12 @@ example update a tag cloud index.
 
 Event data:
 
-- `text` (input) : textual data to save
+- `text` (input) : textual data that was saved
+- `prev` (input) : previous file contents (or NULL)
 - `ext` (input) : file extension for the given media
 
 ***
-* classes/Core.php,802
+* classes/Core.php,821
 ***
 
 ## postSave:[file-extension]
@@ -240,11 +241,12 @@ was saved to storage.
 
 Event data:
 
-- `text` (input) : textual data to save
+- `text` (input) : textual data that was saved
+- `prev` (input) : previous file contents (or NULL)
 - `ext` (input) : file extension for the given media
 
 ***
-* classes/Core.php,816
+* classes/Core.php,836
 ***
 
 ## pre-render
@@ -299,10 +301,11 @@ of the event array and modify it if needed.
 Event data:
 
 - `text` (input|output) : textual data to save
+- `prev` (input) : current file contents (or NULL)
 - `ext` (input) : file extension for the given media
 
 ***
-* classes/Core.php,752
+* classes/Core.php,759
 ***
 
 ## preSave:[file-extension]
@@ -321,10 +324,11 @@ problematic input.
 Event data:
 
 - `text` (input|output) : textual data to save
+- `prev` (input) : current file contents (or NULL)
 - `ext` (input) : file extension for the given media
 
 ***
-* classes/Core.php,766
+* classes/Core.php,774
 ***
 
 ## read:[file-extension]
@@ -411,10 +415,14 @@ file formats.
 
 Event data:
 
+- `saved` (output) : flag to indicates that we saved or not
+   the file.  If this is set to `false`, then `postSave` events
+   will be skipped.  Pre-set to `true` by default.
 - `text` (input) : textual data to save
+- `prev` (input) : current file contents (or NULL)
 - `ext` (input) : file extension for the given media
 
 ***
-* classes/Core.php,785
+* classes/Core.php,794
 ***
 

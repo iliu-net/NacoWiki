@@ -30,6 +30,7 @@
     <div id="toc"><ul>
 <li><a href="#Issues">Issues</a></li>
 <li><a href="#Tools">Tools</a></li>
+<li><a href="#SiteGen">SiteGen</a></li>
 <li><a href="#Maybe">Maybe</a>
 <ul>
 <li><a href="#Tag+Navigation">Tag Navigation</a></li>
@@ -43,6 +44,7 @@
 </ul></li>
 </ul></div>
 <hr />
+<p>Ready for 3.0 release.</p>
 <h2 id="Issues" name="Issues">Issues</h2>
 <ul>
 <li>Render correctly:
@@ -56,11 +58,28 @@
 <ul>
 <li>For wiki links Plugin as a CLI tool</li>
 </ul></li>
-<li>static site generator
+</ul>
+<h2 id="SiteGen" name="SiteGen">SiteGen</h2>
 <ul>
 <li>Search: <a href="https://stork-search.net/">https://stork-search.net/</a></li>
 <li>Sitemap generator</li>
 <li>RSS</li>
+<li>Compatibility with <a href="https://getpelican.com/">Pelican?</a>.
+<ul>
+<li>Use <a href="https://twig.symfony.com/">twig</a> : since is derived from <a href="https://palletsprojects.com/p/jinja/">Jinja2</a></li>
+</ul></li>
+<li>Git data: save it in a <code>.git;</code> file.  To track changes.
+<ul>
+<li><code>git rev-list --pretty=raw HEAD  -- file-path</code></li>
+<li>Only hook event if CLI (See: <a href="https://civihosting.com/blog/detect-cli-in-php-script/">https://civihosting.com/blog/detect-cli-in-php-script/</a>)</li>
+<li>modifies <code>fileMeta</code> and <code>props</code></li>
+</ul></li>
+<li>Migrate 0ink.net</li>
+<li>switch to github-actions
+<ul>
+<li><a href="https://github.blog/2022-08-10-github-pages-now-uses-actions-by-default/">https://github.blog/2022-08-10-github-pages-now-uses-actions-by-default/</a></li>
+<li><a href="https://github.com/marketplace/actions/github-pages-action">https://github.com/marketplace/actions/github-pages-action</a></li>
+<li><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site</a></li>
 </ul></li>
 </ul>
 <h2 id="Maybe" name="Maybe">Maybe</h2>
@@ -86,7 +105,7 @@ change-log:
 </ul></li>
 <li>save this as <code>wiki-&gt;props</code>.</li>
 </ul></li>
-<li>preSave and postSave events to implement backups of track changes
+<li>Hook postSave event to implement backups or track changes
 <ul>
 <li>backups
 <ul>
@@ -109,10 +128,6 @@ change-log:
 <ul>
 <li>Should be configured globally</li>
 <li>run PHP code</li>
-</ul></li>
-<li>UI: when starting page, it shoudl focus automatically on Edit window
-<ul>
-<li><mark>don't know how to do this.</mark></li>
 </ul></li>
 <li>sort - alpha,latest file (in views/folder)
 <ul>
@@ -158,8 +173,11 @@ change-log:
 <li><a href="https://httpd.apache.org/docs/2.4/howto/auth.html">https://httpd.apache.org/docs/2.4/howto/auth.html</a></li>
 </ul></li>
 </ul>
+<hr />
 <h2 id="done" name="done">done</h2>
 <ul>
+<li><input type="checkbox" disabled checked> UI: when starting page, it shoudl focus automatically on Edit window</li>
+<li><input type="checkbox" disabled checked> Should prevent saving files where there is no change to source.</li>
 <li><input type="checkbox" disabled checked> Youtube Links: Code snippets to load YouTube videos
 <ul>
 <li><a href="https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages">https://stackoverflow.com/questions/11804820/how-can-i-embed-a-youtube-video-on-github-wiki-pages</a></li>
