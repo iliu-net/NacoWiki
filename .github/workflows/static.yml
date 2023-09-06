@@ -34,7 +34,7 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Copying files to the target location
         run: |
-          cp -av docs _html
+          cp -av docs _site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
 
