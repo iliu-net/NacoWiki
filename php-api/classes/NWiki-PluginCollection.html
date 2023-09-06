@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/base.css">
             <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/template.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.css">
                 <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
         <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script>
+        <script src="js/template.js"></script>
         <script src="js/search.js"></script>
         <script defer src="js/searchIndex.js"></script>
     </head>
@@ -52,7 +53,7 @@
 <label class="phpdocumentor-sidebar__menu-icon" for="sidebar-button">
     Menu
 </label>
-<aside class="phpdocumentor-column -four phpdocumentor-sidebar">
+<aside class="phpdocumentor-column -three phpdocumentor-sidebar">
                     <section class="phpdocumentor-sidebar__category">
             <h2 class="phpdocumentor-sidebar__category-header">Namespaces</h2>
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
@@ -93,8 +94,9 @@
     </section>
 </aside>
 
-            <div class="phpdocumentor-column -eight phpdocumentor-content">
-                    <ul class="phpdocumentor-breadcrumbs">
+            <div class="phpdocumentor-column -nine phpdocumentor-content">
+                                <section>
+                                        <ul class="phpdocumentor-breadcrumbs">
             <li class="phpdocumentor-breadcrumb"><a href="namespaces/nwiki.html">NWiki</a></li>
     </ul>
 
@@ -113,6 +115,11 @@
     
     </h2>
 
+<div class="phpdocumentor-label-line">
+
+
+</div>
+
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
     :
@@ -129,14 +136,23 @@
 
 
 
-
-
-
 <h3 id="toc">
     Table of Contents
-    <a href="#toc" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/NWiki-PluginCollection.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+
 </h3>
 
+
+
+
+
+
+
+<h4 id="toc-constants">
+    Constants
+    <a href="classes/NWiki-PluginCollection.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a href="classes/NWiki-PluginCollection.html#constant_API_ERROR">API_ERROR</a>
@@ -174,7 +190,16 @@
 <dd>Event handler return code indicating that event was handled and event
 processing should be stopped.</dd>
 
-                    <dt class="phpdocumentor-table-of-contents__entry -property -public">
+    </dl>
+
+
+<h4 id="toc-properties">
+    Properties
+    <a href="classes/NWiki-PluginCollection.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -property -public">
     <a href="classes/NWiki-PluginCollection.html#property_handlers">$handlers</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
@@ -195,7 +220,15 @@ processing should be stopped.</dd>
 </dt>
 <dd>List of loaded plugins</dd>
 
-                <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    </dl>
+
+<h4 id="toc-methods">
+    Methods
+    <a href="classes/NWiki-PluginCollection.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a href="classes/NWiki-PluginCollection.html#method_apiError">apiError()</a>
     <span>
                                 &nbsp;: bool|null    </span>
@@ -265,7 +298,8 @@ processing should be stopped.</dd>
 </dt>
 <dd>Register a new media type</dd>
 
-        </dl>
+    </dl>
+
 
 
 
@@ -274,11 +308,13 @@ processing should be stopped.</dd>
         <h3 class="phpdocumentor-elements__header" id="constants">
             Constants
             <a href="classes/NWiki-PluginCollection.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
         </h3>
                     <article class="phpdocumentor-element -constant -public ">
     <h4 class="phpdocumentor-element__name" id="constant_API_ERROR">
         API_ERROR
         <a href="classes/NWiki-PluginCollection.html#constant_API_ERROR" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
 
     <aside class="phpdocumentor-element-found-in">
@@ -307,6 +343,7 @@ processing should be stopped.</dd>
     <h4 class="phpdocumentor-element__name" id="constant_API_OK">
         API_OK
         <a href="classes/NWiki-PluginCollection.html#constant_API_OK" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
 
     <aside class="phpdocumentor-element-found-in">
@@ -335,6 +372,7 @@ processing should be stopped.</dd>
     <h4 class="phpdocumentor-element__name" id="constant_NOOP">
         NOOP
         <a href="classes/NWiki-PluginCollection.html#constant_NOOP" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
 
     <aside class="phpdocumentor-element-found-in">
@@ -363,6 +401,7 @@ processing should be stopped.</dd>
     <h4 class="phpdocumentor-element__name" id="constant_OK">
         OK
         <a href="classes/NWiki-PluginCollection.html#constant_OK" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
 
     <aside class="phpdocumentor-element-found-in">
@@ -391,6 +430,7 @@ processing should be stopped.</dd>
     <h4 class="phpdocumentor-element__name" id="constant_OKSTOP">
         OKSTOP
         <a href="classes/NWiki-PluginCollection.html#constant_OKSTOP" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
 
     <aside class="phpdocumentor-element-found-in">
@@ -423,6 +463,7 @@ processing should be stopped.</p>
         <h3 class="phpdocumentor-elements__header" id="properties">
             Properties
             <a href="classes/NWiki-PluginCollection.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+
         </h3>
                     <article
         class="
@@ -434,6 +475,7 @@ processing should be stopped.</p>
     <h4 class="phpdocumentor-element__name" id="property_handlers">
         $handlers
         <a href="classes/NWiki-PluginCollection.html#property_handlers" class="headerlink"><i class="fas fa-link"></i></a>
+
         <span class="phpdocumentor-element__modifiers">
                                 </span>
     </h4>
@@ -453,8 +495,7 @@ processing should be stopped.</p>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
     
-        <section class="phpdocumentor-description"></section>
-
+    
     
 
 </article>
@@ -468,6 +509,7 @@ processing should be stopped.</p>
     <h4 class="phpdocumentor-element__name" id="property_mediatypes">
         $mediatypes
         <a href="classes/NWiki-PluginCollection.html#property_mediatypes" class="headerlink"><i class="fas fa-link"></i></a>
+
         <span class="phpdocumentor-element__modifiers">
                                 </span>
     </h4>
@@ -487,8 +529,7 @@ processing should be stopped.</p>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
     
-        <section class="phpdocumentor-description"></section>
-
+    
     
 
 </article>
@@ -502,6 +543,7 @@ processing should be stopped.</p>
     <h4 class="phpdocumentor-element__name" id="property_plugins">
         $plugins
         <a href="classes/NWiki-PluginCollection.html#property_plugins" class="headerlink"><i class="fas fa-link"></i></a>
+
         <span class="phpdocumentor-element__modifiers">
                                 </span>
     </h4>
@@ -521,8 +563,7 @@ processing should be stopped.</p>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
     
-        <section class="phpdocumentor-description"></section>
-
+    
     
 
 </article>
@@ -532,6 +573,7 @@ processing should be stopped.</p>
         <h3 class="phpdocumentor-elements__header" id="methods">
             Methods
             <a href="classes/NWiki-PluginCollection.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+
         </h3>
                     <article
         class="phpdocumentor-element
@@ -542,6 +584,7 @@ processing should be stopped.</p>
     <h4 class="phpdocumentor-element__name" id="method_apiError">
         apiError()
         <a href="classes/NWiki-PluginCollection.html#method_apiError" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -556,6 +599,8 @@ processing should be stopped.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">apiError</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$ev</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$msg</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$opts</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[&#039;status&#039; =&gt; self::API_ERROR, &#039;rc&#039; =&gt; self::OK]</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool|null</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>To be used by an API handler when detecting an error.  Example call:</p>
 <pre class="prettyprint"><code class="prettyprint">return Plugins::apiError($event, 'Example error');
 </code></pre>
@@ -599,13 +644,15 @@ processing should be stopped.</p>
 
     
 
+            <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">bool|null</span>
-            &mdash;
-            <section class="phpdocumentor-description"><p>Returns self::OK by default.  Otherwise the value of $opts[rc]</p>
+        <span class="phpdocumentor-signature__response_type">bool|null</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Returns self::OK by default.  Otherwise the value of $opts[rc]</p>
 </section>
 
-    
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -616,6 +663,7 @@ processing should be stopped.</p>
     <h4 class="phpdocumentor-element__name" id="method_autoload">
         autoload()
         <a href="classes/NWiki-PluginCollection.html#method_autoload" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -630,6 +678,8 @@ processing should be stopped.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">autoload</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$class</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>It will look in the doc strings of the methods for the given class
 looking for a tag:</p>
 <pre class="prettyprint"><code class="prettyprint"></code></pre>
@@ -651,7 +701,8 @@ looking for a tag:</p>
     
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/NWiki-PluginCollection.html#method_autoload#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h5>
     <dl class="phpdocumentor-tag-list">
                                     <dt class="phpdocumentor-tag-list__entry">
@@ -667,12 +718,8 @@ handler.
 </section>
 
                                     </dd>
-                        </dl>
+                                            </dl>
 
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">void</span>
-            &mdash;
-        
     
 </article>
                     <article
@@ -684,6 +731,7 @@ handler.
     <h4 class="phpdocumentor-element__name" id="method_devt">
         devt()
         <a href="classes/NWiki-PluginCollection.html#method_devt" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -698,6 +746,8 @@ handler.
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__reference-operator">&amp;</span>    <span class="phpdocumentor-signature__name">devt</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$content</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>When calling dispatchEvent, you can use this to generate an
 event array that only contains read-only data.</p>
 <p>Example usage:</p>
@@ -721,13 +771,15 @@ on the newly created event.</p>
 
     
 
+            <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
-            &mdash;
-            <section class="phpdocumentor-description"><p>reference to the event.</p>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>reference to the event.</p>
 </section>
 
-    
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -738,6 +790,7 @@ on the newly created event.</p>
     <h4 class="phpdocumentor-element__name" id="method_dispatchEvent">
         dispatchEvent()
         <a href="classes/NWiki-PluginCollection.html#method_dispatchEvent" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -752,6 +805,8 @@ on the newly created event.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">dispatchEvent</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/NacoWikiApp.html"><abbr title="\NacoWikiApp">NacoWikiApp</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$wiki</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$event</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$data</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">NULL</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>It will call the hooks for the given $event.  Data to the hook
 is passed through the $data array.  When calling <code class="prettyprint">dispatchEvent</code>
 if no data needs to be received, you can leave this argument
@@ -795,13 +850,15 @@ function to pass read-only arguments.</p>
 
     
 
+            <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">bool</span>
-            &mdash;
-            <section class="phpdocumentor-description"><p><code class="prettyprint">true</code> if event was handled, otherwise <code class="prettyprint">false</code>.</p>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p><code class="prettyprint">true</code> if event was handled, otherwise <code class="prettyprint">false</code>.</p>
 </section>
 
-    
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -812,6 +869,7 @@ function to pass read-only arguments.</p>
     <h4 class="phpdocumentor-element__name" id="method_loadPlugins">
         loadPlugins()
         <a href="classes/NWiki-PluginCollection.html#method_loadPlugins" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -826,6 +884,8 @@ function to pass read-only arguments.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">loadPlugins</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$cfg</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>It will use the $cfg[plugins][enabled] and $cfg[plugins][disabled]
 list to enable or disable the listed pluigns.</p>
 <ul>
@@ -864,7 +924,8 @@ autoload method can be used.</p>
     
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/NWiki-PluginCollection.html#method_loadPlugins#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h5>
     <dl class="phpdocumentor-tag-list">
                                     <dt class="phpdocumentor-tag-list__entry">
@@ -876,12 +937,8 @@ autoload method can be used.</p>
 </section>
 
                                     </dd>
-                        </dl>
+                                            </dl>
 
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">void</span>
-            &mdash;
-        
     
 </article>
                     <article
@@ -893,6 +950,7 @@ autoload method can be used.</p>
     <h4 class="phpdocumentor-element__name" id="method_mediaExt">
         mediaExt()
         <a href="classes/NWiki-PluginCollection.html#method_mediaExt" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -907,6 +965,8 @@ autoload method can be used.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">mediaExt</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$page</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
     
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
@@ -923,13 +983,15 @@ autoload method can be used.</p>
 
     
 
+            <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">string|null</span>
-            &mdash;
-            <section class="phpdocumentor-description"><p>normalized file extension or NULL</p>
+        <span class="phpdocumentor-signature__response_type">string|null</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>normalized file extension or NULL</p>
 </section>
 
-    
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -940,6 +1002,7 @@ autoload method can be used.</p>
     <h4 class="phpdocumentor-element__name" id="method_path">
         path()
         <a href="classes/NWiki-PluginCollection.html#method_path" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -954,6 +1017,8 @@ autoload method can be used.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">path</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$file</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">NULL</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>This is a <code class="prettyprint">convenience</code> function used to determine the folder
 where a Plugin stores files.</p>
 <p>It will first look if there is a folder with the same name as
@@ -977,11 +1042,11 @@ simply return the plugin directory path</p>
 
     
 
+            <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">string</span>
-            &mdash;
-        
-    
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -992,6 +1057,7 @@ simply return the plugin directory path</p>
     <h4 class="phpdocumentor-element__name" id="method_pluginPath">
         pluginPath()
         <a href="classes/NWiki-PluginCollection.html#method_pluginPath" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -1006,6 +1072,8 @@ simply return the plugin directory path</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">pluginPath</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$cfg</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>Given the NacoWiki configuration, it will return
 an array containing directories where to look for plugins.</p>
 <p>The default is <code class="prettyprint">APP_DIR/plugins</code>.</p>
@@ -1026,13 +1094,15 @@ an array containing directories where to look for plugins.</p>
 
     
 
+            <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
-            &mdash;
-            <section class="phpdocumentor-description"><p>List of plugin directories</p>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>List of plugin directories</p>
 </section>
 
-    
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -1043,6 +1113,7 @@ an array containing directories where to look for plugins.</p>
     <h4 class="phpdocumentor-element__name" id="method_registerEvent">
         registerEvent()
         <a href="classes/NWiki-PluginCollection.html#method_registerEvent" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -1057,6 +1128,8 @@ an array containing directories where to look for plugins.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">registerEvent</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$event</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$callable</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
     
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
@@ -1065,25 +1138,19 @@ an array containing directories where to look for plugins.</p>
                 : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
-
+                
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$callable</span>
                 : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
-
+                
             </dd>
             </dl>
 
     
 
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">void</span>
-            &mdash;
-        
     
 </article>
                     <article
@@ -1095,6 +1162,7 @@ an array containing directories where to look for plugins.</p>
     <h4 class="phpdocumentor-element__name" id="method_registerMedia">
         registerMedia()
         <a href="classes/NWiki-PluginCollection.html#method_registerMedia" class="headerlink"><i class="fas fa-link"></i></a>
+
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="classes/PluginCollection.php"><a href="files/classes-plugincollection.html"><abbr title="classes/PluginCollection.php">PluginCollection.php</abbr></a></abbr>
@@ -1109,6 +1177,8 @@ an array containing directories where to look for plugins.</p>
     <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">registerMedia</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string|array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$ext</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$class</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">null|string|array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$handler</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">NULL</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
+    <div class="phpdocumentor-label-line">
+        </div>
         <section class="phpdocumentor-description"><p>Register the $class as a media type handler.</p>
 <p>It will define the given extension (or extensions) as a media type
 and will add these methods as event hooks:</p>
@@ -1176,78 +1246,159 @@ static function postSave(\NacoWikiApp $wiki, array &amp;$data) : ?bool;
 
     
 
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-    <span class="phpdocumentor-signature__response_type">void</span>
-            &mdash;
-        
     
 </article>
             </section>
 
-        
+        <div class="phpdocumentor-modal" id="source-view">
+    <div class="phpdocumentor-modal-bg" data-exit-button></div>
+    <div class="phpdocumentor-modal-container">
+        <div class="phpdocumentor-modal-content">
+            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/classes/PluginCollection.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
+        </div>
+        <button data-exit-button class="phpdocumentor-modal__close">&times;</button>
+    </div>
+</div>
+
     <script type="text/javascript">
-        function loadExternalCodeSnippets(line) {
-            Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach((pre) => {
-                var src = pre.getAttribute('data-src').replace( /\\/g, '/');
-                var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
-                var language = 'php';
+        (function () {
+            function loadExternalCodeSnippet(el, url, line) {
+                Array.prototype.slice.call(el.querySelectorAll('pre[data-src]')).forEach((pre) => {
+                    const src = url || pre.getAttribute('data-src').replace(/\\/g, '/');
+                    const language = 'php';
 
-                var code = document.createElement('code');
-                code.className = 'language-' + language;
+                    const code = document.createElement('code');
+                    code.className = 'language-' + language;
+                    pre.textContent = '';
+                    pre.setAttribute('data-line', line)
+                    code.textContent = 'Loading…';
+                    pre.appendChild(code);
 
-                pre.textContent = '';
+                    var xhr = new XMLHttpRequest();
 
-                pre.setAttribute('data-line', line)
-                code.textContent = 'Loading…';
+                    xhr.open('GET', src, true);
 
-                pre.appendChild(code);
-
-                var xhr = new XMLHttpRequest();
-
-                xhr.open('GET', src, true);
-
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4) {
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState !== 4) {
+                            return;
+                        }
 
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
-
                             Prism.highlightElement(code);
+                            return;
                         }
-                        else if (xhr.status >= 400) {
+
+                        if (xhr.status === 404) {
+                            code.textContent = '✖ Error: File could not be found';
+                            return;
+                        }
+
+                        if (xhr.status >= 400) {
                             code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                            return;
                         }
-                        else {
-                            code.textContent = '✖ Error: File does not exist, is empty or trying to view from localhost';
-                        }
+
+                        code.textContent = '✖ Error: An unknown error occurred';
+                    };
+
+                    xhr.send(null);
+                });
+            }
+
+            const modalButtons = document.querySelectorAll("[data-modal]");
+            const openedAsLocalFile = window.location.protocol === 'file:';
+            if (modalButtons.length > 0 && openedAsLocalFile) {
+                console.warn(
+                    'Viewing the source code is unavailable because you are opening this page from the file:// scheme; ' +
+                    'browsers block XHR requests when a page is opened this way'
+                );
+            }
+
+            modalButtons.forEach(function (trigger) {
+                if (openedAsLocalFile) {
+                    trigger.setAttribute("hidden", "hidden");
+                }
+
+                trigger.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    const modal = document.getElementById(trigger.dataset.modal);
+                    if (!modal) {
+                        console.error(`Modal with id "${trigger.dataset.modal}" could not be found`);
+                        return;
                     }
-                };
+                    modal.classList.add("phpdocumentor-modal__open");
 
-                xhr.send(null);
-            });
-        }
-
-        var modals = document.querySelectorAll("[data-modal]");
-
-        modals.forEach(function (trigger) {
-            trigger.addEventListener("click", function (event) {
-                //event.preventDefault();
-                const modal = document.getElementById(trigger.dataset.modal);
-                modal.classList.add("phpdocumentor-modal__open");
-                loadExternalCodeSnippets(trigger.dataset.line)
-                const exits = modal.querySelectorAll("[data-exit-button]");
-                exits.forEach(function (exit) {
-                    exit.addEventListener("click", function (event) {
-                        event.preventDefault();
-                        modal.classList.remove("phpdocumentor-modal__open");
+                    loadExternalCodeSnippet(modal, trigger.dataset.src || null, trigger.dataset.line)
+                    const exits = modal.querySelectorAll("[data-exit-button]");
+                    exits.forEach(function (exit) {
+                        exit.addEventListener("click", function (event) {
+                            event.preventDefault();
+                            modal.classList.remove("phpdocumentor-modal__open");
+                        });
                     });
                 });
             });
-        });
+        })();
     </script>
 
     </article>
-                <section data-search-results class="phpdocumentor-search-results phpdocumentor-search-results--hidden">
+                                </section>
+                <section class="phpdocumentor-on-this-page__sidebar">
+                                
+    <section class="phpdocumentor-on-this-page__content">
+        <strong class="phpdocumentor-on-this-page__title">On this page</strong>
+
+        <ul class="phpdocumentor-list -clean">
+            <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                        <li><a href="classes/NWiki-PluginCollection.html#toc-constants">Constants</a></li>
+                                                            <li><a href="classes/NWiki-PluginCollection.html#toc-properties">Properties</a></li>
+                                                            <li><a href="classes/NWiki-PluginCollection.html#toc-methods">Methods</a></li>
+                                    </ul>
+            </li>
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li><a href="classes/NWiki-PluginCollection.html#constant_API_ERROR">API_ERROR</a></li>
+                                                    <li><a href="classes/NWiki-PluginCollection.html#constant_API_OK">API_OK</a></li>
+                                                    <li><a href="classes/NWiki-PluginCollection.html#constant_NOOP">NOOP</a></li>
+                                                    <li><a href="classes/NWiki-PluginCollection.html#constant_OK">OK</a></li>
+                                                    <li><a href="classes/NWiki-PluginCollection.html#constant_OKSTOP">OKSTOP</a></li>
+                                            </ul>
+                </li>
+            
+                            <li class="phpdocumentor-on-this-page-section__title">Properties</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li><a href="classes/NWiki-PluginCollection.html#property_handlers">$handlers<a href="classes/NWiki-PluginCollection.html"></li>
+                                                    <li><a href="classes/NWiki-PluginCollection.html#property_mediatypes">$mediatypes<a href="classes/NWiki-PluginCollection.html"></li>
+                                                    <li><a href="classes/NWiki-PluginCollection.html#property_plugins">$plugins<a href="classes/NWiki-PluginCollection.html"></li>
+                                            </ul>
+                </li>
+            
+                        <li class="phpdocumentor-on-this-page-section__title">Methods</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_apiError">apiError()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_autoload">autoload()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_devt">devt()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_dispatchEvent">dispatchEvent()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_loadPlugins">loadPlugins()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_mediaExt">mediaExt()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_path">path()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_pluginPath">pluginPath()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_registerEvent">registerEvent()</a></li>
+                                            <li><a href="classes/NWiki-PluginCollection.html#method_registerMedia">registerMedia()</a></li>
+                                    </ul>
+            </li>
+                    </ul>
+    </section>
+
+                </section>
+                            </div>
+            <section data-search-results class="phpdocumentor-search-results phpdocumentor-search-results--hidden">
     <section class="phpdocumentor-search-results__dialog">
         <header class="phpdocumentor-search-results__header">
             <h2 class="phpdocumentor-search-results__title">Search results</h2>
@@ -1258,7 +1409,6 @@ static function postSave(\NacoWikiApp $wiki, array &amp;$data) : ?bool;
         </section>
     </section>
 </section>
-            </div>
         </div>
         <a href="classes/NWiki-PluginCollection.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
 
