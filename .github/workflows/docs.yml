@@ -4,9 +4,8 @@
 name: Build and deploy
 
 on:
-  push:
-    branches:
-      - main
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,8 +22,8 @@ jobs:
           ./scripts/docrun
 
 
-      - name: Deploy to GH Pages 🚀
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs
+      #~ - name: Deploy to GH Pages 🚀
+        #~ uses: peaceiris/actions-gh-pages@v3
+        #~ with:
+          #~ github_token: ${{ secrets.GITHUB_TOKEN }}
+          #~ publish_dir: docs

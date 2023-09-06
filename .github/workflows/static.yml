@@ -22,22 +22,30 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
+  sitegen-run:
+    runs-on: ubuntu-latest
+    name: run sitegen
+    steps:
+      - uses: actions/checkout@v3
+        with:
+         fetch-depth: 0
+      - name: Setup Pages
+        # I am not sure what is this step for... Maybe for the upload-pages to work?
+        uses: actions/configure-pages@v3
+      - name: Copying files to the target location
+        run: |
+          cp -av docs _html
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+
+  # Deployment job
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    needs: sphinx_docs_to_gh-pages
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          # Upload entire repository
-          path: 'docs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
