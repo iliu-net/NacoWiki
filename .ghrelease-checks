@@ -10,5 +10,5 @@ dir0=$(dirname "$0")
 find "$dir0" -path "$dir0/files" -prune -o -path "$dir0/scripts" -prune -o -type f '(' -name '*.php' -o -name '*.html' ')' \
 	| xargs -n 1 php -l
 
-$dir0/scripts/docgen
-$dir0/scripts/docrun
+#~ $dir0/scripts/docgen
+#~ $dir0/scripts/docrun
