@@ -37,6 +37,7 @@ jobs:
           ./scripts/docgen
           ./scripts/docrun
           cp -av docs _site
+          rm -f _site/NacoWiki
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
 
