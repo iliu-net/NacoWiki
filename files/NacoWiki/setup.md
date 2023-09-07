@@ -10,5 +10,5 @@ date: "2023-03-06"
 - php _instance-php_ install
 
 
-$include: configuration.md $
+$include: phpcod/configuration.md $
 

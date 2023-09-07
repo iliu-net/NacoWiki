@@ -5,10 +5,26 @@ vid: PqHk9bj4kIA
 ---
 $meta.vid$
 
+This should be removed
 
-<a href="https://www.youtube.com/watch?v=$meta.vid$">
-<img src="https://img.youtube.com/vi/$meta.vid$/0.jpg" width=320 height=240>
-</a>
+%include-start%
+
+**Include starts here**
+
+Only include this
+
+%include-stop%
+
+
+%custom-start%
+
+Custom marking
+
+%custom-stop%
+
+
+
+$include: tryme.md$
 
 ```
 $cfg$

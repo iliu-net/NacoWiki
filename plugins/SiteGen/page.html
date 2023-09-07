@@ -20,7 +20,7 @@ PHP_EOL);
       }
     }
   ?>
-  <!-- link rel="shortcut icon" href="<?=$wiki->asset('imgs/nanowiki-favicon.png')   ?>" type="image/png" -->
+  <!-- link rel="shortcut icon" href="<?=$wiki->asset('imgs/nacowiki-favicon.png')   ?>" type="image/png" -->
 
   <!-- syntax hilite -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
@@ -33,7 +33,7 @@ PHP_EOL);
     <!-- body header -->
     <header>
       <h1 class="title">
-	<a href="<?= $wiki->cfg['ext_url'] ?>"><img src="<?= $wiki->asset('nanowiki-logo.png') ?>" width=32 height=32></a>
+	<a href="<?= $wiki->cfg['ext_url'] ?>"><img src="<?= $wiki->asset('nacowiki-logo.png') ?>" width=32 height=32></a>
 	<?=
 	$wiki->meta['title'] ?  htmlspecialchars($wiki->meta['title']) :  '&#x2302; '. $wiki->cfg['title']
 	?></h1>

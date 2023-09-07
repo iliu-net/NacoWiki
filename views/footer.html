@@ -7,11 +7,20 @@
     }
   ?>
   <hr/>
-  <small>
-    <a href="<?= APP_URL ?>" target="_blank"><?= APP_NAME ?>: <?= APP_VERSION ?></a><br/>
-    Copyright &copy; <?=$year?> <?=$wiki->cfg['copyright']?> <br/>
-    All rights reserved<br/>
-  </small>
+  <div class="footer-row">
+    <div class="footer-column">
+      <small>
+	Copyright &copy; <?=$year?> <?=$wiki->cfg['copyright']?> <br/>
+	All rights reserved<br/>
+      </small>
+    </div>
+    <div class="footer-column footer-powered-by">
+      <small>
+        Powered By: <br/>
+	<a href="<?= APP_URL ?>" target="_blank"><?= APP_NAME ?> <?= APP_VERSION ?></a><br/>
+      </small>
+    </div>
+  </div>
 
   <?php if (!empty($wiki->context['debug']) && $wiki->context['debug']) { ?>
   <hr>

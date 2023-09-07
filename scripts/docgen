@@ -16,6 +16,10 @@ srcdir=$appdir/files/NacoWiki
 author="Alejandro Liu"
 
 cd $appdir
+mkdir -p "$outdir"
+mkdir -p "$outdir/phpcod"
+rm -f "$outdir/NacoWiki"
+ln -s . "$outdir/NacoWiki"
 
 update_file() {
   local dstf="$1" srctxt dsttxt
@@ -30,45 +34,75 @@ update_file() {
 }
 
 render() {
-  local src="$1" dst
-  dst=$(echo "$src" | sed -e 's![^\./]*$!html!' -e "s!$srcdir!$outdir!")
+  local dst=''
+  while [ $# -gt 0 ]
+  do
+    case "$1" in
+    --dst=*) dst=${1#--dst=} ;;
+    *) break ;;
+    esac
+    shift
+  done
+  local src="$1"
+  [ -z "$dst" ] && dst=$(echo "$src" | sed -e 's![^\./]*$!html!' -e "s!$srcdir!$outdir!")
+
   php web/index.php render \
 	--cfg-base_url=$baseurl \
-	--cfg-static_url=$baseurl/ \
+	--cfg-static_url=$(echo $baseurl | sed -e 's!/*$!/!' ) \
 	--cfg-file_store=$srcdir \
 	--cfg-default_doc=default.md \
 	--cfg-ext_url=$baseurl \
 	--cfg-copyright="$author" \
 	 "$src" | update_file "$dst"
 }
-render_link() {
-  local src="$1" txt
-  [ ! -f "$src" ] && return
-  #~ set -x
-  local lnk=$(readlink "$src") ref=$(readlink -f "$src")
-  txt=$(sed -e 's/^/:/' "$src")
-  local rc=0
-  (
-    rm -f "$src"
-    echo "$txt" | sed -e 's/^://' > "$src"
-    touch -r "$ref" "$src"
-    ls -sh "$src"
-    render "$src"
-  ) || rc=$?
-  rm -f "$src"
-  ln -s "$lnk" "$src"
-  return $rc
-}
+#~ render_link() {
+  #~ local src="$1" txt
+  #~ [ ! -f "$src" ] && return
+  #~ local lnk=$(readlink "$src") ref=$(readlink -f "$src")
+  #~ txt=$(sed -e 's/^/:/' "$src")
+  #~ local rc=0
+  #~ (
+    #~ rm -f "$src"
+    #~ echo "$txt" | sed -e 's/^://' > "$src"
+    #~ touch -r "$ref" "$src"
+    #~ ls -sh "$src"
+    #~ render "$src"
+  #~ ) || rc=$?
+  #~ rm -f "$src"
+  #~ ln -s "$lnk" "$src"
+  #~ return $rc
+#~ }
 
-php web/index.php mkassets --output="$outdir"
+#~ php web/index.php mkassets --output="$outdir"
+for img in nacowiki-logo.png
+do
+  cp -av assets/imgs/$img $outdir/$img
+done
+
+mkdir -p "$srcdir/phpcod"
 php $scriptdir/phpcod.php \
-	--output="$srcdir"  \
-	--yaml=$srcdir/phpcod.yaml \
+	--output="$srcdir/phpcod"  \
+	--yaml=$srcdir/phpcod/phpcod.yaml \
 	--title="NacoWiki Docs" \
 	nacowiki.php classes/* plugins/*.php
+(
+  cat <<-_EOF_
+	---
+	title: Plugin List
+	---
+	_EOF_
+  for php in plugins/*.php
+  do
+    plugin=$(basename "$php" .php)
+    if [ -f "$srcdir/phpcod/$plugin.md" ] ; then
+      echo '- [['"phpcod/$plugin.md"']]'
+    fi
+  done
+) | update_file "$srcdir/phpcod/PluginList.md"
 
-render_link $srcdir/README.md
-for src in $srcdir/*
+( srcdir=$(readlink -f .) ;  render --dst=$outdir/README.html README.md )
+
+for src in $srcdir/*.md $srcdir/phpcod/*.md
 do
   [ -L "$src" ] && continue;
 

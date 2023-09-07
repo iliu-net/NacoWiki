@@ -16,7 +16,7 @@ To configure the themes, you must add to the configuration the following keys:
 # NacoWiki themes
 
 These are found in the `assets/themes` folder.  There is a theme per folder. To create a new
-theme, create a new folder, and copy the assets in there.  You do not need to create all 
+theme, create a new folder, and copy the assets in there.  You do not need to create all
 new assets.  You can just create symbolic links to assets that you want to re-use.
 
 # [CodeMirror][cm] themes
@@ -32,7 +32,7 @@ Just use the same name in the configuration key.
 Just specify the theme to use.  You may need to append `.min` to the theme name depending
 on the CDN.
 
-YOu can preview themes here:
+You can preview themes here:
 
 * [highlight.js demo](https://highlightjs.org/static/demo/^)
 

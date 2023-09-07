@@ -9,7 +9,7 @@ date: "2023-03-06"
 Sub-commands are defined by the `Core` class and `Plugins`.  The standard distribution defines
 the following:
 
-$include: commands.md $
+$include: phpcod/commands.md $
 
 
 [nw]: https://github.com/iliu-net/NacoWiki/

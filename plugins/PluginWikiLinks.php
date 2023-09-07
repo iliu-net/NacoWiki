@@ -24,6 +24,10 @@ use NWiki\Cli as Cli;
  *   - ==space== followed by html attribute tags (if any, can be omitted)
  *   - `|` followed by the link text if not specified, defaults to the
  *     __url-path__
+ *   - optional modifier character.  Could be one of the following:
+ *     - `^` : Open in new window (shortcut to target="_blank")
+ *     - `$` : Create an editing link (with ?do=edit)
+ *     - `*` : normal link with an attached PENCIL link next to it.
  *   - `]]` : closing
  * - img tags
  *   - `{{` : opening
@@ -32,6 +36,7 @@ use NWiki\Cli as Cli;
  *   - `|` followed by the `alt` and `title` text.  Defaults to
  *     __url-path__.
  *   - `}}` : closing
+ *
  *
  * URL paths rules:
  *
@@ -72,7 +77,15 @@ class PluginWikiLinks {
 	    } else {
 	      $t = null;
 	    }
-
+	    # Check if there are flags
+	    $flags = [];
+	    while (strlen($v) > 1) {
+	      $i = substr($v,-1,1);
+	      if ($i == '^' || $i == '*' || $i == '$') {
+		$flags[$i] = $i;
+		$v = substr($v,0,-1);
+	      } else break;
+	    }
 	    if (empty($v)) continue;
 	    $v = preg_split('/\s+/',$v,2);
 	    if (count($v) == 0) continue;
@@ -82,13 +95,7 @@ class PluginWikiLinks {
 
 	    if (empty($t)) $t = htmlspecialchars(pathinfo($v)['filename']);
 
-	    //~ echo '<pre>';
-	    //~ var_dump($k);
-	    //~ var_dump($v);
-	    //~ var_dump($x);
-	    //~ var_dump($t);
-	    //~ echo '</pre>';
-	    //~ Util::log(Util::vdump($v));
+
 	    if (substr($v,0,1) == '!') {
 	      # This is a name search operator
 	      if (is_null(self::$tree_cache)) {
@@ -118,8 +125,25 @@ class PluginWikiLinks {
 	      }
 	    }
 	    $v = Util::sanitize($v,$wiki->page);
-	    //~ Util::log(Util::vdump($v));
+	    if (isset($flags['^'])) {
+	      $x .= ' target="_blank"';
+	    }
+	    if (isset($flags['$'])) {
+	      $v .= '?do=edit';
+	    }
+
+	    //~ Util::log('k: '.Util::vdump($k));
+	    //~ Util::log('v: '.Util::vdump($v));
+	    //~ Util::log('t: '.Util::vdump($t));
+	    //~ Util::log('flags: '.Util::vdump($flags));
+	    //~ Util::log('x: '.Util::vdump($x));
+
 	    $vars[$k] = sprintf($fmt, $wiki->mkUrl($v), $t,$x);
+	    if (isset($flags['*'])) {
+	      $vars[$k] .= sprintf($fmt, $wiki->mkUrl($v,['do'=>'edit']), '&#x270E;', $x);
+	    }
+
+	    //~ Util::log('vars '.Util::vdump([$k => $vars[$k]]));
 
 	  }
 	}

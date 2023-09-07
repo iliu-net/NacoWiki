@@ -7,12 +7,15 @@ tags: development, php
 
 ***
 
-Ready for 3.0 release.
+%include-start%
 
-# Issues
 
+- Enhance D attachments D to also let you do contents:(folder)
+- Raw page link should be hidden for folder views.
 - Render correctly:
   - [[/0ink-drafts/2021/2021-12-26-pelican_tests.md]]
+
+%include-stop%
 
 # Tools
 
@@ -21,6 +24,26 @@ Ready for 3.0 release.
 
 # SiteGen
 
+- Templates
+  - standard
+    - page
+    - article list
+      - paginated
+      - summary
+  - specials
+    - rss/atom feed
+    - sitemap.xml
+    - sitemap html
+  - lists
+    - sitemap (un-paginated, all article list)
+  - pelican lists
+    - archives : just a list of pages without summaries, grouped by date
+    - author
+    - category => year
+    - index
+    - tag
+- List
+  - last updated
 - Search: https://stork-search.net/
 - Sitemap generator
 - RSS
@@ -35,6 +58,7 @@ Ready for 3.0 release.
     - https://github.blog/2022-08-10-github-pages-now-uses-actions-by-default/
     - https://github.com/marketplace/actions/github-pages-action
     - https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+- SiteGen -- it doesn't seem to difficult to convert templates, so no real need for twig.
 
 # Maybe
 
@@ -46,7 +70,7 @@ Ready for 3.0 release.
       ```yaml
       created:
       - 2023-03-01
-      - 
+      -
         - user
         - 192.168.101.5
       change-log:
@@ -153,10 +177,10 @@ Ready for 3.0 release.
 We need more markup (beyond phpDoc) to document `event` hooks and API.  So we search
 the code for special strings and extract them.  We parse these as Markdown.
 
-- search for `'/^\s*##---\s?(.*)$/m'` 
+- search for `'/^\s*##---\s?(.*)$/m'`
 - collect in-between text until the next pattern.
 - The `$match[1]` is treated as:
-  - `file-name` 
+  - `file-name`
   - `#` (optional, and can be 1 `#` or more)
   - `section name` (optional, only if `#`'s were present)
 - between matches, we collect lines that begin with:

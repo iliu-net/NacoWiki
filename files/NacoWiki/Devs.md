@@ -11,7 +11,7 @@ Documentation for the PHP Programming interface is generated automatically.
 
 [[php-api]]
 
-To create a plugin you can refer to the already existing plugins in the standard distribution.  At 
+To create a plugin you can refer to the already existing plugins in the standard distribution.  At
 a high-level you need to create a file containing the class that will encapsulate your plugin.
 
 # Example
@@ -51,7 +51,7 @@ example.
 
 The following events can be hooked:
 
-$include: events-list.md $
+$include: phpcod/events-list.md $
 
 
 # Debugging
@@ -62,7 +62,7 @@ $include: debug.md $
 
 When hooking the `error_msg` event, the following errors will be generated:
 
-$include: error-catalog.md $
+$include: phpcod/error-catalog.md $
 
 # REST API
 
@@ -70,7 +70,7 @@ A basic REST API is available for use for use with JavaScript code running on th
 
 The following API calls are currently defined:
 
-$include: RESTAPI.md $
+$include: phpcod/RESTAPI.md $
 
 
 [nw]: https://github.com/iliu-net/NacoWiki/

@@ -4,6 +4,13 @@ date: "2023-02-12"
 ---
 [toc]
 
+# 3.1.0
+
+- tweak footer
+- PluginWikiLinks: Added optional modifier characters.
+- PluginIncludes: Added markers to control how much of the included
+  article is displayed.
+- Folders in crumbs point to ".../"
 
 # 3.0.0
 

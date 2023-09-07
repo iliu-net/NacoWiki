@@ -11,5 +11,6 @@ $wiki = new NacoWikiApp([
   'theme-highlight-js' => 'base16/atlas.min',
   'theme-codemirror' => 'ayu-dark',
   'proxy-ips' => '192.168.101.252',
+  'copyright' => 'Alejandro Liu',
 ]);
 $wiki->run($argv ?? NULL);

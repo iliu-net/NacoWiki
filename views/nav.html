@@ -19,7 +19,7 @@
     array_pop($crumbs);
     for ($i = 1; $i < count($crumbs) ; $i++) {
       echo ' : ';
-      echo '<a href="'.$wiki->mkUrl(implode('/',array_slice($crumbs,0,$i+1))).'">';
+      echo '<a href="'.$wiki->mkUrl(implode('/',array_slice($crumbs,0,$i+1)),'/').'">';
       echo htmlspecialchars($crumbs[$i]);
       echo '</a>';
     }

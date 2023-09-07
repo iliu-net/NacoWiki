@@ -16,3 +16,15 @@ body {
 .main {
     padding-bottom: 20vh;
 }
+
+.footer-row {
+  display: flex;
+}
+
+.footer-column {
+  flex: 50%;
+}
+
+.footer-powered-by {
+  text-align: right;
+}

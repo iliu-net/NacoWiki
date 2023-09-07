@@ -22,12 +22,14 @@ if [ ! -x "$phpdoc" ] ; then
 fi
 
 cd $appdir
-
-$phpdoc -t $appdir/docs/php-api -d "$appdir" -t docs/php-api \
-	--title "PHP API" \
+(
+  set -x
+  $phpdoc -t $appdir/docs/php-api -d "$appdir" -t docs/php-api \
+	--title "NacoWiki PHP API" \
 	--defaultpackagename "NWikiApp" \
 	--ignore assets/ --ignore compat/ --ignore files/ \
 	--ignore scripts/ --ignore views/ --ignore web/
+)
 cp $appdir/docs/landing.html $appdir/docs/index.html
 
 
