@@ -129,6 +129,9 @@ class PluginHTML {
   static function preSave(\NacoWikiApp $wiki, array &$ev) : ?bool {
     $meta = [];
     $body = self::readStruct($ev['text'], $meta);
+    # Modify $log ...
+    Core::logProps($wiki, $ev['props'], $meta, $body);
+
     $ev['text'] = self::makeSource($meta,$body);
     return Plugins::OK;
   }

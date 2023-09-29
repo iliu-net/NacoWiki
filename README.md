@@ -7,10 +7,7 @@ date: "2023-03-01"
 
 # NacoWiki
 
-**_NacoWiki is a small and simple file-based Wiki system._**
-**_It is mostly a complete rewrite of_**
-**_[NanoWiki](https://github.com/iliu-net/nanowiki)_**
-**_which in turn is based on [PicoWiki](https://github.com/luckyshot/picowiki)_**
+**_NacoWiki is a file-based Wiki system._**
 
 # Features
 
@@ -21,13 +18,27 @@ date: "2023-03-01"
 - Syntax highlight'ing based on [hihglight.js](https://highlightjs.org/)
 - Highlighting editor based on [CodeMirror](https://codemirror.net/)
 - Support of front-matter Meta data.
-- Standard Plugins:
+- Some features from standard Plugins:
   - Generate [grapviz](https://graphviz.org/) or [svgbob](https://github.com/ivanceras/svgbob) drawings from tagged/fenced code blocks
   - Extended Markdown markup.
   - Support for source code with display and editing with syntax highlighting for supported
-    languages.  This is meant to be aused to store snippets
+    languages.  This is meant to be used to store snippets
   - Wiki style links
   - Emojis
+  - Static site generator
+
+I myself use it as a personal wiki.  I also use it to document
+[NacoWiki][nw] itself.  It has a simple static site generator
+`SiteGen` that along with `phpDocumentor` and some custom scripts
+it generates the documentation for the
+[gh-pages website](https://iliu-net.github.io/NacoWiki/).  Finally
+I am using to replace [pelican][pp] static
+site generator for my personal [blog](https://0ink.net/).  This
+functionality makes use of `Albatros` which is a different plugin
+from `SiteGen` that works similarly to [palican][pp]
+
+Essentially it is flat-file based wiki that can export sections of
+it as a static site.
 
 ***
 
@@ -62,13 +73,15 @@ through the same plugin mechanism.
 - dom
 - json
 
-
 ## License & Contact
 
-[NacoWiki](https://github.com/iliu-net/NacoWiki/) \
+[NacoWiki][nw] \
 Copyright &copy; 2023 Alejandro Liu. \
 Licensed under [MIT](https://opensource.org/licenses/MIT).
 
 [Parsedown](https://github.com/erusev/parsedown) by Emanuil Rusev also licensed under a MIT License.
 
 Some plugins and parsedown extensions copyright by their respective authors.
+
+  [nw]: https://github.com/iliu-net/NacoWiki/
+  [pp]: https://getpelican.com/

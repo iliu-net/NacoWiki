@@ -1,0 +1,40 @@
+<?php use \NWiki\Core as Core; ?>
+<?php if (!isset($scope)) $scope = 'local'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+  <!-- syntax hilite -->
+  <link rel="stylesheet" href="<?= Core::HIGHLIGHT_JS ?>styles/default.min.css">
+  <!-- select the highlight.js theme... -->
+  <?php if (!empty($wiki->cfg['theme-highlight-js'])) { ?>
+    <link rel="stylesheet" href="<?= Core::HIGHLIGHT_JS ?>styles/<?= $wiki->cfg['theme-highlight-js'] ?>.css">
+  <?php } ?>
+  <script src="<?= Core::HIGHLIGHT_JS ?>highlight.min.js"></script>
+  <!-- additional languages -->
+  <script src="<?= Core::HIGHLIGHT_JS ?>languages/awk.min.js"></script>
+
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+      Comparing
+	"<?=$txts['a']['date']?>" version
+      with
+	"<?=$txts['b']['date']?>" version.
+      <br/>
+      <?php if (empty($difftxt)) { ?>
+	<strong>Versions are the same</strong>
+      <?php } else { ?>
+	<pre><code class="language-diff"><?=htmlspecialchars($difftxt)?></code></pre>
+
+      <?php } ?>
+
+    </div>
+    <?php include(APP_DIR . 'views/footer.html'); ?>
+  </div>
+</body>
+</html>
+<script>hljs.highlightAll();</script>

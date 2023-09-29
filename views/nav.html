@@ -1,5 +1,6 @@
 <!-- body havbar -->
 <?php use \NWiki\Util as Util; ?>
+<?php use NWiki\PluginCollection as Plugins; ?>
 <?php if (!isset($scope)) $scope = 'local'; ?>
 <?php if (!isset($q)) $q = ''; ?>
 <nav>
@@ -47,6 +48,7 @@
       </div>
   <?php }  ?>
   <div class="right">
+    <?php $wiki->navTools('navtools-left'); ?>
     <?php if (in_array($wiki->view,['page','folder','edit'])) { ?>
      <span class="dropdown"> <!-- info box -->
       <a href="javascript:void(0)"
@@ -54,12 +56,28 @@
 	  class="dropbtn" title="Info box"
 	  > &#x1f6c8; </a>
       <div id="infobox" class="dropdown-content">
+	<?php $wiki->navTools('infobox-top'); ?>
 	<table>
-	  <?php foreach ([
+	  <?php $wiki->navTools('infotable-top'); ?>
+	  <?php
+	  $info = [
 	    'meta.'=>$wiki->meta ?? [],
 	    'file.' =>$wiki->filemeta ?? [],
-	    'prop.' =>$wiki->props ?? [],
-	  ] as $p=>$h) {
+	    'mdh.' => [ ],
+	    ];
+	  if ($wiki->view == 'page' || $wiki->view == 'edit') {
+	    $info['mdh.']['ext'] = Plugins::mediaExt($wiki->page);
+	    if (is_null($info['mdh.']['ext'])) {
+	      $info['mdh.']['ext'] = 'No handler';
+	    } else {
+	      $mdh = Plugins::$media_classes[$info['mdh.']['ext']];
+	      $info['mdh.']['Plugin'] = $mdh;
+	      $v = eval('return '.$mdh.'::VERSION;');
+	      if (!empty($v)) $info['mdh.']['Plugin'] .= ' ('.$v.')';
+	    }
+	  }
+	  $wiki->navInfoBox($info);
+	  foreach ($info as $p=>$h) {
 	    foreach ($h as $k=>$v) {
 	      ?>
 	      <tr>
@@ -82,12 +100,12 @@
 	    }
 	  }
 	  ?>
+	  <?php $wiki->navTools('infotable-bot'); ?>
 	</table>
+	<?php $wiki->navTools('infobox-bot'); ?>
       </div>
      </span>
     <?php } ?>
-
-
 
     <span class="dropdown">  <!-- content tree -->
       <a href="javascript:void(0)"
@@ -137,6 +155,7 @@
 	  class="dropbtn" title="<?= $wiki->view ?> tools"
 	  > &#x1F6E0; </a>
       <div id="pgtools" class="dropdown-content">
+	<?php $wiki->navTools('edit-top'); ?>
 	<a
 	  href="javascript:void(0)"
 	  onclick="attachFile('fileToUloadFrm','fileToUploadCtl');"
@@ -149,9 +168,12 @@
 	  href="<?= $wiki->mkUrl($wiki->page,[ 'do'=>'delete']) ?>"
 	  onclick="return confirm('Delete &quot;<?= $wiki->page ?>&quot;?');"
 	>Delete</a>
-	<a
-	  href="<?= $wiki->mkUrl($wiki->page,[ 'do'=>'raw']) ?>"
-	>Raw page</a>
+	<?php if ($wiki->view == 'page') { ?>
+	  <a
+	    href="<?= $wiki->mkUrl($wiki->page,[ 'do'=>'raw']) ?>"
+	  >Raw page</a>
+	<?php } ?>
+	<?php $wiki->navTools('edit-bot'); ?>
       </div>
      </span>
     <?php } ?>
@@ -178,6 +200,9 @@
 	&#x1F441;
       </a>
     <?php } ?>
+
+    <?php $wiki->navTools('navtools-right'); ?>
+
    <!--- &#x238B;
      &#x2699; &#x1F3AF;
     &#x1F6C8;  &#x1F527;

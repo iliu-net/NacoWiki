@@ -487,6 +487,7 @@ class ParsedownExtension extends ParsedownToC {
     if ($Block['element']['name'] != 'ul') return $Block;
     foreach ($Block['element']['text'] as &$li) {
       if ($li['name'] != 'li') continue;
+      if (count($li['text']) == 0) continue;
       if (preg_match('/^\[([ xX])\]\s/',$li['text'][0],$mv)) {
 	$li['text'][0] = '<input type="checkbox" disabled '.
 	    ($mv[1] == ' ' ? '' : 'checked'). '> '.

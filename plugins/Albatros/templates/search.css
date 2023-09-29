@@ -1,0 +1,26 @@
+.search-box a {
+  text-decoration: none;
+}
+.search-box a:hover {
+  text-decoration: none;
+}
+
+.search-result {
+  position: absolute;
+  background-color: whitesmoke;
+}
+
+.search-match {
+  font-size: 105%;
+  color: white;
+  background-color: red;
+
+}
+.search-show {
+  display: block;
+}
+
+.search-hide {
+  display: none;
+}
+

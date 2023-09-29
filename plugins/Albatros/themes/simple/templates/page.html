@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block html_lang %}{{ page.lang }}{% endblock %}
+
+{% block title %}{{ SITENAME }} - {{ page.title|striptags }}{%endblock%}
+
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+
+    {{ page.content }}
+
+    {% if page.modified %}
+        <p>
+        Last updated: {{ page.modified }}
+        </p>
+    {% endif %}
+{% endblock %}

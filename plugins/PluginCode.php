@@ -59,7 +59,7 @@ use NWiki\Core as Core;
  */
 class PluginCode {
   /** @var string */
-  const VERSION = '1.0';
+  const VERSION = '1.1';
   /** @var mixed */
   const TYPES = [
     'yaml' => [
@@ -67,23 +67,27 @@ class PluginCode {
       'meta-re-start' => '/^\s*##---\s*\n/m',
       'meta-re-end' => '/^\s*##---\s*\n/m',
       'meta-re-line' => '/^\s*##\s*([^:]+):\s*(.*)$/',
+      'meta-re-log-line' => '/^\s*##\s*add-log:\s*(.*)$/m',
       'hl-js-class' => 'language-yaml',
       'cm-mode' => 'yaml',
       'cm-deps' => [
 		"mode/yaml/yaml.js",
       ],
       'template' =>
-		'#!/usr/bin/env python3'.PHP_EOL.
+		'---'.PHP_EOL.
 		'##---'.PHP_EOL.
 		'## title: {title}'. PHP_EOL.
 		'## date: {date}'. PHP_EOL.
+		'## author: {author}'. PHP_EOL.
 		'##---'.PHP_EOL.
+		'...'.PHP_EOL.
 		''.PHP_EOL,
     ],
     'py' => [
       'meta-re-start' => '/^\s*##---\s*\n/m',
       'meta-re-end' => '/^\s*##---\s*\n/m',
       'meta-re-line' => '/^\s*##\s*([^:]+):\s*(.*)$/',
+      'meta-re-log-line' => '/^\s*##\s*add-log:\s*(.*)$/m',
       'hl-js-class' => 'language-python',
       'cm-mode' => 'python',
       'cm-deps' => [
@@ -95,6 +99,7 @@ class PluginCode {
 		'##---'.PHP_EOL.
 		'## title: {title}'. PHP_EOL.
 		'## date: {date}'. PHP_EOL.
+		'## author: {author}'. PHP_EOL.
 		'##---'.PHP_EOL.
 		''.PHP_EOL,
     ],
@@ -116,12 +121,14 @@ class PluginCode {
 		'##---'.PHP_EOL.
 		'## title: {title}'. PHP_EOL.
 		'## date: {date}'. PHP_EOL.
+		'## author: {author}'. PHP_EOL.
 		'##---'.PHP_EOL.
 		'phpinfo();'.PHP_EOL,
       'skip-re' => '/<?php\s+/',
       'meta-re-start' => '/^\s*##---\s*\n/m',
       'meta-re-end' => '/^\s*##---\s*\n/m',
       'meta-re-line' => '/^\s*##\s*([^:]+):\s*(.*)\s*$/',
+      'meta-re-log-line' => '/^\s*##\s*add-log:\s*(.*)$/m',
     ],
   ];
   /** Read structured data
@@ -205,6 +212,48 @@ class PluginCode {
    */
   static function read(\NacoWikiApp $wiki, array &$ev) : ?bool {
     $ev['payload'] = self::readStruct($ev['source'], $ev['meta'], $ev['ext']);
+    return Plugins::OK;
+  }
+  /** preSave event handler
+   *
+   * Handles `preSave:[ext]` events.
+   *
+   * TODO: check for LOG lines and adds them to the
+   * props.
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array &$ev passed event
+   */
+  static function preSave(\NacoWikiApp $wiki, array &$ev) : ?bool {
+    # Figure out if there is a log line.
+    $offset = 0;
+    $ext = $ev['ext'];
+    $source = &$ev['text'];
+    if (!empty(self::TYPES[$ext]['skip-re'])) {
+      if (!preg_match(self::TYPES[$ext]['skip-re'],$source,$mv,PREG_OFFSET_CAPTURE,$offset)) return Plugins::OK;
+      $offset = $mv[0][1] + strlen($mv[0][0]);
+    }
+    if (!preg_match(self::TYPES[$ext]['meta-re-start'],$source,$mv,PREG_OFFSET_CAPTURE,$offset)) return Plugins::OK;
+    $start = $offset = $mv[0][1] + strlen($mv[0][0]);
+    if (!preg_match(self::TYPES[$ext]['meta-re-end'],$source,$mv,PREG_OFFSET_CAPTURE,$offset)) return Plugins::OK;
+    $end = $mv[0][1];
+    if (!preg_match(self::TYPES[$ext]['meta-re-log-line'],$source,$mv,PREG_OFFSET_CAPTURE,$offset)) return Plugins::OK;
+    if ($mv[0][1] < $start || $mv[0][1] > $end)  return Plugins::OK; # Falls outside header block
+
+    # Got it!
+    $logtxt = $mv[1][0];
+
+    # Remove log line
+    $offset = $mv[0][1];
+    $len = strlen($mv[0][0]);
+
+    if ($source[$offset+$len] == "\r") $len++;
+    if ($source[$offset+$len] == "\n") $len++;
+    $source = substr($source,0,$offset) . substr($source,$offset+$len);
+
+    # Update props
+    $meta['add-log'] = $logtxt; # This works because logProps only looks at 'add-log' key.
+    Core::logProps($wiki, $ev['props'],$meta);
     return Plugins::OK;
   }
   /**

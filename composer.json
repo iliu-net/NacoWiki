@@ -1,0 +1,6 @@
+{
+    "require": {
+        "twig/twig": "^3.0",
+        "mibe/feedwriter": "^1.1"
+    }
+}

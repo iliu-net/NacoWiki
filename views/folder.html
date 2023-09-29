@@ -39,6 +39,11 @@
 	      echo ' <a href="'.$wiki->mkUrl($doc).'">'. $xfn .
 		  '</a>'.PHP_EOL;
 	      if ($wiki->isWritable($doc)) {
+		if (!$isdir) {
+		  echo '<a href="'.$wiki->mkUrl($wiki->page,$fn,[ 'do'=>'edit']).'"'.
+		      ' title="Edit &quot;'.$xfn.'&quot;" alt="Edit &quot;'.$xfn.'&quot;"'.
+		      '> &#x270E; </a>'.PHP_EOL;
+		}
 		echo '<a href="'.$wiki->mkUrl($wiki->page,$fn,[ 'do'=>'delete']).'"'.
 		    ' title="Delete &quot;'.$xfn.'&quot;" alt="Delete &quot;'.$xfn.'&quot;"'.
 		    ' onclick="return confirm('."'".'Delete &quot;'.$fn.'&quot;?'."'".');"'.

@@ -53,11 +53,6 @@ The following events can be hooked:
 
 $include: phpcod/events-list.md $
 
-
-# Debugging
-
-$include: debug.md $
-
 # Customizing errors
 
 When hooking the `error_msg` event, the following errors will be generated:

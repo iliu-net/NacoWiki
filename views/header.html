@@ -1,7 +1,8 @@
 <!-- body header -->
 <header>
 <h1 class="title"><?=
-  $wiki->meta['title'] ?  htmlspecialchars($wiki->meta['title']) :  '&#x2302; '. $wiki->cfg['title']
+  !empty($wiki->meta['title']) ?  htmlspecialchars($wiki->meta['title']) :  '&#x2302; '. $wiki->cfg['title']
 ?></h1>
+<?php if (!empty($extras['annotate'])) echo $extras['annotate']; ?>
 <hr/>
 </header>

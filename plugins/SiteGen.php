@@ -5,7 +5,6 @@
  *
  * @package Plugins
  * @phpcod Plugins##Sitegen
- * @todo This is still a work in progress
  */
 
 use NWiki\PluginCollection as Plugins;

@@ -1,8 +1,20 @@
 ---
 title: CHANGES
 date: "2023-02-12"
+author: alex
 ---
 [toc]
+
+# 3.2.0-rc
+
+- Added document properties
+- Added `opts.yaml`
+- API improvements
+- Bug fixes and UI improvements
+- Additional Plugins:
+  - Versions
+  - AutoTag
+  - Albatros : Blog site generator (similar to [Pelican](https://getpelican.com/)).
 
 # 3.1.0
 
@@ -32,3 +44,18 @@ date: "2023-02-12"
 - Documentation
 - Re-organized CSS files
 
+# 2.x
+
+This refers to [NanoWiki][nw].
+
+# 1.x
+
+[NanoWiki][nw] originally was based on [PicoWiki][pw].
+
+
+**_NacoWiki is a is mostly a complete rewrite of_**
+**_[NanoWiki][nw]_**
+**_which in turn is based on [PicoWiki][pw]_.**
+
+  [nw]: https://github.com/iliu-net/nanowiki
+  [pw]: https://github.com/luckyshot/picowiki

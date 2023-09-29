@@ -16,6 +16,9 @@ You can find here:
 - [[plugin-intro.md|Plugin Information]]
 - [[Devs.md|Programming documentation]]
   - [php-api](php-api/)
+  - [[writedocs.md|Documenting the code]]
+  - [[debug.md|Debugging]]
+- [[opts-yaml.md|Options YAML]]
 
 For the fulll file list: [[default.md|Files]]
 

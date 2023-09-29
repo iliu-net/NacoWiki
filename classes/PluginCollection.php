@@ -29,6 +29,8 @@ class PluginCollection {
   static $mediatypes = [];
   /** List of loaded plugins */
   static $plugins = [];
+  /** List of media handler classes */
+  static $media_classes = [];
 
   /** translates configured plugin path into list of directories
    *
@@ -283,7 +285,6 @@ class PluginCollection {
   static function registerMedia($ext,string $class, $handler = NULL) : void {
     $media_handlers = [ 'view', 'read', 'render', 'layout', 'missing', 'edit', 'save', 'preSave', 'postSave' ];
 
-
     if (!is_array($ext)) $ext = [ $ext ];
     $mlst = [];
     if (is_array($handler)) {
@@ -307,6 +308,7 @@ class PluginCollection {
     foreach ($ext as $media) {
       $media = strtolower($media); // Make sure it is always lowercase
       self::$mediatypes[$media] = $ext[0];
+      self::$media_classes[$media] = $class;
     }
 
     foreach ($mlst as $event => $callback) {

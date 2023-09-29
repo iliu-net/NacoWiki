@@ -17,7 +17,7 @@ function dropbtnClick(id) {
 }
 window.onclick = function(event) {
   //~ console.log(event);
-  if (!event.target.matches('.dropbtn') && !event.target.matches('.dropdown-content') & !event.target.matches('.dropctl')) {
+  if (!event.target.matches('.dropbtn') && !event.target.matches('.dropdown-content') && !event.target.matches('.dropctl')) {
     dropdownCloseAll();
   }
 };

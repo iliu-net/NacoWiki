@@ -113,6 +113,17 @@ class Util {
     ob_end_clean();
     return trim($res);
   }
+  /** Return a simplified stack trace
+   *
+   * @return string dumped strack trace suitable for Util::log()
+   */
+  static function stackTrace() : string {
+    $trace = PHP_EOL;
+    foreach (debug_backtrace() as $t) {
+      $trace.= '   '.$t['file'].','.$t['line'].':('.$t['class'].'::'.$t['function'].') -- '.$t['type'].PHP_EOL;
+    }
+    return $trace;
+  }
   /** log message
    *
    * Writes the message to stderr and also saves it to the `logmsg`
@@ -124,7 +135,7 @@ class Util {
    *
    * @param string $msg text to log
    */
-  static function log(string $msg) : void {
+  static function log(string $msg = '') : void {
     $trace = debug_backtrace();
     $file = $trace[0]['file'];
     if (defined('APP_DIR')) {
@@ -370,5 +381,28 @@ class Util {
     self::_walkTree($basedir,'', $dirs, $files,$slnkf);
     return [$dirs,$files];
   }
+  /** Copy files recursively
+   *
+   * From [copy doc in php.net](https://www.php.net/manual/de/function.copy.php#91010)
+   *
+   * @param string $src : source directory
+   * @param string $dst : target directory
+   */
+  static function recurse_copy(string $src,string $dst) : void {
+    $dir = opendir($src);
+    @mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+      if (( $file != '.' ) && ( $file != '..' )) {
+	if ( is_dir($src . '/' . $file) ) {
+	  self::recurse_copy($src . '/' . $file,$dst . '/' . $file);
+	}
+	else {
+	  copy($src . '/' . $file,$dst . '/' . $file);
+	}
+      }
+    }
+    closedir($dir);
+  }
+
 }
 

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block html_lang %}{{ article.lang }}{% endblock %}
+
+{% block title %}{{ SITENAME }} - {{ article.title|striptags  }}{% endblock %}
+
+{% block head %}
+  {% if article.summary %}
+    <meta name="description" content="{{article.summary}}" />
+  {% endif %}
+
+  {% for tag in article.tags %}
+    <meta name="tags" content="{{tag}}" />
+  {% endfor %}
+
+{% endblock %}
+
+{% block content %}
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark"
+         title="Permalink to {{ article.title|striptags }}">{{ article.title }}</a></h2>
+  </header>
+  <footer class="post-info">
+    <time class="published" datetime="{{ article.date }}">
+      {{ article.date }}
+    </time>
+    {% if article.modified %}
+    <time class="modified" datetime="{{ article.modified }}">
+      {{ article.modified }}
+    </time>
+    {% endif %}
+    {% if article.author %}
+    <address class="vcard author">
+      By
+          <a class="url fn" href="{{ SITEURL }}/{{ article.author_url }}">{{ article.author }}</a>
+    </address>
+    {% endif %}
+    {% if article.category %}
+    <div class="category">
+        Category: <a href="{{ SITEURL }}/{{ article.category_url }}">{{ article.category }}</a>
+    </div>
+    {% endif %}
+    {% if article.x_tags %}
+    <div class="tags">
+        Tags:
+        {% for my,tag in article.x_tags %}
+            <a href="{{ SITEURL }}/{{ tag.url }}">{{ tag.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    {{ article.content }}
+  </div><!-- /.entry-content -->
+</section>
+{% endblock %}

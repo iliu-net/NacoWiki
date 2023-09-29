@@ -125,10 +125,14 @@ class PluginWikiLinks {
 	      }
 	    }
 	    $v = Util::sanitize($v,$wiki->page);
+	    # Check if writable...
+	    $can_wr = $wiki->isWritable($v);
+
+
 	    if (isset($flags['^'])) {
 	      $x .= ' target="_blank"';
 	    }
-	    if (isset($flags['$'])) {
+	    if (isset($flags['$']) && $can_wr) {
 	      $v .= '?do=edit';
 	    }
 
@@ -139,7 +143,7 @@ class PluginWikiLinks {
 	    //~ Util::log('x: '.Util::vdump($x));
 
 	    $vars[$k] = sprintf($fmt, $wiki->mkUrl($v), $t,$x);
-	    if (isset($flags['*'])) {
+	    if (isset($flags['*']) && $can_wr) {
 	      $vars[$k] .= sprintf($fmt, $wiki->mkUrl($v,['do'=>'edit']), '&#x270E;', $x);
 	    }
 

@@ -1,0 +1,67 @@
+<?php if (!isset($scope)) $scope = 'local'; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <?php include(APP_DIR . 'views/html_head.html'); ?>
+</head>
+<body>
+  <?php include(APP_DIR . 'views/nav.html'); ?>
+  <div class="page">
+    <?php include(APP_DIR . 'views/header.html'); ?>
+    <div id="main" class="main">
+    <?php
+      if (empty($vlinks)) {
+	?> No versions found! <?php
+      } else {
+	$k = count($vlinks);
+	if ($k == 1) {
+	  echo 'One version found';
+	} else {
+	  echo $k.' versions found';
+	}
+	?> <br/>
+	<form>
+	<table>
+	  <tr>
+	  <th>A</th>
+	  <th>B</th>
+	  <th>version</th>
+	  <th>src</th>
+	  </tr>
+	<?php
+	foreach ($vlinks as $v) {
+	  echo '<tr>';
+	  echo '<td><input type="radio" name="v_a" value="'.$v['c_v'].'"></td>';
+	  echo '<td><input type="radio" name="v_b" value="'.$v['c_v'].'"></td>';
+	  echo '<td>';
+	  echo '<a href="'.$wiki->mkUrl($wiki->page,$v['opts']).'">';
+	  if (empty($v['name'])) {
+	    echo empty($v['ts']) ? '???' : $v['ts'];
+	  } else {
+	    echo $v['name'];
+	  }
+	  if (!empty($v['ts'])) echo ' ('.date('Y-m-d H:i:s',$v['ts']).')';
+	  echo '</a>';
+	  if (!empty($v['log'])) {
+	    if (!empty($v['log'][3])) echo '<br/><em>'.htmlspecialchars($v['log'][3]).'</em>';
+	    echo '<br/>';
+	    if (!empty($v['log'][2])) echo htmlspecialchars($v['log'][2]);
+	    echo '@'.$v['log'][1];
+	  }
+	  echo '</td>';
+	  echo '<th><a href="'.$wiki->mkUrl($wiki->page,$v['raws']).'" ';
+	  echo 'alt="View raw" title="View raw"';
+	  echo '> &#x1F441; </a></th>';
+	  echo '</tr>';
+	} ?>
+	</table>
+	<button onclick="return testfn();">Compare versions</button>
+	<script>
+	  <?php readfile(Versions::path('vselect.js')); ?>
+	</script>
+   <?php } ?>
+    </div>
+    <?php include(APP_DIR . 'views/footer.html'); ?>
+  </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% if SEARCH_SITE %}
+  <!---
+    <iframe src="https://duckduckgo.com/search.html?site={{ SEARCH_SITE }}&prefill={{ SEARCH_PREFILL }}" style="overflow:hidden;margin:5px;padding:0;width:408px;height:40px;" frameborder="0"></iframe>
+  -->
+  <div class="search-box">
+    <a href="javascript:void(0)"
+      onclick="searchClear('search-input')"
+      class="search-ctl" style="display: inline"
+      >&#x2a2f;</a>
+    <input
+      type="text"
+      id="search-input"
+      name="search-input"
+      class="search-ctl"
+      title="Search site..."
+      onclick="searchSite('search-input')"
+      />
+    <a href="javascript:void(0)"
+      onclick="searchSite('search-input')"
+      class="search-ctl" style="display: inline"
+      >&#x1f50d;</a>
+  </div>
+  <div id="search-results" class="search-result search-hide">
+  </div>
+  <style>
+    {% include 'search.css' %}
+  </style>
+  <script src="{{ SITEURL }}/.search/search.js?t={{now}}"></script>
+  <script defer src="{{ SITEURL }}/.search/index.js?t={{now}}"></script>
+
+{% endif %}

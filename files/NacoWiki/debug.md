@@ -1,3 +1,8 @@
+---
+title: Debugging
+date: "2023-03-06"
+author: alex
+---
 The `$context` property of the NacoWiki class contains
 a 'debug' flag.  To turn on add to the URL:
 

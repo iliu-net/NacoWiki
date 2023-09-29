@@ -116,8 +116,22 @@ class NacoWikiApp {
 
   /** Current document */
   public string $page = '';
-  /** Current document meta-data */
+  /** Current document meta-data.
+   *
+   * $wiki->meta is loaded from the `front matter` in the stored article
+   * and can be modified by users with write access.  This is unlike
+   * $wiki->props that are managed by the system (either via core or by
+   * plugin).
+   */
   public array $meta = [];
+  /** Current document properties
+   *
+   * $wiki->props is loaded and managed automatically by the system (either
+   * via core or by plugin).  This is unlike $wiki->meta that are loaded
+   * from the editable file and can be modified arbitraily by users with
+   * write access.
+   */
+  public array $props = [];
   /** HTTP context, should be set to http or https, otherwise is NULL */
   public ?string $scheme = NULL;
   /** HTTP client's remote address */
@@ -134,6 +148,8 @@ class NacoWikiApp {
   public array $ctxvars = [];
   /**  Default view class */
   public string $view = 'default';
+  /** Local customizations */
+  public array $opts = [];
 
   /**
    * Create a new NanoWiki application instance
@@ -227,12 +243,20 @@ class NacoWikiApp {
     if (Plugins::dispatchEvent($this, 'error_msg', Plugins::devt(['msg' => $msg,'opts' => $flags, 'tag'=>$tag]))) exit;
     $wiki = $this;
     $this->view = 'error';
-    $this->meta = ['title' => 'Fatal Error'];
+    $trace = debug_backtrace();
+    $this->meta = [
+      'title' => 'Fatal Error',
+      ];
     include(APP_DIR . 'views/err_msg.html');
     exit;
   }
 
   /** Current document is writable
+   *
+   * This is the entry point to check if remote user has access to this file.
+   * At the moment, the minimum functionality is to check if there is OS
+   * write access to the file.
+   *
    * @todo Currently is only a stub function
    * @param ?string $url URL to translate, If not given, it would use $this->page
    * @return ?bool returns `true` if allowed, `false` if not. `NULL` if user is not authenticated.
@@ -249,6 +273,11 @@ class NacoWikiApp {
       } else {
 	$wr = !filter_var($this->cfg['read_only'],FILTER_VALIDATE_BOOLEAN);
       }
+    }
+    if (file_exists($fpath)) {
+      $wr = is_writable($fpath);
+    } else {
+      $wr = is_writable(dirname($fpath));
     }
     $event  = [
       'page' => $url ?? $this->page,
@@ -457,7 +486,7 @@ class NacoWikiApp {
     Plugins::dispatchEvent($this, 'context_loaded');
 
     if (!empty($_SERVER['PATH_INFO'])) $url = $_SERVER['PATH_INFO'];
-    if (!empty($url) && !empty($_GET['url'])) $url = trim($_GET['url'],'/');
+    if (!empty($url) && !empty($_GET['url'])) $url = $_GET['url'];
 
     // Handle HTTP request path
     if (isset($url)) {
@@ -465,7 +494,10 @@ class NacoWikiApp {
       if (!empty($url)) {
 	$this->page = $url;
       }
+      // Load options
+      $this->loadOpts($url);
     }
+
     //~ echo('TRC:'.__FILE__.','.__LINE__.':page:'. $this->page);
     if (!empty($_GET['go'])) {
       $go = Util::sanitize($_GET['go'],$this->page);
@@ -550,9 +582,12 @@ class NacoWikiApp {
 	## This event is used to handle navigation to a page.  i.e.
 	## URL is an actual file.
 	##
-	## There are no special event parameters
+	## Event data:
+	##
+	## - `no_exit` (input) : if true, the event handler will not exit.  Otherwise it will exit.
+	## - `view` (input) : use the specified PHP template to view the content.
 	##--
-	Plugins::dispatchEvent($this, 'read_page');
+	Plugins::dispatchEvent($this, 'read_page',  Plugins::devt(['no_exit'=>false]));
       } else {
 	##-- events-list##missing_page
 	## This event is used to handle http 404 errors (missing resource)
@@ -562,6 +597,20 @@ class NacoWikiApp {
 	Plugins::dispatchEvent($this, 'missing_page');
       }
     }
+  }
+  /** Load option files
+   *
+   * @param string $url path of option files to read
+   */
+  public function loadOpts(string $url) : void {
+    if ($url != '.' && $url != '/') {
+      $this->loadOpts(dirname($url));
+    }
+    if (!is_dir($this->filePath($url))) return;
+    if (!file_exists($this->filePath($url.'/opts.yaml'))) return;
+    $y = yaml_parse_file($this->filePath($url.'/opts.yaml'));
+    if (!is_array($y)) return;
+    $this->opts = array_replace($this->opts,$y);
   }
   /**
    * Declare a context variable.
@@ -644,6 +693,61 @@ class NacoWikiApp {
       ]);
     }
     $this->context = $context;
+  }
+  /** Add nav Tools
+   *
+   * Used to add components to navigation HTML from Plugins.
+   *
+   * @param string $mode string with current mode.
+   */
+  public function navTools($mode) {
+    $ev = [
+      'mode' => $mode,
+      'html' => '',
+    ];
+    ##-- events-list##navtools
+    ## This event can be used to add elements to the meta data drop
+    ## down.
+    ##
+    ## Event data:
+    ##
+    ## - `mode` (input): What part of the nav bar is being modified.
+    ## - `html` (output): HTML elements to add.
+    ##
+    ## Possible modes:
+    ##
+    ## - `edit-top` : Top of the edit pgtools dropdown
+    ## - `edit-bot` : Bottom of the edit pgtools dropdown
+    ## - `navtools-left` : Left of the navigation tool bar
+    ## - `navtools-right` : Right of the navigation tool bar
+    ## - `infobox-top`: Top of the infobox dropdown
+    ## - `infobox-bot`: Bottom of the infobox dropdown
+    ## - `infotable-top`: Top of the infobox table
+    ## - `infotable-bot`: Bottom of the infobox table
+    ##--
+    Plugins::dispatchEvent($this, 'navtools', $ev);
+    echo $ev['html'];
+  }
+  /** Add InfoBox items
+   *
+   * Used to add items to the infobox table of the top nav bar.
+   *
+   * @param array &$info array to receive the new items.
+   */
+  public function navInfoBox(&$info) {
+    $ev = [
+      'infotable' => &$info,
+    ];
+    ##-- events-list##infobox
+    ## This event can be used to add elements to the infobox
+    ## table of the top nav bar.
+    ##
+    ## Event data:
+    ##
+    ## - `infotable` (input|output): Current contents of the infobox table
+    ##
+    ##--
+    Plugins::dispatchEvent($this, 'infobox', $ev);
   }
 }
 

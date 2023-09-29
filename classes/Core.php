@@ -16,6 +16,9 @@ class Core {
   /** URL to the supported HIGHLIGHT_JS version
    * @var string */
   const HIGHLIGHT_JS = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/';
+  /** property files prefix
+   * @var string */
+  const PROP_FILE_PREFIX = '/.prop;';
 
   /** When a file/directory is deleted, make sure no empty dirs remain
    *
@@ -34,7 +37,10 @@ class Core {
       $fpath = rtrim($wiki->filePath($dpath),'/');
       $files = glob($fpath.'/*');
       if (count($files)) break;
-      if (rmdir($fpath) === false) $wiki->errMsg('os_error',$fpath . ': rmdir error',EM_PHPERR);
+      if (rmdir($fpath) === false) {
+	##!! error-catalog|os_error|rmdir error
+	$wiki->errMsg('os_error',$fpath . ': rmdir error',EM_PHPERR);
+      }
       $dpath = dirname($dpath);
     }
     return $dpath;
@@ -47,7 +53,10 @@ class Core {
   static function makePath(\NacoWikiApp $wiki, string $dir) : void {
     $dpath = $wiki->filePath($dir);
     if (is_dir($dpath)) return;
-    if (false === mkdir($dpath, 0777, true)) $wiki->errMsg('os_error',$dir.': mkdir error');
+    if (false === mkdir($dpath, 0777, true)) {
+      ##!! error-catalog|os_error|mkdir error
+      $wiki->errMsg('os_error',$dir.': mkdir error');
+    }
     return;
   }
 
@@ -158,6 +167,7 @@ class Core {
       }
       break;
     default:
+      ##!! error-catalog|param|unknown scope
       $wiki->errMsg('param',$scope.': Unknown scope');
     }
 
@@ -320,6 +330,172 @@ class Core {
     Util::sendFile($wiki->filePath(),'text/plain');
     exit;
   }
+  /** Read properties from props file.
+   *
+   * Read properties from a YAML file.  If not found, it should
+   * pre-initalize things accordingly.
+   *
+   * @param \NacoWikiApp $wiki running wiki instance
+   * @param string $file name of file to use
+   * @return array Array containing properties
+   */
+  static function readProps(\NacoWikiApp $wiki, $file) {
+    $name = pathinfo($file);
+    $prop_file = $name['dirname'].self::PROP_FILE_PREFIX.$name['basename'];
+    if (file_exists($prop_file)) {
+      # Read it as YAML...
+      $res = yaml_parse_file($prop_file);
+      if (is_array($res)) return $res;
+    }
+    // Missing or Invalid prop file...
+    return [
+      'created' => [],
+      'change-log' => [],
+    ];
+  }
+  /** Save properties to props file.
+   *
+   * Save properties ta props file in YAML format.
+   *
+   * @param \NacoWikiApp $wiki running wiki instance
+   * @param array $props Array containing properties
+   * @param string $fpath File to save, otherwise uses $wiki->filePath()
+   * @return bool true on succes, false on error.
+   */
+  static function saveProps($wiki,$props,$fpath = NULL) : bool {
+    ##-- opts-yaml##disable-props
+    ## This option disables the creation of `.props;xxxx` files.
+    ##
+    ## This is for use in `git` repositories, where that kind of information
+    ## should be stored in `git` itself.
+    ##--
+    if (isset($wiki->opts['disable-props']) && $wiki->opts['disable-props']) return true; # Disabled, so we lie and just say success!
+    if (is_null($fpath)) $fpath = $wiki->filePath();
+    $name = pathinfo($fpath);
+    $prop_file = $name['dirname'].self::PROP_FILE_PREFIX.$name['basename'];
+    if (yaml_emit_file($prop_file, $props) === true) return true;
+    return false;
+  }
+
+  /** Calculate a string from an Prop change-log entry
+   *
+   * Used to reduce the number of change log entries.
+   * It uses the remote user if available and remote IP address.
+   * Also, the time stamp is reduced to date only (time is removed).
+   * The reason is that changes by the same user on the same date
+   * should only result in a single change-log entry.
+   *
+   * @param array $entry Entry to convert to a comparable string.
+   * @return string
+   */
+  static function propEntryStr($entry) {
+    return date('Ymd',$entry[0]).'|'.
+	      ($entry[1] ?? '?').'|'.
+	      ($entry[2] ?? '?');
+  }
+  /** Update props
+   *
+   * Update props by creating a new entry in the change log
+   *
+   * @param \NacoWikiApp $wiki running wiki instance
+   * @param array &$props Array containing properties
+   */
+  static function updateProps(\NacoWikiApp $wiki, &$props) {
+    $entry = [ time(), $wiki->remote_addr, $wiki->remote_user ];
+    if (count($props['change-log'])) {
+      $cur = self::propEntryStr($entry);
+      $last = self::propEntryStr($props['change-log'][0]);
+      if ($last == $cur) {
+	if (count($props['change-log'][0]) > 3) {
+	  # Preserve any existing log entries.
+	  $entry[] = $props['change-log'][0][3];
+	}
+	$props['change-log'][0] = $entry;
+      } else {
+	array_unshift($props['change-log'],$entry);
+      }
+    } else {
+      $props['change-log'][] = $entry;
+    }
+  }
+  /** Default props
+   *
+   * Return default properties due to a file being created.
+   *
+   * @param \NacoWikiApp $wiki running wiki instance
+   * @return array Array containing new file properties.
+   */
+  static function defaultProps(\NacoWikiApp $wiki) {
+    return [
+      'created' => [
+	  time(),
+	  $wiki->remote_addr,
+	  $wiki->remote_user,
+      ],
+      'change-log' => [],
+    ];
+  }
+  /** Add log entires to props
+   *
+   * Check if a $meta array contains `add-log` entries and adds them.
+   *
+   * The `add-log` entry from the $meta array is removed.
+   *
+   * This function should be called from a `preSave` event handler by
+   * a plugin as plugins are responsible from parsing and updating
+   * meta data.
+   *
+   * It may also used by other plugins to modify the saved `meta` data
+   * and/or `props` arrays.  (One use is to implement auto-tagging).
+   *
+   * For this to work the media handler plugin must support this.  i.e.
+   * The plugin must rewrite the `$event['text']` with the updated
+   * meta data.
+   *
+   * @param \NacoWikiApp $wiki running wiki instance
+   * @param array &$props - properties array that will receive log entries
+   * @param array &$meta - meta array with log entires
+   * @param string $extra - (Optional) additonal text to be send (usually the article body text).
+   *
+   */
+  static function logProps(\NacoWikiApp $wiki, array &$props, array &$meta, string $extra = NULL) : void {
+    if (isset($meta['add-log'])) {
+      $logtxt = trim($meta['add-log']);
+      unset($meta['add-log']);
+      Util::log(Util::vdump($logtxt));
+      if ($logtxt != '') {
+	if (count($props['change-log']) == 0) {
+	  $props['created'][] = $logtxt;
+	} else {
+	  if (count($props['change-log'][0]) > 3) {
+	    $props['change-log'][0][3] .= PHP_EOL.$logtxt;
+	  } else {
+	    $props['change-log'][0][] = $logtxt;
+	  }
+	}
+      }
+    }
+    ##-- events-list##log-props
+    ## This event is used to manipulate properties and meta headers
+    ## before a file is saved.
+    ##
+    ## Event data:
+    ##
+    ## - `props` (input|output) : properties to be modified.
+    ## - `meta` (input|output) : meta data to be modified
+    ## - `extra` (input) : extra data send by the calling plugin (usually the article body text)
+    ##--
+    $event = [
+      'props' => $props,
+      'meta' => $meta,
+      'extra' => $extra,
+    ];
+    if (Plugins::dispatchEvent($wiki, 'log-props', $event)) {
+      $props = $event['props'];
+      $meta = $event['meta'];
+    }
+  }
+
   /**
    * Utility function to initialize a prepare payload event array
    *
@@ -340,9 +516,34 @@ class Core {
       'source' => Util::fileContents($wiki->filePath($url)),
       'filemeta' => Util::fileMeta($wiki->filePath($url)),
       'meta' => Util::defaultMeta($wiki->filePath($url)),
+      'props' => self::readProps($wiki, $wiki->filePath($url)),
       'payload' => NULL ,
+      'extras' => NULL,
       'ext' => $ext,
     ];
+    $wiki->props = &$event['props'];
+
+    ##-- events-list##preRead
+    ## This event is used to modify data read from disk.  It is intended
+    ## for versioning plugins to display different versions of a file.
+    ##
+    ## Event data:
+    ##
+    ## - `filepath` (input) : file system path to source
+    ## - `url` (input) : web url to source
+    ## - `source` (input|output) : text containing the page document verbatim
+    ## - `filemeta` (input|output) : pre-loaded file-system based meta data
+    ## - `meta` (input|output) : to be filed by event handler with meta-data.
+    ##    it is pre-loaded with data derived from filemeta.
+    ## - `props` (input|output) : to be filed by event handler with properties.
+    ##    it is pre-loaded with data read by Core.
+    ## - `payload` (output) : to be used by later event handlers.
+    ## - `ext` (input) : file extension for the given media
+    ## - `extras` (output) : additional data to display.
+    ##    - `annotate` : HTML containing text to be display after page title.
+    ##--
+    Plugins::dispatchEvent($wiki, 'preRead', $event);
+
     ##-- events-list##read:[file-extension]
     ## This event is used for media handlers to parse source text
     ## and extract header meta data, and the actual payload containing
@@ -356,8 +557,12 @@ class Core {
     ## - `filemeta` (input) : pre-loaded file-system based meta data
     ## - `meta` (output) : to be filed by event handler with meta-data.
     ##    it is pre-loaded with data derived from filemeta.
+    ## - `props` (output) : to be filed by event handler with properties.
+    ##    it is pre-loaded with data read by Core.
     ## - `payload` (output) : to be filed by event handler with the body of the page.
     ## - `ext` (input) : file extension for the given media
+    ## - `extras` (output) : additional data to display.
+    ##    - `annotate` : HTML containing text to be display after page title.
     ##--
     if (!Plugins::dispatchEvent($wiki, 'read:'.$ext, $event)) {
       $event['payload'] = $event['source'];
@@ -400,15 +605,30 @@ class Core {
     $wiki->view = 'page';
     $ext = Plugins::mediaExt($wiki->page);
     if (!is_null($ext)) {
-      if (Plugins::dispatchEvent($wiki, 'view:'.$ext, Plugins::devt(['ext'=>$ext]))) exit;
+      ##-- events-list##view:[file-extension]
+      ##
+      ## This event is used by plugins to process data.  If a plugin
+      ## handle this event, it by-passes any other Core related
+      ## functionality.  The plugin then is responsible for
+      ## generating all the output related to this document.
+      ##
+      ## Event data:
+      ##
+      ## - `ext` (input) : file extension for the given media
+      ##--
+      if (Plugins::dispatchEvent($wiki, 'view:'.$ext, Plugins::devt(['ext'=>$ext]))) {
+	if (isset($data['no_exit']) && $data['no_exit']) return NULL;
+	exit;
+      }
 
       $event = self::preparePayload($wiki, $wiki->page, $ext);
       $wiki->source = $event['source'];
       $wiki->meta = $event['meta'];
       $wiki->filemeta = $event['filemeta'];
       $wiki->payload = $event['payload'];
+      $extras = $event['extras'];
 
-      $event = [ 'html' => $wiki->payload, 'ext' => $ext ];
+      $event = [ 'html' => $wiki->payload, 'ext' => $ext, 'extras' => &$extras ];
       ##-- events-list##pre-render:[file-extension]
       ##
       ## This event is used by plugins to pre-process data.  This
@@ -423,6 +643,8 @@ class Core {
       ##
       ## - `html` (input|output) : current page contents which will be eventually rendered.
       ## - `ext` (input) : file extension for the given media
+      ## - `extras` (input|output) : additional data to display.
+      ##    - `annotate` : HTML containing text to be display after page title.
       ##--
       Plugins::dispatchEvent($wiki, 'pre-render:'.$ext, $event);
       ##-- events-list##pre-render
@@ -439,6 +661,8 @@ class Core {
       ##
       ## - `html` (input|output) : current page contents which will be eventually rendered.
       ## - `ext` (input) : file extension for the given media
+      ## - `extras` (input|output) : additional data to display.
+      ##    - `annotate` : HTML containing text to be display after page title.
       ##--
       Plugins::dispatchEvent($wiki, 'pre-render', $event);
       ##-- events-list##render:[file-extension]
@@ -454,6 +678,8 @@ class Core {
       ##
       ## - `html` (input|output) : current page contents which will be eventually rendered.
       ## - `ext` (input) : file extension for the given media
+      ## - `extras` (input|output) : additional data to display.
+      ##    - `annotate` : HTML containing text to be display after page title.
       ##--
       Plugins::dispatchEvent($wiki, 'render:'.$ext, $event);
       ##-- events-list##post-render:[file-extension]
@@ -468,6 +694,8 @@ class Core {
       ##
       ## - `html` (input|output) : current page contents which will be eventually rendered.
       ## - `ext` (input) : file extension for the given media
+      ## - `extras` (input|output) : additional data to display.
+      ##    - `annotate` : HTML containing text to be display after page title.
       ##--
       Plugins::dispatchEvent($wiki, 'post-render:'.$ext, $event);
       ##-- events-list##post-render
@@ -482,6 +710,8 @@ class Core {
       ##
       ## - `html` (input|output) : current page contents which will be eventually rendered.
       ## - `ext` (input) : file extension for the given media
+      ## - `extras` (input|output) : additional data to display.
+      ##    - `annotate` : HTML containing text to be display after page title.
       ##--
       Plugins::dispatchEvent($wiki, 'post-render', $event);
       $wiki->html = $event['html'];
@@ -494,14 +724,18 @@ class Core {
       ## Event data:
       ##
       ## - `ext` (input) : file extension for the given media
+      ## - `extras` (input) : additional data to display.
+      ##    - `annotate` : HTML containing text to be display after page title.
       ##--
-      if (Plugins::dispatchEvent($wiki, 'layout:'.$ext, Plugins::devt(['ext'=>$ext]))) exit;
+      if (Plugins::dispatchEvent($wiki, 'layout:'.$ext, Plugins::devt(['ext'=>$ext, 'extras'=>$extras]))) exit;
 
       $pgview = $data['view'] ?? APP_DIR . 'views/page.html';
       include($pgview);
+      if (isset($data['no_exit']) && $data['no_exit']) return NULL;
       exit;
     }
     Util::sendFile($wiki->filePath());
+    if (isset($data['no_exit']) && $data['no_exit']) return NULL;
     exit;
   }
   /** Missing page event handler
@@ -561,9 +795,11 @@ class Core {
    */
   static function deletePage(\NacoWikiApp $wiki, array &$data) : ?bool {
     if (!$wiki->isWritable()) {
+      ##!! error-catalog|write_access|Delete access error
       $wiki->errMsg('write_access',$wiki->filePath().': Delete access error');
     }
     if ($wiki->page == '' || $wiki->page == '/') {
+      ##!! error-catalog|invalid_target|Can not delete root folder
       $wiki->errMsg('invalid_target','Can not delete root folder');
     }
 
@@ -571,6 +807,7 @@ class Core {
     if (is_dir($file_path)) {
       if (is_link($file_path)) {
 	// It is a symlink... can be removed
+	##!! error-catalog|os_error|unlink error
 	if (unlink($file_path) === false) $wiki->errMsg('os_error',$file_path. ': unlink error', EM_PHPERR);
       } else {
 	// It is a real directory
@@ -582,6 +819,7 @@ class Core {
 	  if (!empty($_GET['confirm']) && filter_var($_GET['confirm'],FILTER_VALIDATE_BOOLEAN)) {
 	    while (count($files)) {
 	      $cfile = array_pop($files);
+	      ##!! error-catalog|os_error|unlink error
 	      if (unlink($file_path.'/'.$cfile) === false) $wiki->errMsg('os_error',$cfile.': unlink error', EM_PHPERR);
 	    }
 	  } else {
@@ -598,11 +836,25 @@ class Core {
       //~ echo ('</pre>');
       while (count($dirs)) {
 	$cdir = array_pop($dirs);
+	##!! error-catalog|os_error|rmdir error
 	if (rmdir($file_path.'/'.$cdir) === false) $wiki->errMsg('os_error',$cdir.': rmdir error', EM_PHPERR);
       }
+      ##!! error-catalog|os_error|rmdir error
       if (rmdir($file_path) === false) $wiki->errMsg('os_error',$file_path. ': rmdir error', EM_PHPERR);
     } else {
-      if (unlink($file_path) === false) $wiki->errMsg('os_error',$file_path. ': unlink error', EM_PHPERR);
+      # First collect extra files...
+      $pf = pathinfo($file_path);
+      $vics = glob($pf['dirname'].'/.*;'.$pf['basename']);
+      if ($vics === false) {
+	$vics = [ $file_path ];
+      } else {
+	$vics[] = $file_path;
+      }
+      # Delete all victims...
+      foreach ($vics as $f) {
+	##!! error-catalog|os_error|unlink error
+	if (unlink($f) === false) $wiki->errMsg('os_error',$f. ': unlink error', EM_PHPERR);
+      }
     }
     // Clean-up directory path
     $dpath = self::prunePath($wiki, $wiki->page);
@@ -624,13 +876,17 @@ class Core {
    * @event do:rename
    */
   static function renamePage(\NacoWikiApp $wiki, array &$data) : ?bool {
+    ##!! error-catalog|invalid_target|Cannot rename root directory
     if ($wiki->page == '/' || $wiki->page == '') $wiki->errMsg('invalid_target','Cannot rename root directory');
 
+    ##!! error-catalog|param|no name specified
     if (empty($_GET['name'])) $wiki->errMsg('param','No name specified');
     $newpage = Util::sanitize($_GET['name'],$wiki->page);
+    ##!! error-catalog|no-op|no changes made
     if ($newpage == $wiki->page) $wiki->errMsg('no-op','No changes made');
 
     if (!$wiki->isWritable() || !$wiki->isWritable($newpage) ) {
+      ##!! error-catalog|write_access|rename access error
       $wiki->errMsg('write_access',$wiki->filePath().': Rename access error');
     }
 
@@ -639,12 +895,39 @@ class Core {
       $newpage = rtrim($newpage,'/').'/'.basename($wiki->page);
     } elseif (file_exists($wiki->filePath($newpage))) {
       // Is an existing file
+      ##!! error-catalog|duplicate|already exists
       $wiki->errMsg('duplicate',$newpage . ': Already exists!');
     }
 
     self::makePath($wiki, dirname($newpage));
-    if (false === rename($wiki->filePath(),$wiki->filePath($newpage)))
-      $wiki->errMsg('os_error',$wiki->page.'=>'.$newpage.': rename error', EM_PHPERR);
+
+    # First collect extra files...
+    $srcp = pathinfo($wiki->filePath());
+    $dstp = pathinfo($wiki->filePath($newpage));
+    $vics = glob($srcp['dirname'].'/.*;'.$srcp['basename']);
+    if ($vics == false) {
+      $vics = [ $wiki->filePath() ];
+    } else {
+      $vics[] = $wiki->filePath();
+    }
+    foreach ($vics as $v) {
+      $b = basename($v);
+      $t = $dstp['basename'];
+      if ($b != $srcp['basename']) {
+	$i = strpos($b,';');
+	if ($i === false) {
+	  ##!! error-catalog|internal_error|Internal error.
+	  $wiki->errMsg('internal_error',$b.': invalid name');
+	}
+	$t = substr($b,0,$i+1).$t;
+      }
+      //~ echo '<pre>Rename: '.$b.' => '.$t.'</pre>';
+      if (false === rename($srcp['dirname'].'/'.$b,
+			  $dstp['dirname'].'/'.$t)) {
+	##!! error-catalog|os_error|rename file error
+	$wiki->errMsg('os_error',$wiki->page.'=>'.$newpage.': rename error', EM_PHPERR);
+      }
+    }
 
     // Clean-up directory path
     $dpath = self::prunePath($wiki, $wiki->page);
@@ -669,8 +952,10 @@ class Core {
    * @event do:edit
    */
   static function editPage(\NacoWikiApp $wiki, array &$data) : ?bool {
+    ##!! error-catalog|invalid_target|Folder not editable
     if (substr($wiki->page,-1) == '/') $wiki->errMsg('invalid_target','Folders are not editable');
     if (!$wiki->isWritable()) {
+      ##!! error-catalog|write_access|write access error
       $wiki->errMsg('write_access',$wiki->filePath().': Write access error');
     }
 
@@ -683,6 +968,7 @@ class Core {
     }
     $wiki->filemeta = Util::fileMeta($wiki->filePath(),$time);
     $wiki->meta = Util::defaultMeta($wiki->filePath(),$time);
+    $wiki->meta['author'] = $wiki->getUser() ? $wiki->getUser() : '?';
 
     $ext = Plugins::mediaExt($wiki->page);
     $wiki->view = 'edit';
@@ -725,7 +1011,8 @@ class Core {
    *     Otherwise, only the generic one will be triggered.
    * - save:ext
    *   - This actually saves the page.  If no plugin hooked this event,
-   *     it will simply save payload using `file_put_contents`
+   *     it will simply save payload using `file_put_contents` and
+   *     save properties.
    * - postSave
    * - postSave:ext
    *   - postSave events happen after data is written.  Can be used
@@ -739,8 +1026,10 @@ class Core {
    * @event action:save
    */
   static function savePage(\NacoWikiApp $wiki, array &$data) : ?bool {
+    ##!! error-catalog|invalid_target|folders not editable
     if (substr($wiki->page,-1) == '/') $wiki->errMsg('invalid_target','Folders are not editable');
     if (!$wiki->isWritable()) {
+      ##!! error-catalog|write_access|write access error
       $wiki->errMsg('write_access',$wiki->filePath().': Write access error');
     }
 
@@ -752,9 +1041,14 @@ class Core {
     # Pre-read the content
     if (file_exists($wiki->filePath())) {
       $ev['prev'] = Util::fileContents($wiki->filePath());
+      $ev['props'] = self::readProps($wiki, $wiki->filePath());
+      self::updateProps($wiki, $ev['props']);
     } else {
       $ev['prev'] = NULL;
+      $ev['props'] = self::defaultProps($wiki);
     }
+    $wiki->props = &$ev['props'];
+
 
     ##-- events-list##preSave
     ##
@@ -769,6 +1063,8 @@ class Core {
     ## - `text` (input|output) : textual data to save
     ## - `prev` (input) : current file contents (or NULL)
     ## - `ext` (input) : file extension for the given media
+    ## - `props` (output) : to be filed by event handler with properties.
+    ##    it is pre-loaded with data read by Core.
     ##--
     Plugins::dispatchEvent($wiki, 'preSave', $ev);
     ##-- events-list##preSave:[file-extension]
@@ -783,11 +1079,17 @@ class Core {
     ## header meta data from actual content.  And sanitizing any
     ## problematic input.
     ##
+    ## It is recommended to move 'log' keys from the user entered
+    ## meta data block to the `props` array using `Core::logProps`
+    ## which will add the log text to the change log.
+    ##
     ## Event data:
     ##
     ## - `text` (input|output) : textual data to save
     ## - `prev` (input) : current file contents (or NULL)
     ## - `ext` (input) : file extension for the given media
+    ## - `props` (output) : to be filed by event handler with properties.
+    ##    it is pre-loaded with data read by Core.
     ##--
     if (!is_null($ext)) Plugins::dispatchEvent($wiki, 'preSave:'.$ext, $ev);
 
@@ -806,13 +1108,17 @@ class Core {
     ## - `text` (input) : textual data to save
     ## - `prev` (input) : current file contents (or NULL)
     ## - `ext` (input) : file extension for the given media
+    ## - `props` (input) : properties to save
     ##--
     $ev['saved'] = true;
     if (is_null($ext) || !Plugins::dispatchEvent($wiki, 'save:'.$ext, $ev)) {
       if (is_null($ev['prev']) || $ev['text'] != $ev['prev']) {
 	self::makePath($wiki, dirname($wiki->page));
-	if (false === file_put_contents($wiki->filePath(), $ev['text']))
-	$wiki->errMsg('os_error',$wiki->page.': write error', EM_PHPERR);
+	if (false === file_put_contents($wiki->filePath(), $ev['text'])
+	      || false === self::saveProps($wiki,$ev['props'])) {
+	  ##!! error-catalog|os_error|write error
+	  $wiki->errMsg('os_error',$wiki->page.': write error', EM_PHPERR);
+	}
       } else {
 	$ev['saved'] = false;
       }
@@ -831,6 +1137,7 @@ class Core {
       ## - `text` (input) : textual data that was saved
       ## - `prev` (input) : previous file contents (or NULL)
       ## - `ext` (input) : file extension for the given media
+      ## - `props` (input) : saved properties.
       ##--
       Plugins::dispatchEvent($wiki, 'postSave', $ev);
       ##-- events-list##postSave:[file-extension]
@@ -843,6 +1150,7 @@ class Core {
       ## - `text` (input) : textual data that was saved
       ## - `prev` (input) : previous file contents (or NULL)
       ## - `ext` (input) : file extension for the given media
+      ## - `props` (input) : saved properties.
       ##--
       if (!is_null($ext)) Plugins::dispatchEvent($wiki, 'postSave:'.$ext, $ev);
     }
@@ -876,6 +1184,7 @@ class Core {
    */
   static function attachToPage(\NacoWikiApp $wiki, array &$data) : ?bool {
     if (!$wiki->isWritable()) {
+      ##!! error-catalog|write_access|no write access
       $wiki->errMsg('write_access',$wiki->filePath().': Write access error');
     }
     if (substr($wiki->page,-1) != '/') {
@@ -884,10 +1193,12 @@ class Core {
       } else {
 	$ext = Plugins::mediaExt($wiki->page);
 	if (is_null($ext)) {
+	  ##!! error-catalog|invalid_target|can not attach to file
 	  $wiki->errMsg('invalid_target',$wiki->filePath().': can not attach to file');
 	}
 	$p = pathinfo($wiki->page);
 	if ($p['basename'] == $p['filename']) {
+	  ##!! error-catalog|invalid_target|can not attach to file
 	  $wiki->errMsg('invalid_target',$wiki->filePath().': can not attach to file');
 	}
 	$updir = $p['dirname'].'/'.$p['filename'];
@@ -897,10 +1208,14 @@ class Core {
     }
     $updir = '/' . trim($updir,'/') . '/';
 
+    ##!! error-catalog|param|invalid form response
     if (!isset($_FILES['fileToUpload'])) $wiki->errMsg('param','Invalid FORM response');
     $fd = $_FILES['fileToUpload'];
+    ##!! error-catalog|param|zero file upload
     if (isset($fd['size']) && $fd['size'] == 0) $wiki->errMsg('param','Zero file submitted');
+    ##!! error-catalog|param|upload form error
     if (isset($fd['error']) && $fd['error'] != 0) $wiki->errMsg('param','Error: '.$fd['error']);
+    ##!! error-catalog|param|missing file upload
     if (empty($fd['name']) || empty($fd['tmp_name'])) $wiki->errMsg('param','No file uploaded');
 
     $fname = Util::sanitize(basename($fd['name']));
@@ -908,8 +1223,10 @@ class Core {
     if (file_exists($fpath)) $wiki->errMsg('duplicate',$fname.': File already exists');
 
     self::makePath($wiki,$updir);
-    if (!move_uploaded_file($fd['tmp_name'],$fpath))
+    if (!move_uploaded_file($fd['tmp_name'],$fpath)) {
+      ##!! error-catalog|os_error|error saving uploaded file
       $wiki->errMsg('os_error','Error saving uploaded file', EM_PHPERR);
+    }
 
     header('Location: '.$wiki->mkUrl($updir));
     exit;

@@ -9,15 +9,19 @@
     <?php include(APP_DIR . 'views/header.html'); ?>
     <div id="main" class="main">
       <p><?= htmlspecialchars($msg) ?></p>
+      <table>
       <?php if ($flags & EM_PHPERR) {
-	echo '<table>';
 	foreach (error_get_last() as $k=>$v) {
 	  echo '<tr><th align="left">'.
 		htmlspecialchars($k).'</th><td>'.
 		htmlspecialchars($v).'</td></tr>';
 	}
-	echo '</table>';
       } ?>
+	<tr>
+	  <th align="left"> Location </th>
+	  <td> <?= htmlspecialchars($trace[0]['file'])?>, <?=$trace[0]['line']?> </td>
+	</tr>
+      </table>
     </div>
     <?php include(APP_DIR . 'views/footer.html'); ?>
     </div>

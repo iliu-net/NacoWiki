@@ -28,7 +28,8 @@ cd $appdir
 	--title "NacoWiki PHP API" \
 	--defaultpackagename "NWikiApp" \
 	--ignore assets/ --ignore compat/ --ignore files/ \
-	--ignore scripts/ --ignore views/ --ignore web/
+	--ignore scripts/ --ignore views/ --ignore web/ \
+	--ignore vendor/ --ignore t/
 )
 cp $appdir/docs/landing.html $appdir/docs/index.html
 
