@@ -430,6 +430,9 @@ class Albatros {
     unset($meta);
     echo '. DONE'.PHP_EOL;
 
+    ksort(self::$categories, SORT_NATURAL|SORT_FLAG_CASE);
+    //~ print_r(self::$categories);
+
     if (!is_dir($output)) {
       if (mkdir($output) === false) exit(__LINE__);
     }

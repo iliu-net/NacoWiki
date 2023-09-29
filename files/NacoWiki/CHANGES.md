@@ -5,8 +5,9 @@ author: alex
 ---
 [toc]
 
-# next
+# 3.2.1
 
+- Albatros: ensure categories are sorted
 - bug fixes
 
 # 3.2.0
