@@ -5,7 +5,11 @@ author: alex
 ---
 [toc]
 
-# 3.2.0-rc
+# next
+
+- bug fixes
+
+# 3.2.0
 
 - Added document properties
 - Added `opts.yaml`
