@@ -34,6 +34,7 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Copying files to the target location
         run: |
+          composer install
           ./scripts/docgen
           ./scripts/docrun
           cp -av docs _site
