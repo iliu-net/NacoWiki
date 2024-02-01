@@ -10,27 +10,38 @@ tags: development, php
 
 %include-start%
 
-- Migrate https://0ink.net/
+- check if walktree callers filter prop and ver files
+  - search in navtree shows .prop and .ver's
+- opts.yaml in 0ink.net drafts doesn't take
+- tree view doesn't scroll properly
+- creating folders not clear
 
 %include-stop%
 
+- Spell checker: https://github.com/sparksuite/codemirror-spell-checker
 - Enhance D attachments D to also let you do contents:(folder)
 - views/page.html : show props created and last change log
-- Display props in page.html
 - test and fix adding message to the chagelog entries
-- ~~Render correctly:~~
-  - [[/0ink-drafts/2021/2021-12-26-pelican_tests.md]]
 
 # VERSIONS Plugin
 
  * @todo Limit number of versions
  * @todo modify $event[filemeta] $evet[props] in preRead.
+   - i.e. show the right props change log entries and the right date in filemeta.
  * ~~@todo detect if changes happened outside NacoWiki (filemtime != change-log)~~
+ * tweak the hook that shows version to check if there are versions before
+   adding the option.
+ * info box should show the number of versions found.
 
 # AutoTag plugin
 
 - Add CLI command to re-tag Wiki sub-trees.
- 
+- Create a tagcloud navigator
+- nav
+  - tag-cloud [all files|current context]
+- tags: GET to add or remove tags from the selection cookie
+- Create a page that show tags.
+
 # Tools
 
 - Report for checking for broken links (links to pages that don't exist yet), Orphan pages, etc.
@@ -41,12 +52,6 @@ tags: development, php
 - sort - alpha,latest file (in views/folder)
   - add it to the context?
 
-## Tag Navigation
-
-- nav
-  - tag-cloud [all files|current context]
-- tags: GET to add or remove tags from the selection cookie
-- Create a page that show tags.
 
 
 ## Markdown text diagrams

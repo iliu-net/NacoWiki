@@ -11,9 +11,10 @@
 }
 
 .search-match {
-  font-size: 105%;
-  color: white;
-  background-color: red;
+  font-size: 115%;
+  color: black;
+  font-weight: bold;
+  background-color: yellow;
 
 }
 .search-show {

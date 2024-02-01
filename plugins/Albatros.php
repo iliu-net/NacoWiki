@@ -525,13 +525,13 @@ class Albatros {
    * @param function $cb function to call to select articles
    * @return array containing article paths
    */
-  static function selectArticles($cb) : array {
+  static function selectArticles($cb, $sort = true) : array {
     $alist = [];
     foreach (self::$files as $f=>$meta) {
       if (!$cb($f,$meta)) continue;
       $alist[$f] = $meta['date'];
     }
-    krsort($alist);
+    if ($sort) krsort($alist);
     return array_keys($alist);
   }
   /**
@@ -776,9 +776,12 @@ class Albatros {
     $alist = self::selectArticles(function ($f,$meta) use ($now) {
       if ($meta['type'] != 'article' || $meta['date'] <= $now) return false;
       return true;
-    });
-    if (count($alist))
+    }, false);
+
+    if (count($alist)) {
+      ksort($alist);
       self::paginator($wiki, $output, 'index', 'drafts', $alist);
+    }
 
   }
   /** Generate feeds

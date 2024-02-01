@@ -188,6 +188,8 @@ class Core {
 
       $matches = [];
       foreach ($flst as $i=>$j) {
+	if (substr(basename($i),0,1) == '.' || substr(basename($i),0,1) == ',') continue;
+
 	$ext = Plugins::mediaExt($i);
 	if (is_null($ext)) continue;
 

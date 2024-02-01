@@ -213,8 +213,9 @@ class Util {
       $mtime = filemtime($fn);
       if ($mtime === false) return NULL;
     }
+    $pi = pathinfo($fn);
     return [
-	'title' => basename($fn),
+	'title' => $pi['filename'],
 	'date' => gmdate('Y-m-d',$mtime),
       ];
   }

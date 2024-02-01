@@ -5,6 +5,13 @@ author: alex
 ---
 [toc]
 
+# 3.2.2-rel
+
+- Albatros: UI tweaks
+  - Drafts are ordered forward (instead of reverse)
+  - Search CSS tweaks
+- Filter . (dot) files form search.  Search defaults to global.
+
 # 3.2.1
 
 - Albatros: ensure categories are sorted
