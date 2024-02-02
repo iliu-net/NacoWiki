@@ -24,7 +24,7 @@ fi
 cd $appdir
 (
   set -x
-  $phpdoc -t $appdir/docs/php-api -d "$appdir" -t docs/php-api \
+  $phpdoc run -t $appdir/docs/php-api -d "$appdir" -t docs/php-api \
 	--title "NacoWiki PHP API" \
 	--defaultpackagename "NWikiApp" \
 	--ignore assets/ --ignore compat/ --ignore files/ \
