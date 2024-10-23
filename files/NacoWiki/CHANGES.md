@@ -7,6 +7,10 @@ author: alex
 
 # NEXT
 
+- TBD
+
+# 3.3.0-rel
+
 - Add a warning when there are unsaved changes on text editing.
 - Fixed leaking dot files
 - plugins:
