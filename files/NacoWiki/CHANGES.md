@@ -5,6 +5,18 @@ author: alex
 ---
 [toc]
 
+# NEXT
+
+- Add a warning when there are unsaved changes on text editing.
+- Fixed leaking dot files
+- plugins:
+  - PluginVars
+	- Tweaked so that it can preview Albatros.
+    - Fixed a warning
+  - Albatros
+    - Fixed an incompatibility in YAML reading
+    - Added support for [utterances](https://utteranc.es/)
+
 # 3.2.2-rel
 
 - Albatros: UI tweaks

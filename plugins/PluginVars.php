@@ -152,7 +152,12 @@ class PluginVars {
 	    'prop.' => $wiki->props ?? [],
 	  ] as $nsp => &$reg) {
 	foreach ($reg as $k=>$v) {
-	  $vars['$'.$nsp.$k.'$'] = is_array($v) ? yaml_emit($v) : $v;
+	  //~ var_dump($k);
+	  if (is_string($k) and $k[0] == '{' and $k[-1] == '}') {
+	    $vars[$nsp.$k] = is_array($v) ? yaml_emit($v) : $v;
+	  } else {
+	    $vars['$'.$nsp.$k.'$'] = is_array($v) ? yaml_emit($v) : $v;
+	  }
 	}
       }
       $vars['$cfg$'] = yaml_emit($wiki->cfg);

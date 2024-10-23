@@ -10,11 +10,14 @@ tags: development, php
 
 %include-start%
 
-- check if walktree callers filter prop and ver files
-  - search in navtree shows .prop and .ver's
+- BUG: Unable to patch
+- Clean-up left-over .ver or .prop files.
 - opts.yaml in 0ink.net drafts doesn't take
 - tree view doesn't scroll properly
 - creating folders not clear
+- Albatros.php has hardcoded variable substitutions.  Shouldn't
+  these come from PluginVars.  Tweaked so PluginVars kinda works for
+  previewing.
 
 %include-stop%
 

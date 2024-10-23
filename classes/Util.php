@@ -331,8 +331,9 @@ class Util {
    * @param array &$dirs array receiving directory entries
    * @param array &$files array receiving file entries
    * @param array &$lnkf array containing directories realpath's for avoiding symlink loops.
+   * @param bool $hide_dots if True, files beginning with dot(.) or comma(,) are hidden.  Pass $false to include these files.
    */
-  static function _walkTree(string $basedir, string $subdir, array &$dirs, array &$files, array &$lnkf) : void {
+  static function _walkTree(string $basedir, string $subdir, array &$dirs, array &$files, array &$lnkf, bool $hide_dots) : void {
     $rp = realpath($basedir.$subdir);
     if (isset($lnkf[$rp])) return;
     $lnkf[$rp] = $rp;
@@ -353,10 +354,11 @@ class Util {
 
     while (false !== ($fn = readdir($dp))) {
       if ($fn == '.' || $fn == '..') continue;
+      if ($hide_dots && (substr($fn, 0, 1) == '.' || substr($fn, 0, 1) == ',')) continue;
       if (is_dir($fdir . $fn)) {
 	$dirs[] = $subdir . $fn;
 	//~ if (is_link($fdir . $fn)) continue;
-	self::_walkTree($basedir, $subdir.$fn, $dirs, $files,$lnkf);
+	self::_walkTree($basedir, $subdir.$fn, $dirs, $files, $lnkf, $hide_dots);
       } else {
 	$files[] = $subdir . $fn;
       }
@@ -369,17 +371,18 @@ class Util {
    * Create a list of files and folders in the $basedir directory.
    *
    * @param string $basedir directory to read.
+   * @param bool $hide_dots if True, files beginning with dot(.) or comma(,) are hidden.  Pass $false to include these files.
    * @return array [ $array-of-dirs, $array-of-files ]
    */
 
-  static function walkTree(string $basedir) : array {
+  static function walkTree(string $basedir, bool $hide_dots = true) : array {
     $slnkf = [];
     $basedir = rtrim($basedir,'/');
     if ($basedir == '') $basedir = '.';
     $basedir .= '/';
     $dirs = [];
     $files = [];
-    self::_walkTree($basedir,'', $dirs, $files,$slnkf);
+    self::_walkTree($basedir,'', $dirs, $files, $slnkf, $hide_dots);
     return [$dirs,$files];
   }
   /** Copy files recursively

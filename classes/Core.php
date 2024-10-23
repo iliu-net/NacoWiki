@@ -188,8 +188,6 @@ class Core {
 
       $matches = [];
       foreach ($flst as $i=>$j) {
-	if (substr(basename($i),0,1) == '.' || substr(basename($i),0,1) == ',') continue;
-
 	$ext = Plugins::mediaExt($i);
 	if (is_null($ext)) continue;
 
@@ -813,7 +811,7 @@ class Core {
 	if (unlink($file_path) === false) $wiki->errMsg('os_error',$file_path. ': unlink error', EM_PHPERR);
       } else {
 	// It is a real directory
-	list ($dirs,$files) = Util::walkTree($file_path);
+	list ($dirs,$files) = Util::walkTree($file_path, false);
 	if (count($files) > 0) {
 	  //~ echo ('<pre>');
 	  //~ print_r($_GET);

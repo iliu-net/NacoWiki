@@ -172,6 +172,10 @@ class Albatros {
       if (!empty($meta['tags'])) {
 	$meta['x-tags'] = [];
 	$t = [];
+	//~ var_dump($meta);
+	// The next line is because the YAML reader sometimes reads things as an array...
+	if (is_array($meta['tags'])) $meta['tags'] = implode(',',$meta['tags']);
+
 	foreach (preg_split('/\s*,\s*/', $meta['tags']) as $j) {
 	  if (empty($j)) continue;
 	  $j = strtolower($j);

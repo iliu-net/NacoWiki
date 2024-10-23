@@ -36,6 +36,15 @@
 
 	</article>
 
+	{% if UTTERANCES_REPO %}
+	<script src="https://utteranc.es/client.js"
+        repo="{{ UTTERANCES_REPO }}"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+	{% endif %}
 	{% if DISQUS_SITENAME %}
 	<div class="comments">
 	<h2>Comments !</h2>
