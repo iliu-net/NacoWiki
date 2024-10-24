@@ -18,6 +18,9 @@ class Core {
   const HIGHLIGHT_JS = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/';
   /** property files prefix
    * @var string */
+  const PROPS_FILE_PREFIX = '/.props;';
+  /** alternative property files prefix (for background compatibility)
+   * @var string */
   const PROP_FILE_PREFIX = '/.prop;';
 
   /** When a file/directory is deleted, make sure no empty dirs remain
@@ -341,6 +344,16 @@ class Core {
    */
   static function readProps(\NacoWikiApp $wiki, $file) {
     $name = pathinfo($file);
+
+    $props_file = $name['dirname'].self::PROPS_FILE_PREFIX.$name['basename'];
+    if (file_exists($props_file)) {
+      # Read it as JSON...
+      $jsdoc = file_get_contents($props_file);
+      $res = json_decode($jsdoc, true);
+      if (is_array($res)) return $res;
+    }
+
+    // Kept for backwards compatibility...
     $prop_file = $name['dirname'].self::PROP_FILE_PREFIX.$name['basename'];
     if (file_exists($prop_file)) {
       # Read it as YAML...
@@ -372,9 +385,16 @@ class Core {
     if (isset($wiki->opts['disable-props']) && $wiki->opts['disable-props']) return true; # Disabled, so we lie and just say success!
     if (is_null($fpath)) $fpath = $wiki->filePath();
     $name = pathinfo($fpath);
-    $prop_file = $name['dirname'].self::PROP_FILE_PREFIX.$name['basename'];
-    if (yaml_emit_file($prop_file, $props) === true) return true;
-    return false;
+
+    # New storage in JSON format...
+    $prop_file = $name['dirname'].self::PROPS_FILE_PREFIX.$name['basename'];
+    if (file_put_contents($prop_file, json_encode($props)) === false) return false;
+    return true;
+    //~ if (yaml_emit_file($prop_file, $props) === true) return true;
+    //~ # Deprecating YAML based property files
+    //~ $prop_file = $name['dirname'].self::PROP_FILE_PREFIX.$name['basename'];
+    //~ if (yaml_emit_file($prop_file, $props) === true) return true;
+    //~ return false;
   }
 
   /** Calculate a string from an Prop change-log entry

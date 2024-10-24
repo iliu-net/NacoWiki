@@ -18,7 +18,8 @@ use NWiki\Core as Core;
 class Versions {
   /** var string */
   const VERSION = '0.0.0';
-  const FPREFIX = '/.ver;';
+  const FPREFIX = '/.vers;';
+  const FPREFIX_YAML = '/.ver;';
 
   /** Return this plugin's path
    * @param string $f optional item
@@ -71,11 +72,16 @@ class Versions {
   static function readVerData(string $pgfile) : ?array {
     # Identify the version file
     $pf = pathinfo($pgfile);
-    $vfile = $pf['dirname'] . self::FPREFIX . $pf['basename'];
 
+    $vfile = $pf['dirname'] . self::FPREFIX . $pf['basename'];
+    $vyfile = $pf['dirname'] . self::FPREFIX_YAML . $pf['basename'];
     # Load previous versions
     if (file_exists($vfile)) {
-      $vs = yaml_parse_file($vfile);
+      $jsdoc = file_get_contents($vfile);
+      $vs = json_decode($jsdoc, true);
+      if (!is_array($vs)) $vs = [];
+    } elseif (file_exists($vyfile)) {
+      $vs = yaml_parse_file($vyfile);
       if (!is_array($vs)) $vs = [];
     } else {
       $vs = [];
@@ -102,7 +108,12 @@ class Versions {
   static function saveVerData(array $vdata) : bool {
     $vs = $vdata['vs'];
     $vs['root'] = $vdata['root'];
-    return yaml_emit_file($vdata['vfile'], $vs) === true ? true : false;
+    $jsdoc = json_encode($vs);
+    if ($jsdoc === false) return false;
+    if (file_put_contents($vdata['vfile'],$jsdoc) === false) return false;
+    return true;
+    //~ # Save versions as YAML file...
+    //~ return yaml_emit_file($vdata['vfile'], $vs) === true ? true : false;
   }
 
   /** apply patches to string
@@ -127,6 +138,8 @@ class Versions {
       if ($rc != 0) {
 	# This is only visible through the apache2 error log.
 	Util::log('Error running patch:'.Util::vdump($output));
+	//~ $ck = file_get_contents($tmp.'/orig');
+	//~ Util::log('$res:'.Util::vdump($ck));
 	break;
       }
       $res = file_get_contents($tmp.'/orig');
@@ -191,6 +204,7 @@ class Versions {
     # Try to recreate the version as ($pid) using the given deltas.
     $tgt = $ev['text'];
     $ctx = empty($v['root']) ? $ev['prev'] : $v['root']; # We should use v[root] otherwise use ev[prev]
+
     if (count($deltas)) {
       rsort($deltas,SORT_NUMERIC);
       foreach ($deltas as $did) {
@@ -300,7 +314,7 @@ class Versions {
       //~ }
       if ($ev['mode'] == 'edit-bot') {
 	$ev['html'] .= '<a href="'.$wiki->mkUrl($wiki->page,['do'=>'versions']).'">'.
-		    'view versions'.
+		    'View versions'.
 		    '</a>';
       }
     } elseif ($wiki->view == 'versions_list') {
@@ -395,6 +409,7 @@ class Versions {
 
     foreach ($deltas as $k) {
       $d = $v['vs'][$k];
+      //~ Util::log('$d:'.Util::vdump($d));
       if ($d[0] == 'delta') {
         $txt = self::patchStr($txt,$d[1]);
       } elseif ($d[0] =='rewrite') {
@@ -530,8 +545,6 @@ class Versions {
     } else {
       $difftxt = self::diffStr($txts['a']['txt'], $txts['b']['txt']);
     }
-
-
     include Plugins::path('vcmp.html');
     //~ echo '<a href="'.$wiki->mkUrl($wiki->page).'">Continue</a><hr>';
 
@@ -632,7 +645,6 @@ class Versions {
     if (empty($_GET['version'])) return Plugins::OK;
     $tvid = $_GET['version'];
 
-
     $ext = Plugins::mediaExt($wiki->page);
     if (is_null($ext)) {
       ##!! error-catalog|invalid_param|un-supported file type
@@ -653,12 +665,45 @@ class Versions {
     echo $txt;
     exit;
   }
+  /** Version testing
+   *
+   * This implements the cli sub-command `vv`
+   *
+   * This used for Version plugin debuging
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array $argv Command line arguments
+   * @event cli:vv
+   * @phpcod commands##vv
+   */
+  static function vcli(\NacoWikiApp $wiki, array $argv) : ?bool {
+    $wiki->page = '/test/v/2025-01-15-zwave-pairing.md';
+    //~ $wiki->page = '/test/v/2025-01-01-newyear.md';
+    $wiki->view = 'versions_list';
+
+    var_dump($wiki->filePath());
+    # Collect file data
+    $wiki->filemeta = Util::fileMeta($wiki->filePath());
+    $wiki->meta = Util::defaultMeta($wiki->filePath());
+    $wiki->meta['title'] .= ' versions';
+    $wiki->props = Core::readProps($wiki, $wiki->filePath());
+
+    $v = self::readVerData($wiki->filePath());
+    //~ echo yaml_emit(['meta'=>$wiki->meta,'props'=>$wiki->props,'vs'=>$v]);
+    var_dump(['meta'=>$wiki->meta,'props'=>$wiki->props,'vs'=>$v]);
+    exit;
+  }
+
   /**
    * Loading entry point for this class
    *
    * Adds event hooks implemented by this class
    */
   static function load(array $cfg) : void {
+    // Do not register this plugin if these executables are missing...
+    if (!(Util::is_program_in_path('diff') and Util::is_program_in_path('patch'))) return;
+
+    Plugins::registerEvent('cli:vv', [self::class, 'vcli']);
     Plugins::registerEvent('postSave', [self::class, 'diffVers']);
     Plugins::registerEvent('navtools', [self::class, 'navtools']);
     Plugins::registerEvent('do:versions', [self::class, 'viewVers']);

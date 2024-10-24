@@ -407,6 +407,22 @@ class Util {
     }
     closedir($dir);
   }
-
+  /** Check if executable is in path
+   *
+   * This function checks if a given program/command is in the
+   * Linux executable path
+   *
+   * @param string $program : program to check for
+   * @return bool : true if found, false if it does not exist
+   */
+  static function is_program_in_path(string $program) : bool {
+    $path = getenv('PATH');
+    if (empty($path)) return false; # No PATH found!
+    $directories = explode(PATH_SEPARATOR, $path);
+    foreach ($directories as $dir) {
+      if (is_executable($dir . '/' . $program)) return true;
+    }
+    return false;
+  }
 }
 

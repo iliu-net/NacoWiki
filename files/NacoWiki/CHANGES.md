@@ -6,8 +6,12 @@ author: alex
 [toc]
 
 # NEXT
-
-- TBD
+- Core: properties are now saved as JSON files (the PHP JSON parser is more reliable than the YAML one).
+- Util: added `is_program_in_path`
+- plugins:
+  - Versions
+    - Deta files are now saved as JSON files (the PHP JSON parser is more reliable than the YAML one).
+    - Only gets enabled if `diff` and `patch` commands are available.
 
 # 3.3.0-rel
 
