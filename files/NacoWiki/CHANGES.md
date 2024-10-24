@@ -5,7 +5,8 @@ author: alex
 ---
 [toc]
 
-# NEXT
+# 3.4.0-dev1
+
 - Core: properties are now saved as JSON files (the PHP JSON parser is more reliable than the YAML one).
 - Util: added `is_program_in_path`
 - plugins:
