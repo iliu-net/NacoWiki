@@ -5,8 +5,9 @@ author: alex
 ---
 [toc]
 
-# 3.4.0-dev1
+# 3.4.0-rel
 
+- UI tweaks
 - Added `vacuum` option.  If enabled `walkTree` (usually from searching
   files) will delete metadata files that are orphaned.
 - Core: properties are now saved as JSON files (the PHP JSON parser is more reliable than the YAML one).
@@ -16,6 +17,12 @@ author: alex
     - Deta files are now saved as JSON files (the PHP JSON parser is more reliable than the YAML one).
     - Only gets enabled if `diff` and `patch` commands are available.
     - Minor UI tweaks
+  - Albatros
+    - Minor fixes
+  - AutoTag
+    - tagcloud format tweaks
+- debugging git mtime
+- minor fixes and YAML loader work arounds.
 
 # 3.3.0-rel
 
