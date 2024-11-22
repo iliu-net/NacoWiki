@@ -10,7 +10,36 @@ if (!function_exists('yaml_emit')) {
   }
   function yaml_parse($doc) {
     $yaml = new Alchemy\Component\Yaml\Yaml();
-    return $yaml->loadString($doc);
+
+    # Hack to work around long tags lines...
+    $try = $yaml->loadString($doc);
+    if (!(isset($try['tags']) && is_array($try['tags']))) return $try;
+
+    # OK, we need to fix the problem!
+    $fixed = [];
+    $found = false;
+    foreach (explode("\n", $doc) as $line) {
+      if ($found) {
+	if (preg_match('/^  [^ ]/', $line)) {
+	  # This is a continuation line...
+	  //~ echo 'CONT LINE: '.$line. PHP_EOL;
+	  $fixed[count($fixed)-1] .= $line;
+	  $is_fixed = true;
+	} else {
+	  $found = false;
+	}
+      } else {
+	$fixed[] = $line;
+	if (preg_match('/^tags:\s+/',$line)) {
+	  $found = true;
+	}
+      }
+    }
+    $try = $yaml->loadString(implode("\n", $fixed));
+    print_r($try);
+    if (isset($try['tags']) && is_array($try['tags'])) die("Another failure!\n");
+    return $try;
+    return $yaml->loadString(implode("\n", $fixed));
   }
   function yaml_emit_file($f,$data) {
     $yaml = new Alchemy\Component\Yaml\Yaml();

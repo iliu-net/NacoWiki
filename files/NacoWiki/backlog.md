@@ -10,7 +10,7 @@ tags: development, php
 
 %include-start%
 
-- BUG: Unable to patch
+- [x] BUG: Unable to patch
 - Clean-up left-over .ver or .prop files.
 - opts.yaml in 0ink.net drafts doesn't take
 - tree view doesn't scroll properly
@@ -32,9 +32,9 @@ tags: development, php
  * @todo modify $event[filemeta] $evet[props] in preRead.
    - i.e. show the right props change log entries and the right date in filemeta.
  * ~~@todo detect if changes happened outside NacoWiki (filemtime != change-log)~~
- * tweak the hook that shows version to check if there are versions before
+ * [x] tweak the hook that shows version to check if there are versions before
    adding the option.
- * info box should show the number of versions found.
+ * [x] info box should show the number of versions found.
 
 # AutoTag plugin
 

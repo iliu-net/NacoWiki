@@ -9,7 +9,6 @@
  *
  * @package Plugins
  * @phpcod Plugins##Albatros
- * @todo This is a work in progress
  */
 
 use NWiki\PluginCollection as Plugins;
@@ -102,6 +101,10 @@ class Albatros {
     $f = '/'.trim($f,'/');
     $wiki->page = $f;
     $ext = Plugins::mediaExt($f);
+
+    // Ignore these files
+    if (in_array(basename($f),['tagcloud.md','opts.yaml'])) return;
+
     if (!is_null($ext)) {
       ob_start();
       if (Plugins::dispatchEvent($wiki, 'view:'.$ext, Plugins::devt(['ext'=>$ext]))) {
@@ -154,15 +157,19 @@ class Albatros {
 	  $output=null; $rc =null;
 	  chdir(dirname($wiki->filePath($f)));
 	  $out = exec('git --no-pager log -1 --date=short --format=%cd '.
-		      escapeshellarg($wiki->filePath($f)), $output, $rc);
+		      escapeshellarg(basename($wiki->filePath($f))), $output, $rc);
 	  chdir($cwd);
 	  if ($out !== false) {
 	    $out = trim($out);
-	    if (preg_match('/^\d\d\d\d-\d\d-\d\d$/', $out) && $out != $meta['date'])
+	    if (preg_match('/^\d\d\d\d-\d\d-\d\d$/', $out) && $out != $meta['date']) {
 	      $meta['modified'] = $out;
+	      echo '- '.$f.' => Git date: '.$out .PHP_EOL;
+	    }
 	  }
 	}
-	if (empty($meta['modified'])) {
+
+	if (empty($meta['modified']) && !(self::$opts['disable-mtime'] ?? false)) {
+	  echo('Using mtime'.PHP_EOL);
 	  $d = filemtime($wiki->filePath($f));
 	  if ($d && date('Y-m-d', $d) != $meta['date']) {
 	    $meta['modified'] = date('Y-m-d',$d);
@@ -197,7 +204,6 @@ class Albatros {
       $meta['url'] = $f;
       $meta['type'] = 'generic';
       self::$files[$f] = $meta;
-      //~ print_r($meta);
     }
   }
   /** Link references
@@ -213,6 +219,7 @@ class Albatros {
     if (!empty($meta['tags'])) {
       $meta['x_tags'] = [];
       foreach ($meta['tags'] as $t) {
+	if (!array_key_exists($t, self::$tags)) continue;	# If it doesn't exist, we can't link it!
 	$meta['x_tags'][$t] = &self::$tags[$t];
       }
     }
@@ -237,6 +244,10 @@ class Albatros {
   static function xrefFile(\NacoWikiApp $wiki, string $f, array $meta) : void {
     $now = date('Y-m-d');
     if (!empty($meta['date']) && $meta['date'] > $now) {
+      #
+      # If article will be posted in the future it should
+      # *not* be cross-referenced
+      #
       self::$drafts[$f] = $f;
       return;
     }
@@ -263,7 +274,7 @@ class Albatros {
 	  if (!isset(self::$tags[$t])) {
 	    self::$tags[$t] = [
 	      'name' => $t,
-	      'url' => 'tags/'.Util::sanitize($t).'.html',
+	      'url' => 'tags/'.ltrim(Util::sanitize($t),'/').'.html',
 	    ];
 	  }
 	}
@@ -329,6 +340,7 @@ class Albatros {
     $data['ARTICLES'] = '/'.trim($data['ARTICLES'],'/').'/';
     $data['PAGES'] = '/'.trim($data['PAGES'],'/').'/';
     $data['now'] = (string)time();
+    if (empty($data['CYEAR'])) $data['CYEAR'] = date('Y');
     self::$opts = &$data;
   }
   /** Serve pages
@@ -405,7 +417,8 @@ class Albatros {
       array_shift($argv);
     }
     if (empty($output)) die('Must specify output directory: --output=path'.PHP_EOL);
-
+    echo '-----'.PHP_EOL;
+    print_r(self::$opts);
 
     //~ if (count($argv) != 1) die('Must specify one page to render'.PHP_EOL);
     //~ Plugins::registerEvent('post-render', [self::class, 'postRender']);
@@ -452,7 +465,7 @@ class Albatros {
     }
     echo '. DONE'.PHP_EOL;
 
-   if (isset(self::$opts['SEARCH_SITE']) && self::$opts['SEARCH_SITE']) {
+    if (isset(self::$opts['SEARCH_SITE']) && self::$opts['SEARCH_SITE']) {
       echo 'Copying search files ..';
       # Copy theme static files...
       Util::recurse_copy(self::path('search'),$output.'/.search');
@@ -478,7 +491,7 @@ class Albatros {
 			  json_encode($idx));
 
       echo '. DONE'.PHP_EOL;
-   }
+    }
 
     if (is_dir(self::path(self::$opts['THEME'].'/static'))) {
       echo 'Copying theme static files ..';
@@ -669,6 +682,7 @@ class Albatros {
   static function makeTags(\NacoWikiApp $wiki, string $output) : void {
     $now = date('Y-m-d');
     $max = 0;
+    //~ print_r(self::$tags);// DEBUG
     foreach (self::$tags as $t=>$td) {
       $alst = self::selectArticles(function ($f,$meta) use ($t, $now) {
 	if ($meta['type'] != 'article' || $meta['date'] > $now) return false;

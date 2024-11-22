@@ -3,6 +3,11 @@
  *
  * Implements multiple versions for files.
  *
+ * The following need to be available:
+ *
+ * - props are enabled.  (`disable-props` is not `true`).
+ * - `diff` and `patch` commands are enabled on the server.
+ *
  * @package Plugins
  * @phpcod Plugins##Versions
  */
@@ -12,8 +17,29 @@ use NWiki\Core as Core;
 
 /** NacoWiki Versions
  *
+ * This plugin implements version history for documents.
+ * It uses the `properties` change log records to identify
+ * versions.
+ *
+ * Versions are stored either as full version strings or as
+ * patches (the output of the `diff` command) from the next
+ * version.
+ *
+ * The version file is in JSON format and contains a `root`
+ * entry which is the latest base version for the file.
+ *
+ * From then on there are different versions timestamped
+ * matching the properties change log entries.  These
+ * time stamped entries are either a `delta` or `rewrite`.
+ *
+ * If `rewrite` it is just a full version text.  Otherwise
+ * `delta` contains a diff from the next version. i.e. to
+ * recreate this particular version, you need to patch the
+ * next version (starting with `root` and going backwards in
+ * time).
  *
  * @phpcod Versions
+ * @todo The `root` entry could be eliminated by ensuring the newest delta is always a `rewrite`.
  */
 class Versions {
   /** var string */
@@ -312,10 +338,13 @@ class Versions {
 		    //~ 'view versions'.
 		    //~ '</a></div>';
       //~ }
-      if ($ev['mode'] == 'edit-bot') {
-	$ev['html'] .= '<a href="'.$wiki->mkUrl($wiki->page,['do'=>'versions']).'">'.
-		    'View versions'.
-		    '</a>';
+      $count = self::countVers($wiki);
+      if ($count > 0) {
+	if ($ev['mode'] == 'edit-bot') {
+	  $ev['html'] .= '<a href="'.$wiki->mkUrl($wiki->page,['do'=>'versions']).'">'.
+		      'View versions'.
+		      '</a>';
+	}
       }
     } elseif ($wiki->view == 'versions_list') {
       $ext = Plugins::mediaExt($wiki->page);
@@ -550,6 +579,42 @@ class Versions {
 
     return Plugins::OK;
   }
+  /** count versions
+   *
+   * Determine how many versions are in the current page
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @returns int number of versions found, -1 if not handled
+   */
+   static function countVers(\NacoWikiApp $wiki) : int {
+    $ext = Plugins::mediaExt($wiki->page);
+    if (is_null($ext)) return -1;
+    $v = self::readVerData($wiki->filePath());
+    if (is_null($v) || count($v['vs']) < 1 || !isset($wiki->props['change-log']) || count($wiki->props['change-log']) == 0) return -1;
+    $versions = 0;
+    foreach ($wiki->props['change-log'] as $le) {
+      $vid = $le[0];
+      if (isset($v['vs'][$vid])) { ++$versions; }
+    }
+    return $versions;
+   }
+
+  /** Add InfoBox data
+   *
+   * Add version count to the InfoBox.
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array &$event Event data
+   * @event infobox
+   */
+  static function infoBox(\NacoWikiApp $wiki, array &$ev) : ?bool {
+    $count = self::countVers($wiki);
+    if ($count == -1) return Plugins::NOOP;
+    if ($count) {
+      $ev['infotable']['ver.'] = [ 'n' => $count ];
+    }
+    return Plugins::OK;
+  }
 
   /** View versions
    *
@@ -710,5 +775,6 @@ class Versions {
     Plugins::registerEvent('do:vcompare', [self::class, 'compareVers']);
     Plugins::registerEvent('do:rawv', [self::class, 'rawVersion']);
     Plugins::registerEvent('preRead', [self::class, 'getVersion']);
+    Plugins::registerEvent('infobox', [self::class, 'infoBox']);
   }
 }

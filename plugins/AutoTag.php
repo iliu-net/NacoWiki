@@ -77,6 +77,7 @@ class AutoTag {
       }
     }
     foreach (explode("\n",substr($txt,$offset)) as $line) {
+      if ($line == '```') continue;
       $i = strpos($line,'#');
       if ($i !== false) $line = substr($line,0,$i);
       $line = trim($line);

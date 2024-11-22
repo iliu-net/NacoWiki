@@ -148,13 +148,13 @@ class Core {
 
     switch ($scope) {
     case 'global':
-      list(,$f) = Util::walkTree($wiki->filePath('/'));
+      list(,$f) = Util::walkTree($wiki->filePath('/'), true, $wiki->cfg['vacuum']);
       foreach ($f as $i) {
 	$flst['/'.$i] = $i;
       }
       break;
     case 'recursive':
-      list(,$f) = Util::walkTree($wiki->filePath($folder));
+      list(,$f) = Util::walkTree($wiki->filePath($folder), true, $wiki->cfg['vacuum']);
       foreach ($f as $i) {
 	$flst[$folder.$i] = $i;
       }
@@ -1272,7 +1272,8 @@ class Core {
    * @return ?bool Returns \NWiki\PluginCollection::OK to indicate that it was handled.
    */
   static function apiPageList(\NacoWikiApp $wiki, array &$ev) : ?bool {
-    $res = Util::walkTree($wiki->cfg['file_store']);
+    //~ $res = Util::walkTree($wiki->cfg['file_store']);
+    $res = Util::walkTree($wiki->cfg['file_store'], true, $wiki->cfg['vacuum']);
     $res[] = $wiki->page;
     $res[] = $wiki->cfg['base_url'];
     $ev['output'] = $res;

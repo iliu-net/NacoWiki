@@ -111,6 +111,8 @@ class NacoWikiApp {
     'theme-highlight-js' => NULL,	// highlight.js theme
     ## - theme-codemirror (string) - CodeMirror theme
     'theme-codemirror'	=> NULL,	// code mirror theme
+    ## - vacuum (bool) - Automatically remove any left-over meta files
+    'vacuum'		=> true,
   ];
   ##--
 

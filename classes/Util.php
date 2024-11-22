@@ -332,8 +332,9 @@ class Util {
    * @param array &$files array receiving file entries
    * @param array &$lnkf array containing directories realpath's for avoiding symlink loops.
    * @param bool $hide_dots if True, files beginning with dot(.) or comma(,) are hidden.  Pass $false to include these files.
+   * @param bool $vacuum if True, will delete dangling metadata files...
    */
-  static function _walkTree(string $basedir, string $subdir, array &$dirs, array &$files, array &$lnkf, bool $hide_dots) : void {
+  static function _walkTree(string $basedir, string $subdir, array &$dirs, array &$files, array &$lnkf, bool $hide_dots, bool $vacuum) : void {
     $rp = realpath($basedir.$subdir);
     if (isset($lnkf[$rp])) return;
     $lnkf[$rp] = $rp;
@@ -354,11 +355,52 @@ class Util {
 
     while (false !== ($fn = readdir($dp))) {
       if ($fn == '.' || $fn == '..') continue;
-      if ($hide_dots && (substr($fn, 0, 1) == '.' || substr($fn, 0, 1) == ',')) continue;
+      if ($hide_dots && (substr($fn, 0, 1) == '.' || substr($fn, 0, 1) == ',')) {
+	if ($vacuum) {
+	  if (preg_match('/^\.[A-Za-z0-9]+;/', $fn, $mv)) {
+	    $basef = substr($fn, strlen($mv[0]));
+	    if (file_exists($fdir.$basef)) {
+	      # Used to migrate from YAML to JSON
+	      //~ if ($mv[0] == '.prop;' or $mv[0] == '.ver;') {
+		//~ $jsfile = substr($mv[0],0,-1).'s;'.$basef;
+		//~ if (!file_exists($fdir.$jsfile)) {
+		  //~ $res = yaml_parse_file($fdir.$fn);
+		  //~ if (!is_array($res)) {
+		    //~ Util::log('Migrate:Unable to read '.$fdir.$fn);
+		    //~ continue;
+		  //~ }
+		  //~ Util::log('Converting to:'.PHP_EOL.json_encode($res));
+		  //~ if (file_put_contents($fdir.$jsfile, json_encode($res)) !== false) {
+		    //~ unlink($fdir.$fn);
+		    //~ Util::log('Migrate: '.$fdir.$fn.' => '.$jsfile);
+		  //~ } else {
+		    //~ Util:log('Error migrating: '.$fdir.$fn);
+		  //~ }
+		//~ }
+	      //~ } elseif ($mv[0] == '.props;' or $mv[0] == '.vers;') {
+		//~ $legacy = substr($mv[0],0,-2).';'.$basef;
+		//~ if (file_exists($fdir.$legacy)) {
+		  //~ Util::log('XVacuum: '.$fdir.$legacy);
+		  //~ if (unlink($fdir.$legacy) !== true) {
+		    //~ Util::log(Util::vdump(error_get_last()));
+		  //~ }
+		//~ }
+	      //~ }
+	      # Finish migrating form YAML to JSON
+	      continue;
+	    }
+	    Util::log('vacuum: '.$fdir.$fn);
+	    if (unlink($fdir.$fn) !== true) {
+	      Util::log(Util::vdump(error_get_last()));
+	    }
+	  }
+	}
+	continue;
+      }
       if (is_dir($fdir . $fn)) {
 	$dirs[] = $subdir . $fn;
 	//~ if (is_link($fdir . $fn)) continue;
-	self::_walkTree($basedir, $subdir.$fn, $dirs, $files, $lnkf, $hide_dots);
+	self::_walkTree($basedir, $subdir.$fn, $dirs, $files, $lnkf, $hide_dots, $vacuum);
       } else {
 	$files[] = $subdir . $fn;
       }
@@ -372,17 +414,18 @@ class Util {
    *
    * @param string $basedir directory to read.
    * @param bool $hide_dots if True, files beginning with dot(.) or comma(,) are hidden.  Pass $false to include these files.
+   * @param bool $vacuum if True, will delete dangling metadata files...
    * @return array [ $array-of-dirs, $array-of-files ]
    */
 
-  static function walkTree(string $basedir, bool $hide_dots = true) : array {
+  static function walkTree(string $basedir, bool $hide_dots = true, bool $vacuum = false) : array {
     $slnkf = [];
     $basedir = rtrim($basedir,'/');
     if ($basedir == '') $basedir = '.';
     $basedir .= '/';
     $dirs = [];
     $files = [];
-    self::_walkTree($basedir,'', $dirs, $files, $slnkf, $hide_dots);
+    self::_walkTree($basedir,'', $dirs, $files, $slnkf, $hide_dots, $vacuum);
     return [$dirs,$files];
   }
   /** Copy files recursively
@@ -414,6 +457,7 @@ class Util {
    *
    * @param string $program : program to check for
    * @return bool : true if found, false if it does not exist
+   * @todo Eventhough it uses `PATH_SEPARATOR` this is still very much Linux specific!
    */
   static function is_program_in_path(string $program) : bool {
     $path = getenv('PATH');

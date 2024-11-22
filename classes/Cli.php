@@ -126,6 +126,44 @@ class Cli {
     //~ print_r(Plugins::$plugins);
     exit;
   }
+  /** Dump left-over metadata files
+   *
+   * This will look for dot files that do not have a matching content.
+   *
+   * @param \NanoWikiApp $wiki running wiki instance
+   * @param array $argv Command line arguments
+   * @event cli:lint
+   * @phpcod commands##lint
+   */
+  static function lint1(\NacoWikiApp $wiki, array $argv) : ?bool {
+    $base = $wiki->cfg['file_store'];
+    $queue = [ '' ];
+    $loopcheck = [];
+
+    while (count($queue) > 0) {
+      $cd = array_pop($queue);
+      if (isset($loopcheck[$cd])) continue;
+      $loopcheck[$cd] = $cd;
+
+      $dp = opendir($base.$cd);
+      if ($dp === false) continue;
+
+      while (false !== ($fn = readdir($dp))) {
+	if ($fn == '.' || $fn == '..') continue;
+	if (is_dir($base.$cd.'/'.$fn)) {
+	  array_push($queue, $cd . '/'.$fn);
+	  continue;
+	}
+	if (preg_match('/^\.[A-Za-z0-9]+;/', $fn, $mv)) {
+	  $basef = substr($fn, strlen($mv[0]));
+	  if (file_exists($base.$cd.'/'.$basef)) continue;
+	  echo($base.$cd.'/'.$fn.PHP_EOL);
+	}
+      }
+      closedir($dp);
+    }
+    exit;
+  }
 
   /**
    * Install assets
