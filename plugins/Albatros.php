@@ -163,13 +163,11 @@ class Albatros {
 	    $out = trim($out);
 	    if (preg_match('/^\d\d\d\d-\d\d-\d\d$/', $out) && $out != $meta['date']) {
 	      $meta['modified'] = $out;
-	      echo '- '.$f.' => Git date: '.$out .PHP_EOL;
 	    }
 	  }
 	}
 
 	if (empty($meta['modified']) && !(self::$opts['disable-mtime'] ?? false)) {
-	  echo('Using mtime'.PHP_EOL);
 	  $d = filemtime($wiki->filePath($f));
 	  if ($d && date('Y-m-d', $d) != $meta['date']) {
 	    $meta['modified'] = date('Y-m-d',$d);
@@ -682,7 +680,6 @@ class Albatros {
   static function makeTags(\NacoWikiApp $wiki, string $output) : void {
     $now = date('Y-m-d');
     $max = 0;
-    //~ print_r(self::$tags);// DEBUG
     foreach (self::$tags as $t=>$td) {
       $alst = self::selectArticles(function ($f,$meta) use ($t, $now) {
 	if ($meta['type'] != 'article' || $meta['date'] > $now) return false;
