@@ -43,7 +43,24 @@
         theme="github-light"
         crossorigin="anonymous"
         async>
-</script>
+	</script>
+	{% endif %}
+	{% if GISCUS %}
+	<script src="https://giscus.app/client.js"
+		data-repo="{{ GISCUS.REPO }}"
+		data-repo-id="{{ GISCUS.REPO_ID }}"
+		data-category="{{ GISCUS.CATEGORY }}"
+		data-category-id="{{ GISCUS.CATEGORY_ID }}"
+		data-mapping="{% if GISCUS.MAPPING %}{{ GISCUS.MAPPING }}{% else %}pathname{% endif %}"
+		data-strict="0"
+		data-reactions-enabled="{% if GISCUS.REACTIONS %}{{ GISCUS.REACTIONS }}{% else %}1{% endif %}"
+		data-emit-metadata="{% if GISCUS.EMIT_METADATA %}{{ GISCUS.EMUT_METADATA }}{%else %}0{% endif %}"
+		data-input-position="{% if GISCUS.INPUT_POS %}{{ GISCUS.INPUT_POS }}{% else %}bottom{% endif %}"
+		data-theme="{% if GISCUS.THEME %}{{ GISCUS.THEME }}{% else %}light{% endif %}"
+		data-lang="{% if GISCUS.LANG %}{{ GISCUS.LANG }}{% else %}en{% endif %}"
+		crossorigin="anonymous"
+		async>
+	</script>
 	{% endif %}
 	{% if DISQUS_SITENAME %}
 	<div class="comments">
