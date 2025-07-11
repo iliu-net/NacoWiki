@@ -4,6 +4,7 @@ date: "2023-03-01"
 ---
 <!-- This is shown in the Github repo, so only use GFM markup. -->
 
+![syntax check](https://github.com/iliu-net/NacoWiki/actions/workflows/static-checks.yaml/badge.svg)]
 
 # NacoWiki
 
