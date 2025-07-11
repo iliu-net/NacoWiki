@@ -5,6 +5,10 @@ author: alex
 ---
 [toc]
 
+# 3.5.0-rel
+
+- Added Giscus support
+
 # 3.4.0-rel
 
 - UI tweaks

@@ -10,7 +10,12 @@ tags: development, php
 
 %include-start%
 
-- [x] BUG: Unable to patch
+- New Plugin:
+  - embed-like-gists (based on youtubelinks)
+  - Accept QQ EmGithub: user/repo/path ? options QQ
+
+%include-stop%
+
 - Clean-up left-over .ver or .prop files.
 - opts.yaml in 0ink.net drafts doesn't take
 - tree view doesn't scroll properly
@@ -18,9 +23,6 @@ tags: development, php
 - Albatros.php has hardcoded variable substitutions.  Shouldn't
   these come from PluginVars.  Tweaked so PluginVars kinda works for
   previewing.
-
-%include-stop%
-
 - Spell checker: https://github.com/sparksuite/codemirror-spell-checker
 - Enhance D attachments D to also let you do contents:(folder)
 - views/page.html : show props created and last change log
