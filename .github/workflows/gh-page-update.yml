@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     name: run sitegen
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
          fetch-depth: 0
       - name: Setup Pages
@@ -37,10 +37,12 @@ jobs:
           composer install
           ./scripts/docgen
           ./scripts/docrun
-          cp -av docs _site
+          # cp -av docs _site
           rm -f _site/NacoWiki
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
 
   # Deployment job
   deploy:
@@ -52,4 +54,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
