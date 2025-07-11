@@ -1,4 +1,4 @@
-name: static checks
+name: syntax check
 on: [push]
 jobs:
   job-id:
