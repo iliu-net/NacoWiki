@@ -37,8 +37,9 @@ jobs:
           composer install
           ./scripts/docgen
           ./scripts/docrun
+          rm -f docs/NacoWiki
           # cp -av docs _site
-          rm -f _site/NacoWiki
+          # rm -f _site/NacoWiki
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
