@@ -27,6 +27,11 @@ PHP_EOL);
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
   <!-- additional languages -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/awk.min.js"></script>
+  <!-- Add terraform HCL -->
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/highlightjs-terraform@master/terraform.js"></script>
+  <script type="text/javascript">
+    hljs.registerLanguage('hcl', window.hljsDefineTerraform);
+  </script>
 </head>
 <body>
   <div class="page">

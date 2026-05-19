@@ -15,7 +15,7 @@ class Core {
   const CODEMIRROR = 'https://cdn.jsdelivr.net/npm/codemirror@5.65.4/';
   /** URL to the supported HIGHLIGHT_JS version
    * @var string */
-  const HIGHLIGHT_JS = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/';
+  const HIGHLIGHT_JS = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/';
   /** property files prefix
    * @var string */
   const PROPS_FILE_PREFIX = '/.props;';
